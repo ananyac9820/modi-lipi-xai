@@ -1,0 +1,44 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Environments ---
+.venv/
+venv/
+env/
+.env
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Data (downloaded / generated; reproducible via scripts) ---
+data/raw/*
+data/processed/*
+data/features/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/features/.gitkeep
+
+# --- Trained models (reproducible via scripts/run_training.py) ---
+models/*
+!models/.gitkeep
+
+# --- SHAP cache (large); figures/metrics ARE committed ---
+results/shap/*.pkl
+results/shap/*.joblib
+
+# --- Kaggle credentials must never be committed ---
+kaggle.json
+
+# --- OS / editors ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- Streamlit ---
+.streamlit/secrets.toml
