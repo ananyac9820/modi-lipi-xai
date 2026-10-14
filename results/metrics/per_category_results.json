@@ -1,0 +1,26 @@
+{
+  "errors_within_same_category": 1772,
+  "errors_across_categories": 356,
+  "per_category": {
+    "rf": {
+      "consonant": 0.6997142857142857,
+      "digit": 0.8205,
+      "vowel": 0.8175
+    },
+    "svm": {
+      "consonant": 0.8101428571428572,
+      "digit": 0.912,
+      "vowel": 0.8908333333333334
+    },
+    "xgb": {
+      "consonant": 0.7457142857142857,
+      "digit": 0.853,
+      "vowel": 0.8295833333333333
+    },
+    "stack": {
+      "consonant": 0.7797142857142857,
+      "digit": 0.883,
+      "vowel": 0.8533333333333334
+    }
+  }
+}

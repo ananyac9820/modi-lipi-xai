@@ -1,0 +1,343 @@
+{
+  "model": "stacking ensemble",
+  "method": "Kernel SHAP over 35 feature groups; baseline = mean training feature vector",
+  "n_images": 171,
+  "images_per_class": 3,
+  "nsamples": 400,
+  "family_importance": {
+    "hog": 0.3942592144012451,
+    "zernike": 0.15340863168239594,
+    "lbp": 0.3567354381084442
+  },
+  "family_share": {
+    "hog": 0.4359329751366856,
+    "zernike": 0.16962414264056747,
+    "lbp": 0.3944428822227469
+  },
+  "family_n_features": {
+    "hog": 1764,
+    "zernike": 49,
+    "lbp": 448
+  },
+  "family_n_groups": {
+    "hog": 16,
+    "zernike": 3,
+    "lbp": 16
+  },
+  "groups": [
+    {
+      "group": "Zernike: fine detail (orders 9+)",
+      "family": "zernike",
+      "cell": null,
+      "mean_abs_shap": 0.0766809806227684
+    },
+    {
+      "group": "HOG: stroke direction, upper-middle centre-left",
+      "family": "hog",
+      "cell": [
+        1,
+        1
+      ],
+      "mean_abs_shap": 0.06492090970277786
+    },
+    {
+      "group": "HOG: stroke direction, lower-middle centre-right",
+      "family": "hog",
+      "cell": [
+        2,
+        2
+      ],
+      "mean_abs_shap": 0.0507260300219059
+    },
+    {
+      "group": "Zernike: medium detail (orders 5-8)",
+      "family": "zernike",
+      "cell": null,
+      "mean_abs_shap": 0.050260793417692184
+    },
+    {
+      "group": "HOG: stroke direction, upper-middle centre-right",
+      "family": "hog",
+      "cell": [
+        1,
+        2
+      ],
+      "mean_abs_shap": 0.048200901597738266
+    },
+    {
+      "group": "HOG: stroke direction, lower-middle centre-left",
+      "family": "hog",
+      "cell": [
+        2,
+        1
+      ],
+      "mean_abs_shap": 0.04798683524131775
+    },
+    {
+      "group": "LBP: local stroke pattern, lower-middle centre-left",
+      "family": "lbp",
+      "cell": [
+        2,
+        1
+      ],
+      "mean_abs_shap": 0.044468771666288376
+    },
+    {
+      "group": "LBP: local stroke pattern, upper-middle centre-left",
+      "family": "lbp",
+      "cell": [
+        1,
+        1
+      ],
+      "mean_abs_shap": 0.04058447480201721
+    },
+    {
+      "group": "LBP: local stroke pattern, lower-middle centre-right",
+      "family": "lbp",
+      "cell": [
+        2,
+        2
+      ],
+      "mean_abs_shap": 0.03711320459842682
+    },
+    {
+      "group": "LBP: local stroke pattern, upper-middle centre-right",
+      "family": "lbp",
+      "cell": [
+        1,
+        2
+      ],
+      "mean_abs_shap": 0.03242189809679985
+    },
+    {
+      "group": "HOG: stroke direction, lower-middle left",
+      "family": "hog",
+      "cell": [
+        2,
+        0
+      ],
+      "mean_abs_shap": 0.031219828873872757
+    },
+    {
+      "group": "LBP: local stroke pattern, upper-middle left",
+      "family": "lbp",
+      "cell": [
+        1,
+        0
+      ],
+      "mean_abs_shap": 0.027897365391254425
+    },
+    {
+      "group": "Zernike: coarse shape (orders 0-4)",
+      "family": "zernike",
+      "cell": null,
+      "mean_abs_shap": 0.02646685764193535
+    },
+    {
+      "group": "LBP: local stroke pattern, lower-middle left",
+      "family": "lbp",
+      "cell": [
+        2,
+        0
+      ],
+      "mean_abs_shap": 0.025124987587332726
+    },
+    {
+      "group": "HOG: stroke direction, top centre-right",
+      "family": "hog",
+      "cell": [
+        0,
+        2
+      ],
+      "mean_abs_shap": 0.021879563108086586
+    },
+    {
+      "group": "LBP: local stroke pattern, top centre-right",
+      "family": "lbp",
+      "cell": [
+        0,
+        2
+      ],
+      "mean_abs_shap": 0.021284427493810654
+    },
+    {
+      "group": "HOG: stroke direction, upper-middle left",
+      "family": "hog",
+      "cell": [
+        1,
+        0
+      ],
+      "mean_abs_shap": 0.02117140404880047
+    },
+    {
+      "group": "LBP: local stroke pattern, lower-middle right",
+      "family": "lbp",
+      "cell": [
+        2,
+        3
+      ],
+      "mean_abs_shap": 0.01977376826107502
+    },
+    {
+      "group": "LBP: local stroke pattern, top centre-left",
+      "family": "lbp",
+      "cell": [
+        0,
+        1
+      ],
+      "mean_abs_shap": 0.018783319741487503
+    },
+    {
+      "group": "HOG: stroke direction, top centre-left",
+      "family": "hog",
+      "cell": [
+        0,
+        1
+      ],
+      "mean_abs_shap": 0.017922837287187576
+    },
+    {
+      "group": "LBP: local stroke pattern, bottom centre-right",
+      "family": "lbp",
+      "cell": [
+        3,
+        2
+      ],
+      "mean_abs_shap": 0.017257602885365486
+    },
+    {
+      "group": "LBP: local stroke pattern, bottom centre-left",
+      "family": "lbp",
+      "cell": [
+        3,
+        1
+      ],
+      "mean_abs_shap": 0.016763901337981224
+    },
+    {
+      "group": "HOG: stroke direction, lower-middle right",
+      "family": "hog",
+      "cell": [
+        2,
+        3
+      ],
+      "mean_abs_shap": 0.01646634005010128
+    },
+    {
+      "group": "HOG: stroke direction, upper-middle right",
+      "family": "hog",
+      "cell": [
+        1,
+        3
+      ],
+      "mean_abs_shap": 0.01548392977565527
+    },
+    {
+      "group": "LBP: local stroke pattern, upper-middle right",
+      "family": "lbp",
+      "cell": [
+        1,
+        3
+      ],
+      "mean_abs_shap": 0.01494124997407198
+    },
+    {
+      "group": "HOG: stroke direction, bottom centre-left",
+      "family": "hog",
+      "cell": [
+        3,
+        1
+      ],
+      "mean_abs_shap": 0.01278974860906601
+    },
+    {
+      "group": "LBP: local stroke pattern, top right",
+      "family": "lbp",
+      "cell": [
+        0,
+        3
+      ],
+      "mean_abs_shap": 0.01254772488027811
+    },
+    {
+      "group": "HOG: stroke direction, top left",
+      "family": "hog",
+      "cell": [
+        0,
+        0
+      ],
+      "mean_abs_shap": 0.011342516168951988
+    },
+    {
+      "group": "LBP: local stroke pattern, bottom left",
+      "family": "lbp",
+      "cell": [
+        3,
+        0
+      ],
+      "mean_abs_shap": 0.010707278735935688
+    },
+    {
+      "group": "HOG: stroke direction, bottom right",
+      "family": "hog",
+      "cell": [
+        3,
+        3
+      ],
+      "mean_abs_shap": 0.009273268282413483
+    },
+    {
+      "group": "LBP: local stroke pattern, bottom right",
+      "family": "lbp",
+      "cell": [
+        3,
+        3
+      ],
+      "mean_abs_shap": 0.00915692001581192
+    },
+    {
+      "group": "HOG: stroke direction, top right",
+      "family": "hog",
+      "cell": [
+        0,
+        3
+      ],
+      "mean_abs_shap": 0.008508759550750256
+    },
+    {
+      "group": "HOG: stroke direction, bottom centre-right",
+      "family": "hog",
+      "cell": [
+        3,
+        2
+      ],
+      "mean_abs_shap": 0.008344349451363087
+    },
+    {
+      "group": "HOG: stroke direction, bottom left",
+      "family": "hog",
+      "cell": [
+        3,
+        0
+      ],
+      "mean_abs_shap": 0.00802198238670826
+    },
+    {
+      "group": "LBP: local stroke pattern, top left",
+      "family": "lbp",
+      "cell": [
+        0,
+        0
+      ],
+      "mean_abs_shap": 0.007908540777862072
+    }
+  ],
+  "max_additivity_error": 8.770259052326423e-08,
+  "mean_additivity_error": 2.7257678821497218e-08,
+  "faithfulness_deletion_test": {
+    "groups_removed": 3,
+    "mean_probability_drop_top_shap": 0.44728336269459856,
+    "mean_probability_drop_random": 0.08385664380747876
+  },
+  "accuracy_on_sample": 0.8245614035087719
+}

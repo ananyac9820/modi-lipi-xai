@@ -1,0 +1,51 @@
+{
+  "samples": [
+    {
+      "file": "sample_1_consonants.png",
+      "description": "Five consonants on one line",
+      "ground_truth": [
+        "k",
+        "m",
+        "l",
+        "r",
+        "s"
+      ],
+      "kind": "composed from test-split images"
+    },
+    {
+      "file": "sample_2_two_lines.png",
+      "description": "Two lines, slightly tilted",
+      "ground_truth": [
+        "a",
+        "i",
+        "u",
+        "e",
+        "g",
+        "p",
+        "v",
+        "h"
+      ],
+      "kind": "composed from test-split images"
+    },
+    {
+      "file": "sample_3_digits.png",
+      "description": "A row of Modi digits",
+      "ground_truth": [
+        "one",
+        "nine",
+        "four",
+        "seven",
+        "two",
+        "zero"
+      ],
+      "kind": "composed from test-split images"
+    },
+    {
+      "file": "sample_4_real_manuscript.png",
+      "kind": "real manuscript crop (MODI-HHDoc)",
+      "description": "Real manuscript lines: connected cursive writing (hard case)",
+      "ground_truth": null
+    }
+  ],
+  "note": "Composed samples use test-split images only, never training images."
+}

@@ -1,0 +1,18 @@
+{
+ "note": "Published accuracies come from DIFFERENT datasets, class counts, splits and metrics (often validation accuracy, sometimes training accuracy). The classical papers in the original 10-paper survey used private datasets of undisclosed size, one covering only 27 of 46 characters. These numbers are listed for context only and are NOT directly comparable with this project's test accuracy on the public MODI-HChar dataset. Rows marked 'brief' are quoted from the project brief's 10-paper survey; replace them with exact per-paper values from docs/01_literature_survey if needed. Rows marked 'survey-30' come from docs/01_literature_survey/Literature_Survey_30_Papers.xlsx.",
+ "entries": [
+  {"work": "10-paper survey (brief): shallow ResNet9", "approach": "Deep learning", "dataset": "Public benchmark, 46 classes x 90 images", "reported accuracy": "98.92%", "public data?": "yes"},
+  {"work": "10-paper survey (brief): ResNet50 (same paper)", "approach": "Deep learning", "dataset": "Public benchmark, 46 classes x 90 images", "reported accuracy": "91.91%", "public data?": "yes"},
+  {"work": "10-paper survey (brief): InceptionV3 (same paper)", "approach": "Deep learning", "dataset": "Public benchmark, 46 classes x 90 images", "reported accuracy": "86.00%", "public data?": "yes"},
+  {"work": "10-paper survey (brief): CNN with 10-point train/validation gap", "approach": "Deep learning", "dataset": "Not stated in brief", "reported accuracy": "97.6% train / 87.3% validation", "public data?": "?"},
+  {"work": "10-paper survey (brief): Zernike + DCT, KNN; HOG alone; wavelet + SVD, Euclidean", "approach": "Classical", "dataset": "Private, size undisclosed (one covers 27 of 46 characters)", "reported accuracy": "97.77-99.3% (range across the three)", "public data?": "no"},
+  {"work": "Bhong et al. 2025 (survey-30 #4)", "approach": "Deep learning: CNN / VGG16", "dataset": "IEEE DataPort 46 x 90 + own 46 x 60", "reported accuracy": "89.50% val (VGG16); 87.25% val (CNN)", "public data?": "partly"},
+  {"work": "Kolte et al. 2025 (survey-30 #6)", "approach": "Deep learning: attention CNN", "dataset": "IEEE DataPort 46 x 90 + own set", "reported accuracy": "94.60% val (abstract) / ~90% (conclusion)", "public data?": "partly"},
+  {"work": "Chandankhede et al. 2025 (survey-30 #7)", "approach": "Deep learning: ResNet152 / InceptionV3", "dataset": "Own, 360 classes, 7,721 train images", "reported accuracy": "97.38% test but 45.08% val", "public data?": "no"},
+  {"work": "Sonavane et al. 2024 (survey-30 #11)", "approach": "Deep learning: ResNet101 / Xception", "dataset": "Unclear", "reported accuracy": "90.36% val (ResNet101)", "public data?": "?"},
+  {"work": "Date et al. 2024 (survey-30 #14)", "approach": "KNN / SVM / CNN / VGG16 / ResNet", "dataset": "4,140 images (46 x 90) augmented", "reported accuracy": "CNN 96%, SVM 77%, KNN 75%", "public data?": "yes"},
+  {"work": "Ekbote et al. 2022 (survey-30 #21)", "approach": "Hybrid: VGG16 features + RF / XGBoost", "dataset": "About 5,000 samples incl. numerals", "reported accuracy": "92% characters, 93.3% numerals", "public data?": "?"},
+  {"work": "Anam & Gupta 2015 (survey-30 #26)", "approach": "Classical: Otsu + Kohonen network", "dataset": "Own, 22 characters, 8 train images each", "reported accuracy": "72.6%", "public data?": "no"},
+  {"work": "Kulkarni et al. 2014 (survey-30 #28)", "approach": "Classical: Zernike vs Hu moments", "dataset": "Own, 10 numerals x 10 samples", "reported accuracy": "86.66% (Zernike), 70% (Hu)", "public data?": "no"}
+ ]
+}

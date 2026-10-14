@@ -1,0 +1,78 @@
+{
+  "n_images": 127087,
+  "n_classes": 57,
+  "image_size": 64,
+  "families": [
+    {
+      "family": "hog",
+      "cached": false,
+      "n_features": 1764,
+      "seconds": 59.79,
+      "ms_per_image": 0.47,
+      "mean": 0.07469367980957031,
+      "std": 0.14236818253993988,
+      "constant_features": 0
+    },
+    {
+      "family": "zernike",
+      "cached": false,
+      "n_features": 49,
+      "seconds": 45.56,
+      "ms_per_image": 0.358,
+      "mean": 0.1311011016368866,
+      "std": 0.1543702632188797,
+      "constant_features": 0
+    },
+    {
+      "family": "lbp",
+      "cached": false,
+      "n_features": 448,
+      "seconds": 74.32,
+      "ms_per_image": 0.585,
+      "mean": 0.0714285746216774,
+      "std": 0.1944693922996521,
+      "constant_features": 0
+    }
+  ],
+  "fused_dimension": 2261,
+  "family_balanced_fusion": true,
+  "config": {
+    "hog": {
+      "orientations": 9,
+      "pixels_per_cell": [
+        8,
+        8
+      ],
+      "cells_per_block": [
+        2,
+        2
+      ],
+      "block_norm": "L2-Hys",
+      "smooth_sigma": 1.0
+    },
+    "zernike": {
+      "degree": 12,
+      "radius": null
+    },
+    "lbp": {
+      "points": [
+        8,
+        16
+      ],
+      "radii": [
+        1.0,
+        2.0
+      ],
+      "method": "uniform",
+      "grid": [
+        4,
+        4
+      ],
+      "smooth_sigma": 1.0
+    },
+    "fusion": {
+      "balance_families": true,
+      "n_jobs": -1
+    }
+  }
+}

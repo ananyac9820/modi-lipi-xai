@@ -65,6 +65,21 @@ def stage(name: str, logger: logging.Logger | None = None) -> Iterator[None]:
         log.info("✔ %s done in %.1fs", name, time.perf_counter() - start)
 
 
+def setup_matplotlib() -> Any:
+    """Headless matplotlib with a font fallback chain that covers Devanagari
+    (class labels such as 'क'). Returns ``matplotlib.pyplot``."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib import font_manager
+
+    installed = {f.name for f in font_manager.fontManager.ttflist}
+    fallbacks = [f for f in ("Nirmala UI", "Mangal", "Noto Sans Devanagari", "Lohit Devanagari") if f in installed]
+    matplotlib.rcParams["font.family"] = ["DejaVu Sans", *fallbacks]
+    return plt
+
+
 def set_seed(seed: int = config.SEED) -> None:
     """Seed every random number generator we rely on."""
     random.seed(seed)

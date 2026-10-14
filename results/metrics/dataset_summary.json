@@ -1,0 +1,921 @@
+{
+  "dataset": "msd6013/modi-hdc-historical-handwritten-modi-script",
+  "generated_at": "2026-10-14T04:11:17+00:00",
+  "raw_root": "D:\\sem5\\Ds\\cp\\modi-lipi-xai\\data\\raw",
+  "character_roots": [
+    "MODI_HChar"
+  ],
+  "total_images": 575912,
+  "num_classes": 57,
+  "images_per_class": {
+    "min": 10098,
+    "max": 10110,
+    "mean": 10103.72,
+    "median": 10100.0,
+    "std": 4.85,
+    "imbalance_ratio_max_over_min": 1.001
+  },
+  "categories": {
+    "consonant": {
+      "classes": 35,
+      "images": 353497,
+      "raw_folder_names": [
+        "consonants"
+      ],
+      "images_per_class": {
+        "min": 10098,
+        "max": 10100,
+        "mean": 10099.91,
+        "median": 10100.0,
+        "std": 0.37,
+        "imbalance_ratio_max_over_min": 1.0
+      },
+      "labels": [
+        "b",
+        "bh",
+        "ch",
+        "chh",
+        "d",
+        "dh",
+        "dha",
+        "dyn",
+        "g",
+        "gh",
+        "h",
+        "ja",
+        "jh",
+        "k",
+        "kh",
+        "ksh",
+        "l",
+        "lh",
+        "m",
+        "n",
+        "nn",
+        "p",
+        "ph",
+        "r",
+        "s",
+        "sh",
+        "shr",
+        "ta",
+        "th",
+        "tha",
+        "thh",
+        "thha",
+        "tr",
+        "v",
+        "y"
+      ]
+    },
+    "digit": {
+      "classes": 10,
+      "images": 101095,
+      "raw_folder_names": [
+        "digits"
+      ],
+      "images_per_class": {
+        "min": 10105,
+        "max": 10110,
+        "mean": 10109.5,
+        "median": 10110.0,
+        "std": 1.5,
+        "imbalance_ratio_max_over_min": 1.0
+      },
+      "labels": [
+        "eight",
+        "five",
+        "four",
+        "nine",
+        "one",
+        "seven",
+        "six",
+        "three",
+        "two",
+        "zero"
+      ]
+    },
+    "vowel": {
+      "classes": 12,
+      "images": 121320,
+      "raw_folder_names": [
+        "vowels"
+      ],
+      "images_per_class": {
+        "min": 10110,
+        "max": 10110,
+        "mean": 10110.0,
+        "median": 10110.0,
+        "std": 0.0,
+        "imbalance_ratio_max_over_min": 1.0
+      },
+      "labels": [
+        "a",
+        "aa",
+        "ah",
+        "ai",
+        "am",
+        "e",
+        "i",
+        "ii",
+        "o",
+        "oo",
+        "ou",
+        "u"
+      ]
+    }
+  },
+  "classes": [
+    {
+      "label": "a",
+      "category": "vowel",
+      "count": 10110
+    },
+    {
+      "label": "aa",
+      "category": "vowel",
+      "count": 10110
+    },
+    {
+      "label": "ah",
+      "category": "vowel",
+      "count": 10110
+    },
+    {
+      "label": "ai",
+      "category": "vowel",
+      "count": 10110
+    },
+    {
+      "label": "am",
+      "category": "vowel",
+      "count": 10110
+    },
+    {
+      "label": "b",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "bh",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "ch",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "chh",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "d",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "dh",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "dha",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "dyn",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "e",
+      "category": "vowel",
+      "count": 10110
+    },
+    {
+      "label": "eight",
+      "category": "digit",
+      "count": 10110
+    },
+    {
+      "label": "five",
+      "category": "digit",
+      "count": 10105
+    },
+    {
+      "label": "four",
+      "category": "digit",
+      "count": 10110
+    },
+    {
+      "label": "g",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "gh",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "h",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "i",
+      "category": "vowel",
+      "count": 10110
+    },
+    {
+      "label": "ii",
+      "category": "vowel",
+      "count": 10110
+    },
+    {
+      "label": "ja",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "jh",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "k",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "kh",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "ksh",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "l",
+      "category": "consonant",
+      "count": 10099
+    },
+    {
+      "label": "lh",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "m",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "n",
+      "category": "consonant",
+      "count": 10098
+    },
+    {
+      "label": "nine",
+      "category": "digit",
+      "count": 10110
+    },
+    {
+      "label": "nn",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "o",
+      "category": "vowel",
+      "count": 10110
+    },
+    {
+      "label": "one",
+      "category": "digit",
+      "count": 10110
+    },
+    {
+      "label": "oo",
+      "category": "vowel",
+      "count": 10110
+    },
+    {
+      "label": "ou",
+      "category": "vowel",
+      "count": 10110
+    },
+    {
+      "label": "p",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "ph",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "r",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "s",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "seven",
+      "category": "digit",
+      "count": 10110
+    },
+    {
+      "label": "sh",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "shr",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "six",
+      "category": "digit",
+      "count": 10110
+    },
+    {
+      "label": "ta",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "th",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "tha",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "thh",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "thha",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "three",
+      "category": "digit",
+      "count": 10110
+    },
+    {
+      "label": "tr",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "two",
+      "category": "digit",
+      "count": 10110
+    },
+    {
+      "label": "u",
+      "category": "vowel",
+      "count": 10110
+    },
+    {
+      "label": "v",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "y",
+      "category": "consonant",
+      "count": 10100
+    },
+    {
+      "label": "zero",
+      "category": "digit",
+      "count": 10110
+    }
+  ],
+  "image_width": {
+    "min": 170,
+    "max": 171,
+    "median": 170.0
+  },
+  "image_height": {
+    "min": 170,
+    "max": 171,
+    "median": 170.0
+  },
+  "colour_modes": {
+    "RGB": 575912
+  },
+  "file_extensions": {
+    ".jpg": 575912
+  },
+  "skipped_total": 20,
+  "skipped_by_reason": {
+    "hidden/system file": 15,
+    "non-image file (.psd)": 5
+  },
+  "skipped_examples": {
+    "hidden/system file": [
+      "MODI_HChar\\MODI_HChar\\digits\\five\\Thumbs.db",
+      "MODI_HChar\\MODI_HChar\\digits\\four\\Thumbs.db",
+      "MODI_HChar\\MODI_HChar\\digits\\nine\\Thumbs.db",
+      "MODI_HChar\\MODI_HChar\\digits\\one\\Thumbs.db",
+      "MODI_HChar\\MODI_HChar\\digits\\seven\\Thumbs.db",
+      "MODI_HChar\\MODI_HChar\\digits\\six\\Thumbs.db",
+      "MODI_HChar\\MODI_HChar\\digits\\three\\Thumbs.db",
+      "MODI_HChar\\MODI_HChar\\vowels\\aa\\Thumbs.db",
+      "MODI_HChar\\MODI_HChar\\vowels\\ah\\Thumbs.db",
+      "MODI_HChar\\MODI_HChar\\vowels\\ai\\Thumbs.db",
+      "MODI_HChar\\MODI_HChar\\vowels\\am\\Thumbs.db",
+      "MODI_HChar\\MODI_HChar\\vowels\\e\\Thumbs.db",
+      "MODI_HChar\\MODI_HChar\\vowels\\i\\Thumbs.db",
+      "MODI_HChar\\MODI_HChar\\vowels\\ii\\Thumbs.db",
+      "MODI_HChar\\MODI_HChar\\vowels\\o\\Thumbs.db"
+    ],
+    "non-image file (.psd)": [
+      "MODI_HChar\\MODI_HChar\\digits\\five\\five1123.psd",
+      "MODI_HChar\\MODI_HChar\\digits\\five\\five1124.psd",
+      "MODI_HChar\\MODI_HChar\\digits\\five\\five1125.psd",
+      "MODI_HChar\\MODI_HChar\\digits\\five\\five1126.psd",
+      "MODI_HChar\\MODI_HChar\\digits\\five\\five1130.psd"
+    ]
+  },
+  "excluded_classes": {},
+  "warnings": [],
+  "claims_vs_measured": {
+    "surveyed_papers": {
+      "claimed_classes": 46,
+      "claimed_images_per_class": 90,
+      "measured_classes": 57,
+      "measured_images_per_class_range": [
+        10098,
+        10110
+      ],
+      "classes_match": false,
+      "per_class_match": false
+    },
+    "kaggle_uploader": {
+      "claimed_classes": 57,
+      "measured_classes": 57,
+      "claimed_total_images": 575920,
+      "measured_total_images": 575912,
+      "total_difference": -8,
+      "classes_match": true,
+      "total_match": false,
+      "by_category": {
+        "digit": {
+          "claimed_classes": 10,
+          "measured_classes": 10,
+          "claimed_images": 101100,
+          "measured_images": 101095,
+          "images_difference": -5
+        },
+        "vowel": {
+          "claimed_classes": 12,
+          "measured_classes": 12,
+          "claimed_images": 121320,
+          "measured_images": 121320,
+          "images_difference": 0
+        },
+        "consonant": {
+          "claimed_classes": 35,
+          "measured_classes": 35,
+          "claimed_images": 353500,
+          "measured_images": 353497,
+          "images_difference": -3
+        }
+      }
+    },
+    "class_count_note": "Measured: 12 vowel + 35 consonant = 47 letter classes, plus 10 digit classes = 57 total (excluding any 'other'). Papers report 46; the uploader's own breakdown (12 + 35 = 47 letters + 10 digits) implies 57. Neither 46 nor 47 is guaranteed to be the same character inventory as this dataset.",
+    "differences": [
+      "digit: uploader claims 101,100 images, found 101,095 (-5).",
+      "consonant: uploader claims 353,500 images, found 353,497 (-3).",
+      "Uploader claims 575,920 images; found 575,912 (-8).",
+      "Measured: 12 vowel + 35 consonant = 47 letter classes, plus 10 digit classes = 57 total (excluding any 'other'). Papers report 46; the uploader's own breakdown (12 + 35 = 47 letters + 10 digits) implies 57. Neither 46 nor 47 is guaranteed to be the same character inventory as this dataset."
+    ],
+    "policy": "All counts in this file are measured from disk. Claims are listed only for comparison."
+  },
+  "split_plan_full_dataset": {
+    "boundary_band": {
+      "range_images": [
+        150,
+        400
+      ],
+      "n_classes": 0,
+      "classes": {},
+      "note": "Classes near the full/scaled threshold. If any exist, switch to the smooth rule min(200, max(20, int(0.2 * n)))."
+    },
+    "policy": "Test size is fixed once per class: classes with >= test_per_class + min(curve sizes) images get test_per_class test images; smaller classes get floor(scaled_test_fraction * N) (min 1), marked 'scaled'. A class with fewer training images than a curve point stays in that point with every training image it has, so the class set is identical at every point; the point is flagged incomplete and accuracy is additionally reported on complete classes only.",
+    "full_test_threshold_images": 272,
+    "test_per_class": 200,
+    "reduced_test_classes": {},
+    "points": {
+      "72": {
+        "complete": true,
+        "short_classes": {}
+      },
+      "90": {
+        "complete": true,
+        "short_classes": {}
+      },
+      "250": {
+        "complete": true,
+        "short_classes": {}
+      },
+      "500": {
+        "complete": true,
+        "short_classes": {}
+      },
+      "1000": {
+        "complete": true,
+        "short_classes": {}
+      },
+      "2000": {
+        "complete": true,
+        "short_classes": {}
+      }
+    },
+    "incomplete_points": []
+  },
+  "config": {
+    "seed": 42,
+    "dataset": {
+      "kaggle_slug": "msd6013/modi-hdc-historical-handwritten-modi-script",
+      "kaggle_url": "https://www.kaggle.com/datasets/msd6013/modi-hdc-historical-handwritten-modi-script",
+      "character_root_hint": "hchar",
+      "exclude_dir_keywords": [
+        "hhdoc",
+        "document",
+        "__macosx"
+      ],
+      "image_extensions": [
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".bmp",
+        ".tif",
+        ".tiff"
+      ],
+      "min_image_side": 8,
+      "min_images_per_class": 5,
+      "category_keywords": {
+        "digit": [
+          "digit",
+          "numeral",
+          "number"
+        ],
+        "vowel": [
+          "vowel",
+          "swar"
+        ],
+        "consonant": [
+          "consonant",
+          "vyanjan"
+        ]
+      },
+      "published_claim_classes": 46,
+      "published_claim_per_class": 90,
+      "uploader_claim_classes": 57,
+      "uploader_claim_total": 575920,
+      "uploader_claim_by_category": {
+        "digit": {
+          "classes": 10,
+          "images": 101100
+        },
+        "vowel": {
+          "classes": 12,
+          "images": 121320
+        },
+        "consonant": {
+          "classes": 35,
+          "images": 353500
+        }
+      },
+      "min_free_space_gb": 16.0,
+      "document_samples": 20
+    },
+    "sampling": {
+      "test_per_class": 200,
+      "scaled_test_fraction": 0.2,
+      "boundary_band": [
+        150,
+        400
+      ],
+      "pool_reserve": 30,
+      "main_train_per_class": 500,
+      "curve_train_sizes": [
+        72,
+        90,
+        250,
+        500,
+        1000,
+        2000
+      ],
+      "pool_per_class": 2230
+    },
+    "preprocess": {
+      "image_size": 64,
+      "min_contrast": 40.0,
+      "contrast_percentile": 0.2,
+      "border_clear_ratio": 0.02,
+      "border_band_ratio": 0.07,
+      "border_line_aspect": 3.0,
+      "median_kernel": 3,
+      "morph_open_kernel": 0,
+      "min_component_area_ratio": 0.0005,
+      "min_component_area_floor": 4,
+      "min_ink_pixels": 10,
+      "deskew": false,
+      "min_deskew_angle": 2.0,
+      "max_deskew_angle": 20.0,
+      "max_deskew_ink_change": 0.15,
+      "padding_ratio": 0.1,
+      "resize_threshold": 96,
+      "output_ext": ".png",
+      "n_jobs": -1
+    },
+    "segmentation": {
+      "max_working_width": 1600,
+      "line_min_gap_ratio": 0.01,
+      "line_min_height_ratio": 0.02,
+      "projection_noise_ratio": 0.02,
+      "min_char_area_ratio": 0.0008,
+      "merge_overlap_ratio": 0.5,
+      "wide_blob_ratio": 1.6,
+      "tall_blob_ratio": 2.2,
+      "min_chars_for_stats": 3,
+      "crop_padding": 4
+    },
+    "hog": {
+      "orientations": 9,
+      "pixels_per_cell": [
+        8,
+        8
+      ],
+      "cells_per_block": [
+        2,
+        2
+      ],
+      "block_norm": "L2-Hys"
+    },
+    "zernike": {
+      "degree": 12,
+      "radius": null
+    },
+    "lbp": {
+      "points": [
+        8,
+        16
+      ],
+      "radii": [
+        1.0,
+        2.0
+      ],
+      "method": "uniform",
+      "grid": [
+        4,
+        4
+      ]
+    },
+    "reduce": {
+      "method": "pca",
+      "pca_variance": 0.95,
+      "pca_max_components": 300,
+      "lda_components": null,
+      "lda_solver": "eigen",
+      "lda_shrinkage": "auto"
+    },
+    "split": {
+      "test_size": 0.2,
+      "cv_folds": 5
+    },
+    "models": {
+      "rf": {
+        "n_estimators": 400,
+        "max_depth": null,
+        "min_samples_leaf": 1,
+        "max_features": "sqrt",
+        "class_weight": "balanced",
+        "n_jobs": -1
+      },
+      "svm": {
+        "kernel": "rbf",
+        "C": 10.0,
+        "gamma": "scale",
+        "probability": true,
+        "class_weight": "balanced"
+      },
+      "xgb": {
+        "n_estimators": 300,
+        "max_depth": 5,
+        "learning_rate": 0.1,
+        "subsample": 0.8,
+        "colsample_bytree": 0.8,
+        "tree_method": "hist",
+        "n_jobs": -1,
+        "eval_metric": "mlogloss"
+      },
+      "stack_final_C": 1.0,
+      "stack_final_max_iter": 2000,
+      "stack_cv": 5,
+      "stack_passthrough": false
+    },
+    "cnn_baseline": {
+      "conv_channels": [
+        32,
+        64,
+        128
+      ],
+      "dense_units": 256,
+      "dropout": 0.5,
+      "optimizer": "adam",
+      "learning_rate": 0.001,
+      "batch_size": 128,
+      "max_epochs": 40,
+      "early_stopping_patience": 6,
+      "val_fraction": 0.1,
+      "refit_on_full_train": true,
+      "num_threads": 0
+    },
+    "explain": {
+      "background_size": 50,
+      "global_sample_size": 150,
+      "kernel_nsamples": 400,
+      "hog_region_grid": [
+        4,
+        4
+      ],
+      "top_k_features": 10
+    },
+    "app": {
+      "high_confidence": 0.7,
+      "low_confidence": 0.4,
+      "top_k": 3,
+      "max_upload_mb": 10
+    }
+  },
+  "preprocessing": {
+    "selected": 127110,
+    "processed_ok": 127087,
+    "failed": 23,
+    "failed_by_reason": {
+      "Blank image (no contrast between ink and paper)": 16,
+      "No ink found in the image (blank or too faint after thresholding)": 7
+    },
+    "failed_examples": {
+      "MODI_HChar\\MODI_HChar\\vowels\\a\\a6310.jpg": "Blank image (no contrast between ink and paper).",
+      "MODI_HChar\\MODI_HChar\\vowels\\aa\\aa6320.jpg": "Blank image (no contrast between ink and paper).",
+      "MODI_HChar\\MODI_HChar\\consonants\\b\\b6898.jpg": "No ink found in the image (blank or too faint after thresholding).",
+      "MODI_HChar\\MODI_HChar\\consonants\\chh\\chh6310.jpg": "No ink found in the image (blank or too faint after thresholding).",
+      "MODI_HChar\\MODI_HChar\\consonants\\d\\d6898.jpg": "No ink found in the image (blank or too faint after thresholding).",
+      "MODI_HChar\\MODI_HChar\\consonants\\d\\d6897.jpg": "No ink found in the image (blank or too faint after thresholding).",
+      "MODI_HChar\\MODI_HChar\\vowels\\e\\e6310.jpg": "Blank image (no contrast between ink and paper).",
+      "MODI_HChar\\MODI_HChar\\consonants\\g\\g4964.jpg": "Blank image (no contrast between ink and paper).",
+      "MODI_HChar\\MODI_HChar\\vowels\\ii\\ii6431.jpg": "Blank image (no contrast between ink and paper).",
+      "MODI_HChar\\MODI_HChar\\consonants\\k\\k1780.jpg": "Blank image (no contrast between ink and paper).",
+      "MODI_HChar\\MODI_HChar\\consonants\\ksh\\ksh6250.jpg": "Blank image (no contrast between ink and paper).",
+      "MODI_HChar\\MODI_HChar\\consonants\\lh\\lh6250.jpg": "Blank image (no contrast between ink and paper).",
+      "MODI_HChar\\MODI_HChar\\digits\\one\\one6250.jpg": "Blank image (no contrast between ink and paper).",
+      "MODI_HChar\\MODI_HChar\\vowels\\oo\\oo6310.jpg": "Blank image (no contrast between ink and paper).",
+      "MODI_HChar\\MODI_HChar\\vowels\\ou\\ou6310.jpg": "Blank image (no contrast between ink and paper).",
+      "MODI_HChar\\MODI_HChar\\digits\\six\\six6250.jpg": "Blank image (no contrast between ink and paper).",
+      "MODI_HChar\\MODI_HChar\\consonants\\ta\\ta6310.jpg": "Blank image (no contrast between ink and paper).",
+      "MODI_HChar\\MODI_HChar\\consonants\\tha\\tha2551.jpg": "Blank image (no contrast between ink and paper).",
+      "MODI_HChar\\MODI_HChar\\consonants\\thh\\thh6896.jpg": "No ink found in the image (blank or too faint after thresholding).",
+      "MODI_HChar\\MODI_HChar\\consonants\\thh\\thh6899.jpg": "No ink found in the image (blank or too faint after thresholding).",
+      "MODI_HChar\\MODI_HChar\\consonants\\y\\y6250.jpg": "No ink found in the image (blank or too faint after thresholding).",
+      "MODI_HChar\\MODI_HChar\\digits\\zero\\zero6250.jpg": "Blank image (no contrast between ink and paper).",
+      "MODI_HChar\\MODI_HChar\\digits\\zero\\zero6899.jpg": "Blank image (no contrast between ink and paper)."
+    },
+    "params_hash": "11502278b05e",
+    "polarity_convention": "ink = 255 (white) on background = 0 (black)",
+    "this_run": {
+      "images": 127087,
+      "deskew_applied_fraction": 0.0,
+      "dark_ink_on_light_fraction": 1.0,
+      "polarity_decided_by_minority_rule": 127087
+    },
+    "split_plan_processed_pool": {
+      "boundary_band": {
+        "range_images": [
+          150,
+          400
+        ],
+        "n_classes": 0,
+        "classes": {},
+        "note": "Classes near the full/scaled threshold. If any exist, switch to the smooth rule min(200, max(20, int(0.2 * n)))."
+      },
+      "policy": "Test size is fixed once per class: classes with >= test_per_class + min(curve sizes) images get test_per_class test images; smaller classes get floor(scaled_test_fraction * N) (min 1), marked 'scaled'. A class with fewer training images than a curve point stays in that point with every training image it has, so the class set is identical at every point; the point is flagged incomplete and accuracy is additionally reported on complete classes only.",
+      "full_test_threshold_images": 272,
+      "test_per_class": 200,
+      "reduced_test_classes": {},
+      "points": {
+        "72": {
+          "complete": true,
+          "short_classes": {}
+        },
+        "90": {
+          "complete": true,
+          "short_classes": {}
+        },
+        "250": {
+          "complete": true,
+          "short_classes": {}
+        },
+        "500": {
+          "complete": true,
+          "short_classes": {}
+        },
+        "1000": {
+          "complete": true,
+          "short_classes": {}
+        },
+        "2000": {
+          "complete": true,
+          "short_classes": {}
+        }
+      },
+      "incomplete_points": []
+    },
+    "max_per_class": 2230,
+    "per_class_used": {
+      "a": 2230,
+      "aa": 2230,
+      "ah": 2230,
+      "ai": 2230,
+      "am": 2230,
+      "b": 2230,
+      "bh": 2230,
+      "ch": 2230,
+      "chh": 2230,
+      "d": 2230,
+      "dh": 2230,
+      "dha": 2230,
+      "dyn": 2230,
+      "e": 2230,
+      "eight": 2230,
+      "five": 2230,
+      "four": 2230,
+      "g": 2230,
+      "gh": 2230,
+      "h": 2230,
+      "i": 2230,
+      "ii": 2230,
+      "ja": 2230,
+      "jh": 2230,
+      "k": 2230,
+      "kh": 2230,
+      "ksh": 2230,
+      "l": 2230,
+      "lh": 2230,
+      "m": 2230,
+      "n": 2230,
+      "nine": 2230,
+      "nn": 2230,
+      "o": 2230,
+      "one": 2230,
+      "oo": 2230,
+      "ou": 2230,
+      "p": 2230,
+      "ph": 2230,
+      "r": 2230,
+      "s": 2230,
+      "seven": 2230,
+      "sh": 2230,
+      "shr": 2230,
+      "six": 2230,
+      "ta": 2230,
+      "th": 2230,
+      "tha": 2230,
+      "thh": 2230,
+      "thha": 2230,
+      "three": 2230,
+      "tr": 2230,
+      "two": 2230,
+      "u": 2230,
+      "v": 2230,
+      "y": 2230,
+      "zero": 2230
+    },
+    "classes_below_cap": {}
+  }
+}

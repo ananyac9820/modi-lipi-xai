@@ -1,0 +1,405 @@
+{
+ "labels": {
+  "a": {
+   "category": "vowel",
+   "devanagari": "अ",
+   "modi_unicode": "𑘀",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "aa": {
+   "category": "vowel",
+   "devanagari": "आ",
+   "modi_unicode": "𑘁",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "ah": {
+   "category": "vowel",
+   "devanagari": "अः",
+   "modi_unicode": null,
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "ai": {
+   "category": "vowel",
+   "devanagari": "ऐ",
+   "modi_unicode": "𑘋",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "am": {
+   "category": "vowel",
+   "devanagari": "अं",
+   "modi_unicode": null,
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "e": {
+   "category": "vowel",
+   "devanagari": "ए",
+   "modi_unicode": "𑘊",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "i": {
+   "category": "vowel",
+   "devanagari": "इ",
+   "modi_unicode": "𑘂",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "ii": {
+   "category": "vowel",
+   "devanagari": "ई",
+   "modi_unicode": "𑘃",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "o": {
+   "category": "vowel",
+   "devanagari": "ओ",
+   "modi_unicode": "𑘌",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "oo": {
+   "category": "vowel",
+   "devanagari": "ऊ",
+   "modi_unicode": "𑘅",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "ou": {
+   "category": "vowel",
+   "devanagari": "औ",
+   "modi_unicode": "𑘍",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "u": {
+   "category": "vowel",
+   "devanagari": "उ",
+   "modi_unicode": "𑘄",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "b": {
+   "category": "consonant",
+   "devanagari": "ब",
+   "modi_unicode": "𑘤",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "bh": {
+   "category": "consonant",
+   "devanagari": "भ",
+   "modi_unicode": "𑘥",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "ch": {
+   "category": "consonant",
+   "devanagari": "च",
+   "modi_unicode": "𑘓",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "chh": {
+   "category": "consonant",
+   "devanagari": "छ",
+   "modi_unicode": "𑘔",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "d": {
+   "category": "consonant",
+   "devanagari": null,
+   "modi_unicode": null,
+   "verified": false,
+   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+  },
+  "dh": {
+   "category": "consonant",
+   "devanagari": null,
+   "modi_unicode": null,
+   "verified": false,
+   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+  },
+  "dha": {
+   "category": "consonant",
+   "devanagari": null,
+   "modi_unicode": null,
+   "verified": false,
+   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+  },
+  "dyn": {
+   "category": "consonant",
+   "devanagari": "ज्ञ",
+   "modi_unicode": null,
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "g": {
+   "category": "consonant",
+   "devanagari": "ग",
+   "modi_unicode": "𑘐",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "gh": {
+   "category": "consonant",
+   "devanagari": "घ",
+   "modi_unicode": "𑘑",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "h": {
+   "category": "consonant",
+   "devanagari": "ह",
+   "modi_unicode": "𑘮",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "ja": {
+   "category": "consonant",
+   "devanagari": "ज",
+   "modi_unicode": "𑘕",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "jh": {
+   "category": "consonant",
+   "devanagari": "झ",
+   "modi_unicode": "𑘖",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "k": {
+   "category": "consonant",
+   "devanagari": "क",
+   "modi_unicode": "𑘎",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "kh": {
+   "category": "consonant",
+   "devanagari": "ख",
+   "modi_unicode": "𑘏",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "ksh": {
+   "category": "consonant",
+   "devanagari": "क्ष",
+   "modi_unicode": null,
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "l": {
+   "category": "consonant",
+   "devanagari": "ल",
+   "modi_unicode": "𑘩",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "lh": {
+   "category": "consonant",
+   "devanagari": "ळ",
+   "modi_unicode": "𑘯",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "m": {
+   "category": "consonant",
+   "devanagari": "म",
+   "modi_unicode": "𑘦",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "n": {
+   "category": "consonant",
+   "devanagari": null,
+   "modi_unicode": null,
+   "verified": false,
+   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+  },
+  "nn": {
+   "category": "consonant",
+   "devanagari": null,
+   "modi_unicode": null,
+   "verified": false,
+   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+  },
+  "p": {
+   "category": "consonant",
+   "devanagari": "प",
+   "modi_unicode": "𑘢",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "ph": {
+   "category": "consonant",
+   "devanagari": "फ",
+   "modi_unicode": "𑘣",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "r": {
+   "category": "consonant",
+   "devanagari": "र",
+   "modi_unicode": "𑘨",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "s": {
+   "category": "consonant",
+   "devanagari": "स",
+   "modi_unicode": "𑘭",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "sh": {
+   "category": "consonant",
+   "devanagari": "श",
+   "modi_unicode": "𑘫",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "shr": {
+   "category": "consonant",
+   "devanagari": "श्र",
+   "modi_unicode": null,
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "ta": {
+   "category": "consonant",
+   "devanagari": null,
+   "modi_unicode": null,
+   "verified": false,
+   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+  },
+  "th": {
+   "category": "consonant",
+   "devanagari": null,
+   "modi_unicode": null,
+   "verified": false,
+   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+  },
+  "tha": {
+   "category": "consonant",
+   "devanagari": null,
+   "modi_unicode": null,
+   "verified": false,
+   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+  },
+  "thh": {
+   "category": "consonant",
+   "devanagari": null,
+   "modi_unicode": null,
+   "verified": false,
+   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+  },
+  "thha": {
+   "category": "consonant",
+   "devanagari": null,
+   "modi_unicode": null,
+   "verified": false,
+   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+  },
+  "tr": {
+   "category": "consonant",
+   "devanagari": "त्र",
+   "modi_unicode": null,
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "v": {
+   "category": "consonant",
+   "devanagari": "व",
+   "modi_unicode": "𑘪",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "y": {
+   "category": "consonant",
+   "devanagari": "य",
+   "modi_unicode": "𑘧",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "zero": {
+   "category": "digit",
+   "devanagari": "०",
+   "modi_unicode": "𑙐",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "one": {
+   "category": "digit",
+   "devanagari": "१",
+   "modi_unicode": "𑙑",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "two": {
+   "category": "digit",
+   "devanagari": "२",
+   "modi_unicode": "𑙒",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "three": {
+   "category": "digit",
+   "devanagari": "३",
+   "modi_unicode": "𑙓",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "four": {
+   "category": "digit",
+   "devanagari": "४",
+   "modi_unicode": "𑙔",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "five": {
+   "category": "digit",
+   "devanagari": "५",
+   "modi_unicode": "𑙕",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "six": {
+   "category": "digit",
+   "devanagari": "६",
+   "modi_unicode": "𑙖",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "seven": {
+   "category": "digit",
+   "devanagari": "७",
+   "modi_unicode": "𑙗",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "eight": {
+   "category": "digit",
+   "devanagari": "८",
+   "modi_unicode": "𑙘",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  },
+  "nine": {
+   "category": "digit",
+   "devanagari": "९",
+   "modi_unicode": "𑙙",
+   "verified": false,
+   "note": "inferred from the dataset's romanised folder name"
+  }
+ },
+ "about": "Display aid only; the model predicts the dataset's folder names. Devanagari and Modi Unicode values are inferred from the romanised folder names and have NOT been verified against the glyph images. Set 'verified': true after checking results/figures/class_reference_sheet.png.",
+ "unverified_count": 57
+}
