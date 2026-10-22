@@ -42,7 +42,7 @@ python scripts/run_evaluation.py
 ```
 
 ```bash
-streamlit run app/app.py
+python -m web.server
 ```
 
 ### Architecture
@@ -399,21 +399,33 @@ Only the baseline vector is cached (`results/shap/baseline.npy`); the explainer 
 ## Web app
 
 ```bash
-streamlit run app/app.py
+python -m web.server
 ```
 
-- **Recognise:** drag-and-drop upload or four bundled samples. It shows numbered boxes coloured
-  green, amber or red by confidence, a strip of cropped characters with confidence bars, and the
-  assembled reading (romanised, plus Devanagari where the mapping is unambiguous). A detail panel
-  per character has the enlarged crop, the 64×64 model input, top-3 probabilities, each base model's
-  vote, SHAP evidence for the prediction and for the runner-up, and heat overlays showing *where*
-  on the glyph the evidence came from. Results download as CSV or JSON.
-- **Pipeline Dashboard:** the clickable stage flow shows the actual intermediate output for the
-  current image, from upload through preprocessing, segmentation, HOG, Zernike, LBP, fusion,
-  PCA/LDA, the ensemble and the prediction to SHAP. It also has the measured dataset summary, a
-  model comparison with cross-validation, the learning curve (classical vs CNN), the ablation, an
-  interactive confusion matrix, the most-confused pairs, global SHAP, and a literature table with
-  an explicit not-comparable warning.
+Then open http://127.0.0.1:8000. To use it from a phone on the same Wi-Fi, run
+`python -m web.server --host 0.0.0.0` and open the laptop's IP address on port 8000.
+
+A small multi-page site (Starlette, plain HTML/CSS/JS, no front-end framework) designed for phones
+first, with a cut-paper look and a bottom tab bar. All numbers on it are read from `results/`, so
+it updates itself when experiments finish.
+
+- **Home:** key results as swipeable cards, the live status of each part of the project (for
+  example how many CNN curve points are done), and a small learning-curve chart.
+- **Read:** upload or photograph a page, pick a bundled sample, or write a character on the drawing
+  pad. Shows numbered boxes coloured by confidence, the assembled reading (romanised and
+  Devanagari), and one row per character. Tapping a character opens its top-3 guesses, each base
+  model's vote, and a SHAP explanation: heat maps over the glyph plus the feature groups that
+  pushed toward the answer, against it, and toward the runner-up. Results download as CSV or JSON.
+- **Results:** the learning curve with the crossover band and a point-by-point table, the four
+  models at 500 images per class, the descriptor ablation, the most confused pairs, and the word
+  segmentation evaluation.
+- **Explain:** where the SHAP evidence comes from (by descriptor and by region), contrastive SHAP
+  for look-alike pairs, and the faithfulness (deletion) test.
+- **Script:** all 57 characters with a real dataset sample, test-set F1, and what each one is
+  most often confused with.
+
+The JSON API behind the pages (`/api/overview`, `/api/recognise`, `/api/explain/{id}/{k}`, ...)
+is in [`web/server.py`](web/server.py); `tests/test_app.py` exercises it end to end.
 
 ## Pipeline
 
@@ -427,7 +439,7 @@ streamlit run app/app.py
 | Evaluation + figures + SHAP | `python scripts/run_evaluation.py` (`--skip-shap`, `--force-shap`) |
 | App samples + class reference sheet | `python scripts/make_sample_images.py` |
 | *Reference CNN baseline* | `python scripts/run_cnn_baseline.py` (`--estimate`, `--sizes`, `--force`, `--plot-only`) |
-| Web app | `streamlit run app/app.py` |
+| Web app | `python -m web.server` (`--host 0.0.0.0` for phones on the same network) |
 
 All tunable parameters live in [`src/config.py`](src/config.py). The random seed is fixed at 42, so
 results are reproducible.
@@ -529,12 +541,13 @@ scripts/    standalone entry points, one per stage (+ check_environment.py, run_
 notebooks/  exploration, feature analysis, results analysis
 models/     trained models (gitignored)
 results/    figures, metrics JSON, SHAP outputs
-app/        Streamlit web app
+web/        web app: server.py (Starlette API) and static/ (pages, CSS, JS)
+app/assets/ bundled sample images used by the web app
 ```
 
 ## References
 
-The literature survey (`docs/01_literature_survey/Literature_Survey_30_Papers.xlsx`) covers the 30 open-access papers below; PDFs are in `docs/03_reference_papers/`. Author and venue metadata come from OpenAlex/arXiv and should be checked against each PDF before submission. Several important paywalled papers (Zernike + DCT 2023, HOG-based 2024, wavelet + SVD 2020) are listed separately in `docs/03_reference_papers/INDEX.md`.
+The literature survey (`docs/01_literature_survey/Literature_Survey_30_Papers.xlsx`) covers the 30 open-access papers below. The PDFs are kept locally in `docs/03_reference_papers/` and are not committed (publishers' copyright); every entry links to its source. Author and venue metadata come from OpenAlex/arXiv and should be checked against each PDF before submission. Several important paywalled papers (Zernike + DCT 2023, HOG-based 2024, wavelet + SVD 2020) are listed separately in `docs/03_reference_papers/INDEX.md`.
 
 1. Rahul A. Mahajan (2026). *A Framework for Modi-Lipi Script Based On CAPTCHA*. International Journal on Advanced Electrical and Computer Engineering. https://doi.org/10.65521/ijaece.v15i1s.1383
 2. Anshika Jain, Maya Ingle (2026). *A Novel Model For Transliterating MODI To Devanagari Script*. International Journal of Advances in Signal and Image Sciences. https://doi.org/10.29284/s06egq94

@@ -431,7 +431,7 @@ class ExplainConfig:
 # ---------------------------------------------------------------------------
 @dataclass(frozen=True)
 class AppConfig:
-    """Thresholds used by the Streamlit app."""
+    """Thresholds used by the web app."""
 
     high_confidence: float = 0.70         # >= green
     low_confidence: float = 0.40          # <  red, in between amber

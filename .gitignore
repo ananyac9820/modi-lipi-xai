@@ -43,8 +43,6 @@ Thumbs.db
 .vscode/
 .idea/
 
-# --- Streamlit ---
-.streamlit/secrets.toml
 
 # --- local tool config ---
 .claude/

@@ -1,4 +1,4 @@
-﻿"""REFERENCE BASELINE: train the untuned CNN at every learning-curve point.
+"""REFERENCE BASELINE: train the untuned CNN at every learning-curve point.
 
 Uses exactly the same seeded splits and fixed test set as the classical
 models, scores with the same function, and writes

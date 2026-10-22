@@ -148,13 +148,12 @@ def check_plotting() -> str:
 
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    import plotly
     import seaborn  # noqa: F401
 
     fig, ax = plt.subplots()
     ax.plot([0, 1])
     plt.close(fig)
-    return f"matplotlib {matplotlib.__version__}, plotly {plotly.__version__}, seaborn OK"
+    return f"matplotlib {matplotlib.__version__}, seaborn OK"
 
 
 def check_torch_baseline() -> str:
@@ -172,10 +171,11 @@ def check_torch_baseline() -> str:
     return f"torch {torch.__version__} conv forward/backward OK on CPU (BASELINE dependency only)"
 
 
-def check_streamlit() -> str:
-    import streamlit
+def check_web() -> str:
+    import starlette
+    import uvicorn
 
-    return f"streamlit {streamlit.__version__} importable"
+    return f"starlette {starlette.__version__}, uvicorn {uvicorn.__version__} importable"
 
 
 CHECKS: list[tuple[str, Callable[[], str]]] = [
@@ -189,7 +189,7 @@ CHECKS: list[tuple[str, Callable[[], str]]] = [
     ("skimage LBP", check_lbp),
     ("mahotas Zernike", check_zernike),
     ("plotting libs", check_plotting),
-    ("streamlit", check_streamlit),
+    ("web server", check_web),
     ("PyTorch (CNN baseline only)", check_torch_baseline),
 ]
 
