@@ -1,26 +1,26 @@
 {
-  "errors_within_same_category": 1772,
-  "errors_across_categories": 356,
+  "errors_within_same_category": 1439,
+  "errors_across_categories": 299,
   "per_category": {
     "rf": {
-      "consonant": 0.6997142857142857,
-      "digit": 0.8205,
-      "vowel": 0.8175
+      "consonant": 0.8158571428571428,
+      "digit": 0.8975,
+      "vowel": 0.86375
     },
     "svm": {
-      "consonant": 0.8101428571428572,
-      "digit": 0.912,
-      "vowel": 0.8908333333333334
+      "consonant": 0.837,
+      "digit": 0.9265,
+      "vowel": 0.88875
     },
     "xgb": {
-      "consonant": 0.7457142857142857,
-      "digit": 0.853,
-      "vowel": 0.8295833333333333
+      "consonant": 0.8115714285714286,
+      "digit": 0.9005,
+      "vowel": 0.8608333333333333
     },
     "stack": {
-      "consonant": 0.7797142857142857,
-      "digit": 0.883,
-      "vowel": 0.8533333333333334
+      "consonant": 0.8214285714285714,
+      "digit": 0.91,
+      "vowel": 0.8716666666666667
     }
   }
 }

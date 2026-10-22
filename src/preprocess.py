@@ -7,6 +7,7 @@ Pipeline for one image:
     -> blank-image check (no contrast -> rejected)
     -> Otsu binarisation with automatic polarity detection
     -> scan-frame removal (lines hugging the image edge)
+    -> interior scan-grid line removal (thin vertical lines spanning the cell)
     -> speck removal (tiny connected components)
     -> crop to the ink bounding box
     -> moment-based slant correction (only when the estimate is trustworthy)
@@ -171,6 +172,51 @@ def remove_border_artifacts(binary: np.ndarray) -> tuple[np.ndarray, int]:
     return out, removed
 
 
+def remove_grid_lines(binary: np.ndarray) -> tuple[np.ndarray, int]:
+    """Remove vertical scan-grid lines that sit inside the image.
+
+    About 3 % of dataset images contain a thin vertical line from the scanning
+    grid that is NOT within the edge band (often on the right, solid or dashed).
+    A thin vertical piece that is separate from the glyph is removed only if
+    its column (all thin pieces sharing roughly the same x) covers most of the
+    image height AND reaches beyond the glyph body: grid lines run the full
+    height of the cell, while real detached strokes (e.g. in 'ai', 'am') stay
+    within the character. Horizontal lines are never touched here: isolated
+    horizontal strokes are usually genuine headlines (e.g. over Modi digits).
+    """
+    h, w = binary.shape
+    n, labels, stats, _ = cv2.connectedComponentsWithStats(binary, connectivity=8)
+    if n <= 2:
+        return binary, 0
+    main = 1 + int(np.argmax(stats[1:, cv2.CC_STAT_AREA]))
+    mt, mb = stats[main, cv2.CC_STAT_TOP], stats[main, cv2.CC_STAT_TOP] + stats[main, cv2.CC_STAT_HEIGHT]
+    thin = [i for i in range(1, n) if i != main
+            and stats[i, cv2.CC_STAT_WIDTH] <= P.grid_line_max_width_ratio * w
+            and stats[i, cv2.CC_STAT_HEIGHT] >= 3 * stats[i, cv2.CC_STAT_WIDTH]]
+    clusters: list[list[int]] = []
+    for i in sorted(thin, key=lambda k: stats[k, cv2.CC_STAT_LEFT]):
+        cx = stats[i, cv2.CC_STAT_LEFT] + stats[i, cv2.CC_STAT_WIDTH] / 2
+        if clusters:
+            j = clusters[-1][-1]
+            if abs(cx - (stats[j, cv2.CC_STAT_LEFT] + stats[j, cv2.CC_STAT_WIDTH] / 2)) <= P.grid_line_cluster_tol * w:
+                clusters[-1].append(i)
+                continue
+        clusters.append([i])
+    drop = np.zeros(n, dtype=bool)
+    for cl in clusters:
+        coverage = sum(int(stats[i, cv2.CC_STAT_HEIGHT]) for i in cl) / h
+        top = min(stats[i, cv2.CC_STAT_TOP] for i in cl)
+        bottom = max(stats[i, cv2.CC_STAT_TOP] + stats[i, cv2.CC_STAT_HEIGHT] for i in cl)
+        sticks_out = (mt - top) + (bottom - mb) >= P.grid_line_overhang_ratio * h
+        if coverage >= P.grid_line_min_coverage and sticks_out:
+            drop[cl] = True
+    if not drop.any():
+        return binary, 0
+    out = binary.copy()
+    out[drop[labels]] = 0
+    return out, int(drop.sum())
+
+
 def remove_specks(binary: np.ndarray) -> tuple[np.ndarray, int]:
     """Remove connected components smaller than a size relative to the image.
 
@@ -258,8 +304,13 @@ def normalize_size(binary: np.ndarray, size: int = P.image_size) -> np.ndarray:
 # ---------------------------------------------------------------------------
 # Full pipeline
 # ---------------------------------------------------------------------------
-def preprocess_array(img: np.ndarray, keep_steps: bool = False) -> PreprocessResult:
+def preprocess_array(img: np.ndarray, keep_steps: bool = False, grid_lines: bool = True) -> PreprocessResult:
     """Preprocess an in-memory image (any polarity, gray or colour).
+
+    Args:
+        grid_lines: remove interior scan-grid lines (dataset images). The app
+            passes False for segmentation crops, which are tight around the
+            glyph and never contain grid lines.
 
     Raises:
         ModiError: if no ink survives (blank image).
@@ -270,9 +321,13 @@ def preprocess_array(img: np.ndarray, keep_steps: bool = False) -> PreprocessRes
         raise ModiError("Blank image (no contrast between ink and paper).")
     binary, info = binarize(den)
     deframed, n_frame = remove_border_artifacts(binary)
+    n_grid = 0
+    if grid_lines:
+        deframed, n_grid = remove_grid_lines(deframed)
     clean, removed = remove_specks(deframed)
     info["specks_removed"] = removed
     info["frame_fragments_removed"] = n_frame
+    info["grid_line_pieces_removed"] = n_grid
     if int((clean > 0).sum()) < P.min_ink_pixels:
         raise ModiError("No ink found in the image (blank or too faint after thresholding).")
     cropped = crop_to_ink(clean)

@@ -162,6 +162,11 @@ class PreprocessConfig:
     border_clear_ratio: float = 0.02     # outermost fraction of the image blanked outright
     border_band_ratio: float = 0.07      # edge band in which elongated components are frame lines
     border_line_aspect: float = 3.0      # length / thickness needed to count as a line
+    # Interior scan-grid lines (thin vertical lines inside the image, ~3 % of images).
+    grid_line_max_width_ratio: float = 0.06   # thinner than this fraction of the width
+    grid_line_cluster_tol: float = 0.03       # pieces within this x-distance form one (dashed) line
+    grid_line_min_coverage: float = 0.75      # the line must cover this fraction of the image height
+    grid_line_overhang_ratio: float = 0.15    # ...and extend this far beyond the glyph body
     median_kernel: int = 3               # median blur kernel for salt/pepper noise (0/1 = off)
     morph_open_kernel: int = 0           # opening erodes thin strokes, so off by default
     min_component_area_ratio: float = 0.0005  # components below this fraction of the image are specks
@@ -195,7 +200,10 @@ class SegmentationConfig:
     projection_noise_ratio: float = 0.02  # a row/col is "empty" if ink < ratio * max profile
     min_char_area_ratio: float = 0.0008   # components smaller than this fraction of image area are dropped
     merge_overlap_ratio: float = 0.5      # horizontally overlapping components are merged (matras, dots)
-    wide_blob_ratio: float = 1.6          # width > ratio * median width -> likely merged characters
+    wide_blob_ratio: float = 2.0          # width > ratio * median width -> likely merged characters
+    # Single Modi characters reach ~2.5x their height (measured on the dataset), so only
+    # boxes wider than this x line height are presumed to be several characters.
+    max_char_aspect: float = 2.6
     tall_blob_ratio: float = 2.2          # height > ratio * median height -> suspicious
     min_chars_for_stats: int = 3          # need this many boxes before median-based flags are reliable
     crop_margin_ratio: float = 0.15       # white margin around each crop, like the dataset images
@@ -215,6 +223,18 @@ class SegmentationConfig:
     fragment_width_ratio: float = 0.5
     fragment_ink_ratio: float = 0.3
     fragment_max_gap_ratio: float = 0.6
+    # Recognition-guided re-segmentation of wide / connected boxes (src/resegment.py)
+    reseg_valley_ratio: float = 0.45      # a cut candidate is a profile valley below this fraction of the peak
+    reseg_min_piece_ratio: float = 0.35   # pieces narrower than this x expected width are not allowed
+    reseg_max_piece_ratio: float = 2.8    # ...nor wider than this (Modi characters reach ~2.5x)
+    reseg_split_width_ratio: float = 1.8  # boxes wider than this x typical width get candidate cuts (tuned on train words)
+    reseg_max_candidates: int = 14
+    reseg_width_sigma: float = 0.6        # width prior: Gaussian on log(width / typical width)
+    reseg_prior_weight: float = 0.5
+    # Per-character cost. Tuned on TRAINING-split words: any positive value made the line-level
+    # search merge separate characters (error 42% -> 70-80%), so it is 0.
+    reseg_piece_penalty: float = 0.0
+    reseg_confidence: float = 0.6         # segmentation confidence given to re-split pieces
 
 
 # ---------------------------------------------------------------------------
@@ -279,7 +299,10 @@ FEATURE_SETS: tuple[str, ...] = ("hog", "zernike", "lbp", "fused")
 class ReduceConfig:
     """PCA / LDA settings. ``method`` selects which one the main models use."""
 
-    method: str = "pca"                   # "pca" | "lda" | "none"
+    # "auto" = the reducer chosen by cross-validation on the TRAINING set
+    # (scripts/run_training.py --only select -> results/metrics/reducer_selection.json).
+    # The test set is never used to make this choice. Explicit "pca" | "lda" | "none" also work.
+    method: str = "auto"
     pca_variance: float = 0.95            # keep components explaining this much variance
     pca_max_components: int = 300         # hard cap for speed
     lda_components: int | None = None     # None = n_classes - 1
@@ -314,10 +337,10 @@ class ModelConfig:
         "kernel": "rbf",
         "C": 10.0,
         "gamma": "scale",
-        # probability=False on purpose: Platt scaling would add an internal
-        # 5-fold cross-validation to every SVM fit. The stacking meta-learner
-        # consumes the SVM's decision scores instead and does the calibration.
-        "probability": False,
+        # No Platt scaling (probability=True, deprecated in scikit-learn 1.9): it
+        # would add an internal 5-fold cross-validation to every SVM fit. The
+        # stacking meta-learner consumes the SVM's decision scores instead and
+        # does the calibration. probability=False is the default, so it is not passed.
         "decision_function_shape": "ovr",
         "class_weight": "balanced",
         "cache_size": 1000,
@@ -372,7 +395,12 @@ class CNNBaselineConfig:
     optimizer: str = "adam"
     learning_rate: float = 1e-3
     batch_size: int = 128
-    max_epochs: int = 40
+    # Safety cap only; early stopping (patience below) decides when training ends.
+    # Was 40: in the first run that cap cut training short at small curve sizes while
+    # validation loss was still falling (72/class: 0.86 -> 0.81 at epoch 39), which would
+    # have handicapped the CNN exactly where the comparison matters. Raised to 300 so
+    # the stopping rule, not the cap, ends training. Nothing else in the protocol changed.
+    max_epochs: int = 300
     early_stopping_patience: int = 6      # epochs without val-loss improvement
     val_fraction: float = 0.1             # carved from the TRAINING set only, per class
     # After early stopping picks the epoch count, retrain on 100 % of the

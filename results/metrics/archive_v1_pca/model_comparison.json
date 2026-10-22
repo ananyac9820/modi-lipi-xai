@@ -1,0 +1,92 @@
+{
+  "models": {
+    "rf": {
+      "accuracy": 0.7457017543859649,
+      "macro_f1": 0.742932621383051,
+      "macro_precision": 0.7448874464543626,
+      "macro_recall": 0.745701754385965,
+      "n_test": 11400,
+      "per_category_accuracy": {
+        "consonant": 0.6997142857142857,
+        "digit": 0.8205,
+        "vowel": 0.8175
+      },
+      "complete": true,
+      "short_classes": {},
+      "accuracy_complete_classes": null
+    },
+    "svm": {
+      "accuracy": 0.845,
+      "macro_f1": 0.8451158629984575,
+      "macro_precision": 0.8466640743892473,
+      "macro_recall": 0.845,
+      "n_test": 11400,
+      "per_category_accuracy": {
+        "consonant": 0.8101428571428572,
+        "digit": 0.912,
+        "vowel": 0.8908333333333334
+      },
+      "complete": true,
+      "short_classes": {},
+      "accuracy_complete_classes": null
+    },
+    "xgb": {
+      "accuracy": 0.7821929824561403,
+      "macro_f1": 0.7834208118408211,
+      "macro_precision": 0.7863670088408973,
+      "macro_recall": 0.7821929824561403,
+      "n_test": 11400,
+      "per_category_accuracy": {
+        "consonant": 0.7457142857142857,
+        "digit": 0.853,
+        "vowel": 0.8295833333333333
+      },
+      "complete": true,
+      "short_classes": {},
+      "accuracy_complete_classes": null
+    },
+    "stack": {
+      "accuracy": 0.8133333333333334,
+      "macro_f1": 0.8128324626068781,
+      "macro_precision": 0.8132978277603126,
+      "macro_recall": 0.8133333333333334,
+      "n_test": 11400,
+      "per_category_accuracy": {
+        "consonant": 0.7797142857142857,
+        "digit": 0.883,
+        "vowel": 0.8533333333333334
+      },
+      "complete": true,
+      "short_classes": {},
+      "accuracy_complete_classes": null
+    }
+  },
+  "best_model": "svm",
+  "display_names": {
+    "rf": "Random Forest",
+    "svm": "SVM (RBF)",
+    "xgb": "XGBoost",
+    "stack": "Stacking ensemble"
+  },
+  "train_per_class": 500,
+  "n_test": 11400,
+  "fit_seconds": {
+    "preprocessor": 34.96,
+    "rf": 120.3,
+    "svm": 169.21,
+    "xgb": 4106.02,
+    "stack_total": 6034.8
+  },
+  "model_size_bytes": {
+    "rf": 225349654,
+    "svm": 37036993,
+    "xgb": 2589362,
+    "stack": 267662357
+  },
+  "inference_ms_per_image": {
+    "rf": 1.4877,
+    "svm": 14.9066,
+    "xgb": 0.0765,
+    "stack": 14.2004
+  }
+}

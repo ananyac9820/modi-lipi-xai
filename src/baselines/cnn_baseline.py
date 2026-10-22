@@ -24,6 +24,7 @@ import io
 import os
 import time
 from dataclasses import asdict
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -135,10 +136,24 @@ def _stratified_val_mask(y: np.ndarray, frac: float, seed: int) -> np.ndarray:
     return mask
 
 
+def _save_checkpoint(path: Path, state: dict[str, Any]) -> None:
+    """Atomic write, so a power cut mid-save never leaves a corrupt checkpoint."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(".tmp")
+    torch.save(state, tmp)
+    os.replace(tmp, path)
+
+
 def _fit(n_classes: int, X: torch.Tensor, y: torch.Tensor, epochs: int, seed: int,
-         X_val: torch.Tensor | None = None, y_val: torch.Tensor | None = None
-         ) -> tuple[nn.Module, list[dict[str, float]], int]:
+         X_val: torch.Tensor | None = None, y_val: torch.Tensor | None = None,
+         ckpt: Path | None = None) -> tuple[nn.Module, list[dict[str, float]], int]:
     """Train for up to ``epochs``; with validation data, early-stop on val loss.
+
+    With ``ckpt``, the complete training state (weights, optimiser, both RNG
+    states, early-stopping bookkeeping, history) is saved after every epoch,
+    and an existing checkpoint is resumed. Training on CPU is deterministic,
+    so a resumed run gives bit-for-bit the same model as an uninterrupted one;
+    an interruption costs at most the epoch in progress.
 
     Returns (model with best weights, history, best_epoch).
     """
@@ -147,8 +162,19 @@ def _fit(n_classes: int, X: torch.Tensor, y: torch.Tensor, epochs: int, seed: in
     opt = torch.optim.Adam(model.parameters(), lr=C.learning_rate)
     gen = torch.Generator().manual_seed(seed)
     history: list[dict[str, float]] = []
-    best, best_epoch, best_state, waited = np.inf, epochs, None, 0
-    for ep in range(1, epochs + 1):
+    best, best_epoch, best_state, waited, start, finished = np.inf, epochs, None, 0, 1, False
+    if ckpt is not None and ckpt.exists():
+        s = torch.load(ckpt, weights_only=False)
+        model.load_state_dict(s["model"])
+        opt.load_state_dict(s["opt"])
+        gen.set_state(s["gen"])
+        torch.set_rng_state(s["torch_rng"])
+        history, best, best_epoch, best_state, waited = s["history"], s["best"], s["best_epoch"], s["best_state"], s["waited"]
+        start, finished = len(history) + 1, s["finished"]
+        log.info("    resumed from checkpoint after epoch %d%s", len(history), " (phase already finished)" if finished else "")
+    for ep in range(start, epochs + 1):
+        if finished:
+            break
         t = time.perf_counter()
         tr_loss = _run_epoch(model, X, y, opt, gen)
         rec = {"epoch": ep, "train_loss": round(tr_loss, 5), "seconds": round(time.perf_counter() - t, 2)}
@@ -160,9 +186,16 @@ def _fit(n_classes: int, X: torch.Tensor, y: torch.Tensor, epochs: int, seed: in
                 best_state = {k: v.detach().clone() for k, v in model.state_dict().items()}
             else:
                 waited += 1
+        rec["wall_s"] = round(time.perf_counter() - t, 2)          # incl. validation; used for resumed timing
         history.append(rec)
         log.info("    epoch %2d  train_loss %.4f%s  (%.1fs)", ep, tr_loss,
                  f"  val_loss {rec['val_loss']:.4f}" if "val_loss" in rec else "", rec["seconds"])
+        finished = ep == epochs or (X_val is not None and waited >= C.early_stopping_patience)
+        if ckpt is not None:
+            _save_checkpoint(ckpt, {"model": model.state_dict(), "opt": opt.state_dict(), "gen": gen.get_state(),
+                                    "torch_rng": torch.get_rng_state(), "history": history, "best": best,
+                                    "best_epoch": best_epoch, "best_state": best_state, "waited": waited,
+                                    "finished": finished})
         if X_val is not None and waited >= C.early_stopping_patience:
             log.info("    early stop: no val improvement for %d epochs (best epoch %d)", waited, best_epoch)
             break
@@ -171,10 +204,50 @@ def _fit(n_classes: int, X: torch.Tensor, y: torch.Tensor, epochs: int, seed: in
     return model, history, best_epoch
 
 
+def _sleep_corrected(wall: float, *histories: list[dict[str, float]]) -> tuple[float, int]:
+    """Training time with laptop sleep removed.
+
+    The timer keeps running while the computer sleeps, so an epoch that spans
+    a sleep looks enormously long. Any epoch longer than 10x the median epoch
+    of its phase is counted at the median instead. Accuracy is unaffected:
+    training is deterministic and sleep only pauses it.
+    """
+    excess, n = 0.0, 0
+    for hist in histories:
+        if not hist:
+            continue
+        med = float(np.median([e["seconds"] for e in hist]))
+        for e in hist:
+            if e["seconds"] > 10 * med:
+                excess += e["seconds"] - med
+                n += 1
+    return wall - excess, n
+
+
+def _epoch_sum_time(*histories: list[dict[str, float]]) -> tuple[float, int]:
+    """Training time for a run split over several sessions: the sum of the
+    per-epoch wall times (training + validation), sleep-corrected the same way
+    as ``_sleep_corrected``. Wall clock is meaningless across sessions."""
+    total, n = 0.0, 0
+    for hist in histories:
+        if not hist:
+            continue
+        times = [e.get("wall_s", e["seconds"]) for e in hist]
+        med = float(np.median(times))
+        for s in times:
+            if s > 10 * med:
+                s, n = med, n + 1
+            total += s
+    return total, n
+
+
 def train_and_evaluate(train_imgs: np.ndarray, train_labels: np.ndarray, classes: list[str],
-                       seed: int = config.SEED) -> tuple[nn.Module, dict[str, Any]]:
+                       seed: int = config.SEED, ckpt_dir: Path | None = None) -> tuple[nn.Module, dict[str, Any]]:
     """Fixed protocol: early stopping on a train-only validation slice, then
     (optionally) refit on the full training set for the selected epoch count.
+
+    ``ckpt_dir``: if given, each phase checkpoints every epoch there and
+    resumes from it (see ``_fit``); the caller deletes it once the point is saved.
 
     Returns:
         (trained model, info dict with timings, epochs, history, size)
@@ -187,10 +260,13 @@ def train_and_evaluate(train_imgs: np.ndarray, train_labels: np.ndarray, classes
     X_all = _to_tensor(train_imgs)
     val = _stratified_val_mask(y_all, C.val_fraction, seed)
 
+    ck1 = ckpt_dir / "phase1.pt" if ckpt_dir else None
+    ck2 = ckpt_dir / "phase2.pt" if ckpt_dir else None
+    resumed = bool(ck1 and ck1.exists())
     t0 = time.perf_counter()
     log.info("  phase 1: early stopping (train %d / val %d)", int((~val).sum()), int(val.sum()))
     model, hist1, best_epoch = _fit(len(classes), X_all[~val], torch.from_numpy(y_all[~val]), C.max_epochs, seed,
-                                    X_all[val], torch.from_numpy(y_all[val]))
+                                    X_all[val], torch.from_numpy(y_all[val]), ckpt=ck1)
     hist2: list[dict[str, float]] = []
     # WHY THIS REFIT EXISTS - do not remove it in a refactor.
     # Phase 1 trains on only (1 - val_fraction) of the training set, because a
@@ -202,10 +278,19 @@ def train_and_evaluate(train_imgs: np.ndarray, train_labels: np.ndarray, classes
     # trained on 100 % of the same training images the classical models use.
     if C.refit_on_full_train:
         log.info("  phase 2: refit on 100%% of training data for %d epochs", best_epoch)
-        model, hist2, _ = _fit(len(classes), X_all, torch.from_numpy(y_all), best_epoch, seed)
-    train_time = time.perf_counter() - t0
+        model, hist2, _ = _fit(len(classes), X_all, torch.from_numpy(y_all), best_epoch, seed, ckpt=ck2)
+    wall = time.perf_counter() - t0
+    if resumed:
+        train_time, slept = _epoch_sum_time(hist1, hist2)
+    else:
+        train_time, slept = _sleep_corrected(wall, hist1, hist2)
     info = {
         "train_time_s": round(train_time, 2),
+        "wall_clock_s": round(wall, 2),
+        "resumed_from_checkpoint": resumed,
+        "train_time_method": "sum of per-epoch times (run split over sessions)" if resumed
+        else "wall clock minus sleep",
+        "epochs_spanning_sleep": slept,
         "best_epoch": best_epoch,
         "epochs_phase1": len(hist1),
         "epochs_refit": len(hist2),

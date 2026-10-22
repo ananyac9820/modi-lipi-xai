@@ -101,6 +101,13 @@ class TestPreprocessing:
         framed = g.copy(); framed[1:3, 5:-5] = 0                 # scan-frame fragment on the top edge
         assert np.array_equal(pp.preprocess_array(g).final, pp.preprocess_array(framed).final)
 
+    def test_grid_line_removed_but_real_stroke_kept(self):
+        g = glyph(dark_ink=True)                                  # glyph spans rows ~25-95 of 120
+        grid = g.copy(); grid[2:118, 104:106] = 0                 # full-height thin line beside the glyph
+        assert np.array_equal(pp.preprocess_array(g).final, pp.preprocess_array(grid).final)
+        stroke = g.copy(); stroke[40:80, 104:106] = 0             # short detached stroke inside the glyph's height
+        assert not np.array_equal(pp.preprocess_array(g).final, pp.preprocess_array(stroke).final)
+
     def test_blank_rejected(self):
         noise = np.clip(np.random.default_rng(0).normal(230, 3, (120, 120)), 0, 255).astype(np.uint8)
         with pytest.raises(ModiError):
@@ -160,3 +167,41 @@ class TestSegmentation:
             if s["ground_truth"]:
                 r = sg.segment(pp.read_image(config.PATHS.app_assets / s["file"]))
                 assert len(r.boxes) == len(s["ground_truth"]), s["file"]
+
+
+# ------------------------------------------------------- re-segmentation
+class TestResegmentation:
+    @staticmethod
+    def ink_aspect(crop):
+        ys, xs = np.nonzero(crop < 128)
+        return (xs.max() - xs.min() + 1) / (ys.max() - ys.min() + 1)
+
+    def test_touching_pair_is_split_in_two(self):
+        from src import resegment
+
+        canvas = np.full((200, 400), 235, np.uint8)
+        for x in (60, 120):                                        # ink of the two glyphs touches at x = 150
+            canvas[40:160, x:x + 120] = np.minimum(canvas[40:160, x:x + 120], glyph(120))
+        canvas[66:70, 90:210] = 0                                  # shared headline joins the word
+        r = sg.segment(canvas)
+        x0 = min(b.x for b in r.boxes); x1 = max(b.x + b.w for b in r.boxes)
+        y0 = min(b.y for b in r.boxes); y1 = max(b.y + b.h for b in r.boxes)
+        r.boxes = [sg.CharBox(x0, y0, x1 - x0, y1 - y0, 0, 1, ["wide"], 0.5)]   # the joined pair as one box
+        r.crops = [sg._to_crop(r.binary[y0:y1, x0:x1])]
+
+        def fake_classifier(crops):                               # confident only for character-shaped ink
+            return np.array([0.9 if 0.75 <= self.ink_aspect(c) <= 1.3 else 0.05 for c in crops])
+
+        n = resegment.apply(r, fake_classifier)
+        assert n >= 1 and len(r.boxes) == 2
+        assert all("resegmented" in b.flags for b in r.boxes)
+        assert abs(r.boxes[0].x + r.boxes[0].w - 150) <= 12        # the cut lands where the glyphs meet
+
+    def test_single_wide_character_not_forced_apart(self):
+        from src import resegment
+
+        r = sg.segment(np.minimum(np.full((200, 300), 235, np.uint8),
+                                  np.pad(glyph(120), ((40, 40), (90, 90)), constant_values=255)))
+        r.boxes[0].flags.append("wide")
+        n = resegment.apply(r, lambda crops: np.array([0.95 if c.shape[1] > 100 else 0.1 for c in crops]))
+        assert n == 0 and len(r.boxes) == 1

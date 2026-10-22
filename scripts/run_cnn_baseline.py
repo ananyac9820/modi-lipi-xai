@@ -1,4 +1,4 @@
-"""REFERENCE BASELINE: train the untuned CNN at every learning-curve point.
+﻿"""REFERENCE BASELINE: train the untuned CNN at every learning-curve point.
 
 Uses exactly the same seeded splits and fixed test set as the classical
 models, scores with the same function, and writes
@@ -10,6 +10,11 @@ This is NOT part of the Modi Lipi XAI pipeline or app.
 
 Usage:
     python scripts/run_cnn_baseline.py                    # all curve points (resumes)
+
+Safe to stop at any time (close the window / Ctrl+C): every epoch is
+checkpointed in models/baselines/checkpoints/, and the next run continues from
+the last finished epoch with bit-identical results. So the long points can be
+run over several nights.
     python scripts/run_cnn_baseline.py --sizes 72 90 250  # selected points
     python scripts/run_cnn_baseline.py --estimate         # time 1 epoch, extrapolate, train nothing
     python scripts/run_cnn_baseline.py --force            # retrain points already done
@@ -19,6 +24,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -60,6 +66,17 @@ def _estimate(images: np.ndarray, index, classes: list[str], sizes: list[int]) -
         log.info("  %5d/class (%7d images): ~%5.0f - %6.0f min", n, n_img, lo / 60, hi / 60)
 
 
+def _keep_awake() -> None:
+    """Ask Windows not to idle-sleep while this process runs (released automatically
+    when it exits). Per-process request, no system setting is changed. Closing the
+    lid can still sleep the laptop, depending on its power settings."""
+    if sys.platform == "win32":
+        import ctypes
+
+        ES_CONTINUOUS, ES_SYSTEM_REQUIRED = 0x80000000, 0x00000001
+        ctypes.windll.kernel32.SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--sizes", type=int, nargs="+", default=list(config.SAMPLING.curve_train_sizes))
@@ -70,6 +87,7 @@ def main() -> int:
 
     set_seed()
     config.PATHS.ensure()
+    _keep_awake()
     if args.plot_only:
         learning_curve.plot_headline()
         return 0
@@ -102,7 +120,9 @@ def main() -> int:
             continue
         with stage(f"CNN baseline @ {n} training images per class", log):
             train, test, split = data_loader.stratified_split(index, n)
-            model, info = cb.train_and_evaluate(images[train["_pos"].to_numpy()], train["label"].to_numpy(), classes)
+            ckpt_dir = MODEL_DIR / "checkpoints" / f"cnn_{n}"
+            model, info = cb.train_and_evaluate(images[train["_pos"].to_numpy()], train["label"].to_numpy(), classes,
+                                                ckpt_dir=ckpt_dir)
             t = time.perf_counter()
             proba = cb.predict_proba(model, images[test["_pos"].to_numpy()])
             infer_ms = 1000 * (time.perf_counter() - t) / len(test)
@@ -115,6 +135,7 @@ def main() -> int:
             point = {"train_per_class": n, **scores, **info, "inference_ms_per_image": round(infer_ms, 4),
                      "n_test": int(len(test)), "reduced_test_classes": split["reduced_test_classes"]}
             learning_curve.upsert_point(learning_curve.CNN_JSON, header, point)
+            shutil.rmtree(ckpt_dir, ignore_errors=True)
             log.info("  @%d/class: accuracy %.2f%%, macro-F1 %.4f, train %.0fs, %d params (%.1f MB)%s",
                      n, 100 * scores["accuracy"], scores["macro_f1"], info["train_time_s"], info["n_parameters"],
                      info["model_size_bytes"] / 1e6, "" if scores["complete"] else "  [INCOMPLETE POINT]")

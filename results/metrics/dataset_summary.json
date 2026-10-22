@@ -1,6 +1,6 @@
 {
   "dataset": "msd6013/modi-hdc-historical-handwritten-modi-script",
-  "generated_at": "2026-10-14T04:11:17+00:00",
+  "generated_at": "2026-10-15T08:47:45+00:00",
   "raw_root": "D:\\sem5\\Ds\\cp\\modi-lipi-xai\\data\\raw",
   "character_roots": [
     "MODI_HChar"
@@ -639,6 +639,10 @@
       "border_clear_ratio": 0.02,
       "border_band_ratio": 0.07,
       "border_line_aspect": 3.0,
+      "grid_line_max_width_ratio": 0.06,
+      "grid_line_cluster_tol": 0.03,
+      "grid_line_min_coverage": 0.75,
+      "grid_line_overhang_ratio": 0.15,
       "median_kernel": 3,
       "morph_open_kernel": 0,
       "min_component_area_ratio": 0.0005,
@@ -663,7 +667,18 @@
       "wide_blob_ratio": 1.6,
       "tall_blob_ratio": 2.2,
       "min_chars_for_stats": 3,
-      "crop_padding": 4
+      "crop_margin_ratio": 0.15,
+      "max_skew_deg": 12.0,
+      "skew_step_deg": 0.5,
+      "min_skew_to_correct_deg": 0.7,
+      "headline_min_coverage": 0.55,
+      "headline_band_ratio": 0.6,
+      "min_col_gap": 2,
+      "valley_split_ratio": 0.25,
+      "connected_line_ratio": 0.6,
+      "fragment_width_ratio": 0.5,
+      "fragment_ink_ratio": 0.3,
+      "fragment_max_gap_ratio": 0.6
     },
     "hog": {
       "orientations": 9,
@@ -675,7 +690,8 @@
         2,
         2
       ],
-      "block_norm": "L2-Hys"
+      "block_norm": "L2-Hys",
+      "smooth_sigma": 1.0
     },
     "zernike": {
       "degree": 12,
@@ -694,10 +710,15 @@
       "grid": [
         4,
         4
-      ]
+      ],
+      "smooth_sigma": 1.0
+    },
+    "fusion": {
+      "balance_families": true,
+      "n_jobs": -1
     },
     "reduce": {
-      "method": "pca",
+      "method": "auto",
       "pca_variance": 0.95,
       "pca_max_components": 300,
       "lda_components": null,
@@ -706,7 +727,7 @@
     },
     "split": {
       "test_size": 0.2,
-      "cv_folds": 5
+      "cv_folds": 3
     },
     "models": {
       "rf": {
@@ -721,23 +742,27 @@
         "kernel": "rbf",
         "C": 10.0,
         "gamma": "scale",
-        "probability": true,
-        "class_weight": "balanced"
+        "probability": false,
+        "decision_function_shape": "ovr",
+        "class_weight": "balanced",
+        "cache_size": 1000
       },
       "xgb": {
-        "n_estimators": 300,
-        "max_depth": 5,
-        "learning_rate": 0.1,
+        "n_estimators": 200,
+        "max_depth": 3,
+        "learning_rate": 0.25,
+        "max_bin": 32,
         "subsample": 0.8,
-        "colsample_bytree": 0.8,
+        "colsample_bytree": 0.4,
         "tree_method": "hist",
         "n_jobs": -1,
         "eval_metric": "mlogloss"
       },
       "stack_final_C": 1.0,
       "stack_final_max_iter": 2000,
-      "stack_cv": 5,
-      "stack_passthrough": false
+      "stack_cv": 3,
+      "stack_passthrough": false,
+      "stack_n_jobs": 1
     },
     "cnn_baseline": {
       "conv_channels": [
@@ -806,7 +831,7 @@
       "MODI_HChar\\MODI_HChar\\digits\\zero\\zero6250.jpg": "Blank image (no contrast between ink and paper).",
       "MODI_HChar\\MODI_HChar\\digits\\zero\\zero6899.jpg": "Blank image (no contrast between ink and paper)."
     },
-    "params_hash": "11502278b05e",
+    "params_hash": "c612e0afecf2",
     "polarity_convention": "ink = 255 (white) on background = 0 (black)",
     "this_run": {
       "images": 127087,

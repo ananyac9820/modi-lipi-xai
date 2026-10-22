@@ -1,0 +1,503 @@
+{
+  "model": "Classical stacking ensemble (HOG + Zernike + LBP -> RF + SVM + XGBoost)",
+  "label": "Classical: fused features + stacking",
+  "family": "classical",
+  "feature_set": "fused",
+  "reducer": "pca",
+  "points": [
+    {
+      "train_per_class": 72,
+      "accuracy": 0.6982456140350877,
+      "macro_f1": 0.6992039566609324,
+      "macro_precision": 0.702636149320314,
+      "macro_recall": 0.6982456140350878,
+      "n_test": 11400,
+      "per_category_accuracy": {
+        "consonant": 0.6551428571428571,
+        "digit": 0.777,
+        "vowel": 0.7583333333333333
+      },
+      "complete": true,
+      "short_classes": {},
+      "accuracy_complete_classes": null,
+      "inference_ms_per_image": 3.6181,
+      "train_time_s": 232.68,
+      "models": {
+        "rf": {
+          "accuracy": 0.6455263157894737,
+          "macro_f1": 0.6407275042297674,
+          "macro_precision": 0.6456308485293342,
+          "macro_recall": 0.6455263157894737,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.5894285714285714,
+            "digit": 0.7245,
+            "vowel": 0.7433333333333333
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 0.1352,
+          "train_time_s": 9.37
+        },
+        "svm": {
+          "accuracy": 0.7531578947368421,
+          "macro_f1": 0.7539886848779694,
+          "macro_precision": 0.758165856250533,
+          "macro_recall": 0.7531578947368421,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.7117142857142857,
+            "digit": 0.8235,
+            "vowel": 0.8154166666666667
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 3.1222,
+          "train_time_s": 5.29
+        },
+        "xgb": {
+          "accuracy": 0.652280701754386,
+          "macro_f1": 0.652529169407973,
+          "macro_precision": 0.6550105631738912,
+          "macro_recall": 0.6522807017543859,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.6037142857142858,
+            "digit": 0.7365,
+            "vowel": 0.72375
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 0.0695,
+          "train_time_s": 44.76
+        },
+        "stack": {
+          "accuracy": 0.6982456140350877,
+          "macro_f1": 0.6992039566609324,
+          "macro_precision": 0.702636149320314,
+          "macro_recall": 0.6982456140350878,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.6551428571428571,
+            "digit": 0.777,
+            "vowel": 0.7583333333333333
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 3.6181,
+          "train_time_s": 232.68
+        }
+      },
+      "n_train": 4104,
+      "n_components": 300,
+      "fit_seconds": {
+        "preprocessor": 12.62,
+        "rf": 9.37,
+        "svm": 5.29,
+        "xgb": 44.76,
+        "stack_total": 232.68
+      },
+      "model_size_bytes": 49676093
+    },
+    {
+      "train_per_class": 90,
+      "accuracy": 0.7155263157894737,
+      "macro_f1": 0.7160050953519558,
+      "macro_precision": 0.7187634048808406,
+      "macro_recall": 0.7155263157894737,
+      "n_test": 11400,
+      "per_category_accuracy": {
+        "consonant": 0.6715714285714286,
+        "digit": 0.792,
+        "vowel": 0.78
+      },
+      "complete": true,
+      "short_classes": {},
+      "accuracy_complete_classes": null,
+      "inference_ms_per_image": 6.1096,
+      "train_time_s": 959.85,
+      "models": {
+        "rf": {
+          "accuracy": 0.6631578947368421,
+          "macro_f1": 0.6599722990161307,
+          "macro_precision": 0.6641934996933249,
+          "macro_recall": 0.6631578947368422,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.6095714285714285,
+            "digit": 0.739,
+            "vowel": 0.75625
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 0.3754,
+          "train_time_s": 31.28
+        },
+        "svm": {
+          "accuracy": 0.7645614035087719,
+          "macro_f1": 0.7652797244738984,
+          "macro_precision": 0.7695773703909657,
+          "macro_recall": 0.764561403508772,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.723,
+            "digit": 0.8395,
+            "vowel": 0.8233333333333334
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 5.4338,
+          "train_time_s": 12.3
+        },
+        "xgb": {
+          "accuracy": 0.6706140350877193,
+          "macro_f1": 0.6704717803997815,
+          "macro_precision": 0.6731315052064155,
+          "macro_recall": 0.6706140350877193,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.6244285714285714,
+            "digit": 0.753,
+            "vowel": 0.7366666666666667
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 0.1274,
+          "train_time_s": 233.28
+        },
+        "stack": {
+          "accuracy": 0.7155263157894737,
+          "macro_f1": 0.7160050953519558,
+          "macro_precision": 0.7187634048808406,
+          "macro_recall": 0.7155263157894737,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.6715714285714286,
+            "digit": 0.792,
+            "vowel": 0.78
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 6.1096,
+          "train_time_s": 959.85
+        }
+      },
+      "n_train": 5130,
+      "n_components": 300,
+      "fit_seconds": {
+        "preprocessor": 13.22,
+        "rf": 31.28,
+        "svm": 12.3,
+        "xgb": 233.28,
+        "stack_total": 959.85
+      },
+      "model_size_bytes": 59976539
+    },
+    {
+      "train_per_class": 250,
+      "accuracy": 0.7762280701754386,
+      "macro_f1": 0.7759898483004911,
+      "macro_precision": 0.7766652667452727,
+      "macro_recall": 0.7762280701754386,
+      "n_test": 11400,
+      "per_category_accuracy": {
+        "consonant": 0.7385714285714285,
+        "digit": 0.861,
+        "vowel": 0.8154166666666667
+      },
+      "complete": true,
+      "short_classes": {},
+      "accuracy_complete_classes": null,
+      "inference_ms_per_image": 8.9816,
+      "train_time_s": 1288.94,
+      "models": {
+        "rf": {
+          "accuracy": 0.7235964912280701,
+          "macro_f1": 0.7204639414077497,
+          "macro_precision": 0.7238550539772433,
+          "macro_recall": 0.7235964912280702,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.6778571428571428,
+            "digit": 0.809,
+            "vowel": 0.7858333333333334
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 0.9363,
+          "train_time_s": 45.89
+        },
+        "svm": {
+          "accuracy": 0.8200877192982456,
+          "macro_f1": 0.820227218539808,
+          "macro_precision": 0.822532411842371,
+          "macro_recall": 0.8200877192982455,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.784,
+            "digit": 0.8905,
+            "vowel": 0.8666666666666667
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 12.4717,
+          "train_time_s": 45.77
+        },
+        "xgb": {
+          "accuracy": 0.7490350877192983,
+          "macro_f1": 0.7506644158871228,
+          "macro_precision": 0.7541009907567966,
+          "macro_recall": 0.7490350877192984,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.7092857142857143,
+            "digit": 0.8265,
+            "vowel": 0.8004166666666667
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 0.1427,
+          "train_time_s": 294.32
+        },
+        "stack": {
+          "accuracy": 0.7762280701754386,
+          "macro_f1": 0.7759898483004911,
+          "macro_precision": 0.7766652667452727,
+          "macro_recall": 0.7762280701754386,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.7385714285714285,
+            "digit": 0.861,
+            "vowel": 0.8154166666666667
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 8.9816,
+          "train_time_s": 1288.94
+        }
+      },
+      "n_train": 14250,
+      "n_components": 300,
+      "fit_seconds": {
+        "preprocessor": 29.52,
+        "rf": 45.89,
+        "svm": 45.77,
+        "xgb": 294.32,
+        "stack_total": 1288.94
+      },
+      "model_size_bytes": 145743958
+    },
+    {
+      "train_per_class": 500,
+      "accuracy": 0.8133333333333334,
+      "macro_f1": 0.8128324626068781,
+      "macro_precision": 0.8132978277603126,
+      "macro_recall": 0.8133333333333334,
+      "n_test": 11400,
+      "per_category_accuracy": {
+        "consonant": 0.7797142857142857,
+        "digit": 0.883,
+        "vowel": 0.8533333333333334
+      },
+      "complete": true,
+      "short_classes": {},
+      "accuracy_complete_classes": null,
+      "inference_ms_per_image": 14.2004,
+      "train_time_s": 6034.8,
+      "model_size_bytes": 267662357,
+      "models": {
+        "rf": {
+          "accuracy": 0.7457017543859649,
+          "macro_f1": 0.742932621383051,
+          "macro_precision": 0.7448874464543626,
+          "macro_recall": 0.745701754385965,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.6997142857142857,
+            "digit": 0.8205,
+            "vowel": 0.8175
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 1.4877,
+          "train_time_s": 120.3,
+          "model_size_bytes": 225349654
+        },
+        "svm": {
+          "accuracy": 0.845,
+          "macro_f1": 0.8451158629984575,
+          "macro_precision": 0.8466640743892473,
+          "macro_recall": 0.845,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.8101428571428572,
+            "digit": 0.912,
+            "vowel": 0.8908333333333334
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 14.9066,
+          "train_time_s": 169.21,
+          "model_size_bytes": 37036993
+        },
+        "xgb": {
+          "accuracy": 0.7821929824561403,
+          "macro_f1": 0.7834208118408211,
+          "macro_precision": 0.7863670088408973,
+          "macro_recall": 0.7821929824561403,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.7457142857142857,
+            "digit": 0.853,
+            "vowel": 0.8295833333333333
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 0.0765,
+          "train_time_s": 4106.02,
+          "model_size_bytes": 2589362
+        },
+        "stack": {
+          "accuracy": 0.8133333333333334,
+          "macro_f1": 0.8128324626068781,
+          "macro_precision": 0.8132978277603126,
+          "macro_recall": 0.8133333333333334,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.7797142857142857,
+            "digit": 0.883,
+            "vowel": 0.8533333333333334
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 14.2004,
+          "train_time_s": 6034.8,
+          "model_size_bytes": 267662357
+        }
+      },
+      "n_train": 28500,
+      "n_components": 300,
+      "fit_seconds": {
+        "preprocessor": 34.96,
+        "rf": 120.3,
+        "svm": 169.21,
+        "xgb": 4106.02,
+        "stack_total": 6034.8
+      }
+    },
+    {
+      "train_per_class": 1000,
+      "accuracy": 0.8385087719298245,
+      "macro_f1": 0.8382525101165306,
+      "macro_precision": 0.8390667411480954,
+      "macro_recall": 0.8385087719298245,
+      "n_test": 11400,
+      "per_category_accuracy": {
+        "consonant": 0.8062857142857143,
+        "digit": 0.9065,
+        "vowel": 0.8758333333333334
+      },
+      "complete": true,
+      "short_classes": {},
+      "accuracy_complete_classes": null,
+      "inference_ms_per_image": 29.8948,
+      "train_time_s": 55911.6,
+      "models": {
+        "rf": {
+          "accuracy": 0.7660526315789473,
+          "macro_f1": 0.7641558491924229,
+          "macro_precision": 0.7658909658242729,
+          "macro_recall": 0.7660526315789474,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.7245714285714285,
+            "digit": 0.839,
+            "vowel": 0.82625
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 5.2922,
+          "train_time_s": 51543.91
+        },
+        "svm": {
+          "accuracy": 0.8667543859649123,
+          "macro_f1": 0.8667838306448139,
+          "macro_precision": 0.8678636501252432,
+          "macro_recall": 0.8667543859649123,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.8354285714285714,
+            "digit": 0.928,
+            "vowel": 0.9070833333333334
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 25.483,
+          "train_time_s": 226.53
+        },
+        "xgb": {
+          "accuracy": 0.8006140350877193,
+          "macro_f1": 0.8008998623514945,
+          "macro_precision": 0.8020050960492542,
+          "macro_recall": 0.8006140350877192,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.7635714285714286,
+            "digit": 0.8805,
+            "vowel": 0.8420833333333333
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 0.1123,
+          "train_time_s": 796.53
+        },
+        "stack": {
+          "accuracy": 0.8385087719298245,
+          "macro_f1": 0.8382525101165306,
+          "macro_precision": 0.8390667411480954,
+          "macro_recall": 0.8385087719298245,
+          "n_test": 11400,
+          "per_category_accuracy": {
+            "consonant": 0.8062857142857143,
+            "digit": 0.9065,
+            "vowel": 0.8758333333333334
+          },
+          "complete": true,
+          "short_classes": {},
+          "accuracy_complete_classes": null,
+          "inference_ms_per_image": 29.8948,
+          "train_time_s": 55911.6
+        }
+      },
+      "n_train": 57000,
+      "n_components": 300,
+      "fit_seconds": {
+        "preprocessor": 38.2,
+        "rf": 51543.91,
+        "svm": 226.53,
+        "xgb": 796.53,
+        "stack_total": 55911.6
+      },
+      "model_size_bytes": 495238134
+    }
+  ]
+}

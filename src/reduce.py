@@ -67,21 +67,36 @@ class VariancePCA(BaseEstimator, TransformerMixin):
         return self.pca_.inverse_transform(full)
 
 
+SELECTION_JSON = config.PATHS.metrics / "reducer_selection.json"
+
+
+def resolve_method(method: str | None = None) -> str:
+    """Turn "auto" into the reducer chosen by training-set cross-validation."""
+    method = (method or R.method).lower()
+    if method != "auto":
+        return method
+    if not SELECTION_JSON.exists():
+        raise ModiError("REDUCE.method is 'auto' but no reducer has been selected yet. "
+                        "Run: python scripts/run_training.py --only select")
+    import json
+    return json.loads(SELECTION_JSON.read_text(encoding="utf-8"))["selected"]
+
+
 def make_reducer(method: str | None = None, n_classes: int | None = None) -> Any:
     """Return the configured reducer.
 
     Args:
-        method: "pca", "lda" or "none"; defaults to ``config.REDUCE.method``.
-        n_classes: needed for LDA's default component count (n_classes - 1).
+        method: "pca", "lda", "none" or "auto"; defaults to ``config.REDUCE.method``.
+        n_classes: kept for API compatibility (LDA picks its own component count).
     """
-    method = (method or R.method).lower()
+    method = resolve_method(method)
     if method == "pca":
         return VariancePCA()
     if method == "lda":
-        k = R.lda_components
-        if k is None and n_classes:
-            k = n_classes - 1
-        return LinearDiscriminantAnalysis(solver=R.lda_solver, shrinkage=R.lda_shrinkage, n_components=k)
+        # None lets sklearn use min(n_classes - 1, n_features), which also works
+        # for the 49-feature Zernike-only ablation.
+        return LinearDiscriminantAnalysis(solver=R.lda_solver, shrinkage=R.lda_shrinkage,
+                                          n_components=R.lda_components)
     if method == "none":
         return "passthrough"
     raise ModiError(f"Unknown reduction method '{method}'. Use 'pca', 'lda' or 'none'.")

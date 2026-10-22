@@ -262,9 +262,7 @@ What the loader actually counted on disk (`results/metrics/dataset_summary.json`
 Note the class-count inconsistency: the papers say 46, this dataset has 57, and its 12 vowels +
 35 consonants make 47 letters. The 35 consonants include the conjuncts क्ष, ज्ञ, त्र, श्र and omit
 ङ, ञ, ष. `results/figures/class_reference_sheet.png` shows three real examples of every class.
-**The Devanagari shown in the app is inferred from the romanised folder names and is not yet
-verified.** The ten dental/retroflex classes (`ta`, `th`, `tha`, `thh`, `thha`, `d`, `dh`, `dha`, `n`,
-`nn`) cannot be mapped from their names, so no Devanagari is shown for them (see `src/labels.json`).
+**Labels and Devanagari.** The model predicts the dataset's romanised folder names. For display, 47 of them map directly to Devanagari. The 10 dental/retroflex classes (`ta`, `th`, `tha`, `thh`, `thha`, `d`, `dh`, `dha`, `n`, `nn`) cannot be mapped from their names, so they were **matched by shape to the official Unicode Modi code chart** (Pandey 2011, Fig. 1): `ta`=त, `th`=ट, `thh`=ठ, `tha`=थ, `thha`=द, `d`=ड, `dh`=ढ, `dha`=ध, `n`=न, `nn`=ण (`results/figures/label_verification_sheet.png`, made by `scripts/make_label_verification_sheet.py`). The matching is one-to-one, and it explains the second most-confused pair: in Modi, द (`thha`) and ह (`h`) are drawn almost identically. All mappings stay marked `verified: false` in `src/labels.json` until a Modi reader confirms them.
 
 ## Preprocessing (stage 1)
 
@@ -281,8 +279,14 @@ verified.** The ten dental/retroflex classes (`ta`, `th`, `tha`, `thh`, `thha`, 
 - **Deskew is off by default.** On an isolated character, moment-based slant cannot be told apart
   from the glyph's own diagonal strokes, and in testing it sheared upright glyphs. Page and line skew
   are corrected in segmentation instead.
-- **Known residual:** a small number of images keep a thin frame fragment slightly *inside* the edge
-  band (visible on the class reference sheet). That is an easy next improvement.
+- **Interior scan-grid lines:** about 3% of images also contain a thin *vertical* grid line inside the
+  image, usually on the right and sometimes dashed. A thin, separate vertical piece is removed only
+  if its column covers at least 75% of the image height **and** extends beyond the character's body.
+  Grid lines run the full cell height, while real detached strokes (as in `ai` and `am`) stay within
+  the glyph. Isolated *horizontal* lines are never removed: measured on the data, they are mostly
+  genuine headlines, for example over Modi digits. On 8,550 checked images the rule changed 2.7%,
+  spread over 39 classes (at most 6.6% in any one) and no digits. App crops skip this step, because
+  segmentation already crops tightly around the glyph.
 - The default pool is **2,230 images per class** (200 test + 2,000 largest training size + 30
   reserve): 127,110 selected, **127,087 processed**, 23 rejected as blank or inkless.
 
@@ -304,8 +308,15 @@ this with plain concatenation.
 
 ## Models (stage 5) and compute constraints
 
-Every pipeline is: standardise → family-balance → PCA (or LDA) → model. PCA keeps the fewest
-components reaching 95% of variance, capped at 300. In practice it hits the cap, at 87% variance.
+Every pipeline is: standardise → family-balance → dimensionality reduction → model.
+
+**Choosing PCA or LDA without touching the test set:** `run_training.py --only select` runs 3-fold
+cross-validation on the main training set (RF and SVM, with the reducer refitted inside each fold).
+The winner is written to `results/metrics/reducer_selection.json`, and `REDUCE.method = "auto"` uses
+it everywhere. In the first run, LDA beat PCA on the test set for all four models and trained 10×
+faster. Choosing on that basis would have used the test set for a modelling decision, so the
+choice is made by training-set cross-validation instead. PCA keeps the fewest components reaching
+95% of variance (capped at 300); LDA projects onto at most 56 class-discriminating directions.
 
 - **Random Forest** (400 trees), **SVM-RBF** (C = 10), **XGBoost**, and a **StackingClassifier**
   whose meta-learner is a logistic regression on the base models' out-of-fold outputs.
@@ -336,6 +347,35 @@ Fragments narrower or lighter than a typical character (detached strokes, dots, 
 are merged into the nearer neighbour, but never into an over-wide box. Every box carries flags
 (`wide`, `narrow`, `tall`, `connected`) and a confidence, and the app explains them in plain
 language.
+
+**Recognition-guided segmentation (novelty, `src/resegment.py`).** Touching characters leave no
+blank column, so blank-column splitting alone leaves several of them in one over-wide box. For every
+box flagged `wide` or `connected`, candidate cuts are placed at the valleys of the ink profile,
+ignoring the headline. Every way of cutting the box is then scored by the **trained classifier's
+confidence in each piece**, plus a weak prior on character width, and dynamic programming keeps the
+best-scoring split. The unsplit box is always one of the options, so a genuinely wide character is
+not forced apart. Pieces produced this way are flagged `resegmented`. It is evaluated on synthetic
+words with known answers by `python scripts/eval_segmentation.py`
+(`results/metrics/segmentation_eval.json`, examples in `results/figures/segmentation_examples.png`).
+
+The test words are built from **test-split** images: 120 words of 3–5 letters, either separated or pushed
+together until the strokes touch, under a joining headline. Its settings (a per-character cost of 0, and
+splitting only boxes wider than 1.8× the typical width) were tuned on separate words built from
+**training** images. It runs only on lines where projection segmentation flagged a problem, because
+re-reading clean lines slightly hurt.
+
+| Synthetic test words | Count correct | Character error rate | Whole word correct |
+|---|---|---|---|
+| Separated, projection only | 88.3% | 20.5% | 45.0% |
+| Separated, + recognition-guided | 88.3% | 20.3% | 45.0% |
+| Touching, projection only | 5.8% | 81.8% | 0.8% |
+| Touching, + recognition-guided | **41.7%** | **64.1%** | **10.0%** |
+
+Two other segmentation fixes came from this evaluation. Many single Modi characters are up to 2.5×
+wider than they are tall, so the "too wide, must be joined" rules now allow that. Detached
+headline tails and strokes are merged back. Touching characters remain hard: only 10% of touching
+words are read completely correctly, and real manuscripts (ligatures, slant, faded ink) are harder
+still.
 
 Tested on the bundled samples, which are composed from **test-split** glyphs with known answers:
 **5/5, 8/8 and 6/6 characters found.** On a crop of a real manuscript page, the writing is
@@ -383,7 +423,7 @@ streamlit run app/app.py
 | Download data | `python scripts/download_data.py` (`--from-zip`, `--force`, `--delete-zip`) |
 | Preprocess + dataset stats | `python scripts/run_preprocessing.py` (`--max-per-class 0` = all, `--summary-only`, `--force`) |
 | Feature extraction | `python scripts/run_feature_extraction.py` (`--force`, `--only hog`) |
-| Training: main, PCA vs LDA, ablation, CV, learning curve | `python scripts/run_training.py` (`--only ...`, `--sizes ...`, resumes) |
+| Training: reducer selection, main, learning curve, ablation, PCA vs LDA, CV | `python scripts/run_training.py` (`--only select main curve ...`, `--sizes ...`, resumes) |
 | Evaluation + figures + SHAP | `python scripts/run_evaluation.py` (`--skip-shap`, `--force-shap`) |
 | App samples + class reference sheet | `python scripts/make_sample_images.py` |
 | *Reference CNN baseline* | `python scripts/run_cnn_baseline.py` (`--estimate`, `--sizes`, `--force`, `--plot-only`) |
@@ -449,10 +489,16 @@ This exists only to answer the research question. It lives in `src/baselines/` a
 
 - **Fixed and untuned.** `conv3x3(32)-BN-ReLU-pool → conv3x3(64)-BN-ReLU-pool → conv3x3(128)-BN-ReLU-pool
   → dropout(0.5) → dense(256)-ReLU → dropout(0.5) → dense(classes)`, about 2.2M parameters. Adam
-  (lr 1e-3), batch 128, at most 40 epochs, early stopping with patience 6. These are textbook defaults
+  (lr 1e-3), batch 128, early stopping with patience 6 (epoch safety cap 300). These are textbook defaults
   set in `config.CNN_BASELINE` before any results were seen. No architecture or hyperparameter search
   is done, so no reviewer can say the baseline was handicapped (or flattered) to suit the classical
   side.
+- **One protocol correction, made before any CNN result was reported:** the epoch safety cap was
+  40. In the first run it ended training at small curve sizes while validation loss was still
+  falling (72 per class: 0.86 → 0.81 at epoch 39), so early stopping never fired. That would have
+  under-trained the CNN exactly where the crossover matters. The cap was raised to 300, so
+  early stopping (not the cap) ends training. Nothing else changed, and the cap-40 results were
+  discarded.
 - **Identical conditions.** It uses the same seeded splits, the same fixed 200-per-class test set,
   the same preprocessed 64×64 input images, and the same scoring function
   (`learning_curve.score_predictions`). Neither side gets augmentation.

@@ -113,18 +113,37 @@ class Recognizer:
     def classes(self) -> np.ndarray:
         return self.bundle.classes
 
-    def recognize(self, image: np.ndarray, single: bool | None = None) -> RecognitionResult:
+    def piece_confidence(self, crops: list[np.ndarray]) -> np.ndarray:
+        """Top-class probability for each crop (used to score segmentation hypotheses)."""
+        feats, ok = [], []
+        for k, crop in enumerate(crops):
+            try:
+                img = preprocess.preprocess_array(crop, grid_lines=False).final
+                feats.append(fusion.extract_one(img, self.bundle.feature_set)); ok.append(k)
+            except ModiError:
+                pass
+        out = np.full(len(crops), 1e-6)
+        if feats:
+            out[ok] = self.bundle.predict_proba(np.vstack(feats)).max(axis=1)
+        return out
+
+    def recognize(self, image: np.ndarray, single: bool | None = None, resegment: bool = True) -> RecognitionResult:
         """Segment an image and classify every character.
 
         Args:
             image: grayscale or colour array.
             single: force single-character mode (None = automatic: used when
                 segmentation finds exactly one box).
+            resegment: split wide / joined boxes with recognition-guided
+                segmentation (src/resegment.py).
         """
         if image is None or not hasattr(image, "shape") or image.size == 0:
             raise ModiError("The uploaded file could not be read as an image.")
         t0 = time.perf_counter()
         seg = segmentation.segment(image)
+        if resegment and seg.boxes:
+            from src import resegment as rs
+            rs.apply(seg, self.piece_confidence)
         t_seg = time.perf_counter() - t0
         is_single = single if single is not None else len(seg.boxes) == 1
         chars: list[CharPrediction] = []
@@ -132,7 +151,7 @@ class Recognizer:
         t1 = time.perf_counter()
         for k, (box, crop) in enumerate(zip(seg.boxes, seg.crops)):
             try:
-                res = preprocess.preprocess_array(crop, keep_steps=True)
+                res = preprocess.preprocess_array(crop, keep_steps=True, grid_lines=False)
                 f = fusion.extract_one(res.final, self.bundle.feature_set)
                 feats.append(f); ok_idx.append(k)
                 chars.append(CharPrediction(box.order, box.as_dict(), crop, res.final, f, None, 0.0, "low", [],

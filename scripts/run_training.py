@@ -1,6 +1,7 @@
 """Stage 5 runner: train and evaluate the classical models.
 
 Experiments (each one is saved as soon as it finishes, so the script resumes):
+  0. SELECT     choose PCA vs LDA by 3-fold CV on the main TRAINING set (RF + SVM); test set unused
   1. MAIN       fused features + PCA, 500 training images per class -> RF, SVM, XGBoost, stacking
   2. REDUCTION  the same with LDA instead of PCA
   3. ABLATION   HOG only / Zernike only / LBP only / fused (plain) / fused (balanced), all four models
@@ -33,7 +34,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import numpy as np  # noqa: E402
 from sklearn.model_selection import StratifiedKFold  # noqa: E402
 
-from src import config, data_loader, learning_curve, models  # noqa: E402
+from src import config, data_loader, learning_curve, models, reduce  # noqa: E402
 from src.features import fusion  # noqa: E402
 from src.utils import get_logger, load_json, run_cli, save_json, set_seed, stage  # noqa: E402
 
@@ -45,7 +46,7 @@ TRAIN_INFO = MET / "training_info.json"
 ABLATION = MET / "ablation.json"
 REDUCTION = MET / "reduction_comparison.json"
 CV_JSON = MET / "cross_validation.json"
-EXPERIMENTS = ("main", "reduction", "ablation", "cv", "curve")
+EXPERIMENTS = ("select", "main", "curve", "ablation", "reduction", "cv")
 
 
 class Data:
@@ -125,6 +126,49 @@ def run_main(data: Data, force: bool) -> None:
     _curve_point(n, scores, bundle, rep)
 
 
+def run_select(data: Data, force: bool, folds: int = 3) -> None:
+    """Choose the dimensionality reduction on TRAINING data only.
+
+    3-fold stratified CV on the main training set; for PCA and for LDA the
+    preprocessor is refitted inside each fold and RF and SVM are scored on the
+    held-out fold. The reducer with the higher mean accuracy (averaged over
+    the two models) is written to reducer_selection.json and used whenever
+    REDUCE.method is "auto". XGBoost is left out only to keep this step
+    affordable (it is slow on 300 PCA dimensions); the ensemble's composition
+    is unaffected.
+    """
+    if reduce.SELECTION_JSON.exists() and not force:
+        log.info("Reducer already selected (%s) - skipping", reduce.resolve_method())
+        return
+    n = config.SAMPLING.main_train_per_class
+    train, _, _ = data.split(n)
+    X = data.X("fused")[train["_pos"].to_numpy()]
+    classes, y = np.unique(train["label"].to_numpy(), return_inverse=True)
+    skf = StratifiedKFold(n_splits=folds, shuffle=True, random_state=config.SEED)
+    scores: dict[str, dict[str, list[float]]] = {}
+    for method in ("pca", "lda"):
+        scores[method] = {"rf": [], "svm": []}
+        for k, (tr, va) in enumerate(skf.split(X, y), 1):
+            t = time.perf_counter()
+            pre = models.make_preprocessor("fused", method, len(classes))
+            Ztr, Zva = pre.fit_transform(X[tr], y[tr]), None
+            Zva = pre.transform(X[va])
+            for name in ("rf", "svm"):
+                acc = float((models.make_base(name).fit(Ztr, y[tr]).predict(Zva) == y[va]).mean())
+                scores[method][name].append(acc)
+            log.info("  %s fold %d/%d: rf %.2f%%, svm %.2f%% (%.0fs)", method.upper(), k, folds,
+                     100 * scores[method]["rf"][-1], 100 * scores[method]["svm"][-1], time.perf_counter() - t)
+    summary = {m: {name: {"mean": float(np.mean(v)), "std": float(np.std(v))} for name, v in d.items()}
+               for m, d in scores.items()}
+    overall = {m: float(np.mean([summary[m][name]["mean"] for name in summary[m]])) for m in summary}
+    selected = max(overall, key=overall.get)
+    save_json({"selected": selected, "criterion": "mean 3-fold CV accuracy of RF and SVM on the main training set",
+               "train_per_class": n, "folds": folds, "overall_cv_accuracy": overall, "per_model": summary,
+               "per_fold": scores, "note": "The fixed test set was not used for this choice."}, reduce.SELECTION_JSON)
+    log.info("Selected reducer: %s (CV accuracy %s)", selected.upper(),
+             ", ".join(f"{m.upper()} {100 * a:.2f}%" for m, a in overall.items()))
+
+
 def run_reduction(data: Data, force: bool) -> None:
     if REDUCTION.exists() and not force:
         log.info("Reduction comparison already done - skipping")
@@ -132,7 +176,7 @@ def run_reduction(data: Data, force: bool) -> None:
     n = config.SAMPLING.main_train_per_class
     out: dict[str, Any] = {"train_per_class": n, "methods": {}}
     for method in ("pca", "lda"):
-        if method == config.REDUCE.method and TRAIN_INFO.exists():
+        if method == reduce.resolve_method() and TRAIN_INFO.exists():
             info = load_json(TRAIN_INFO)
             out["methods"][method] = {"models": info["models"], "n_components": info["info"]["n_features_reduced"]}
             continue
@@ -158,7 +202,7 @@ def run_ablation(data: Data, force: bool) -> None:
             bundle, scores, _, _, _ = fit_and_score(data, n, fset, balance=balance)
             done[key] = {"models": scores, "n_features": bundle.info["n_features_in"],
                          "n_components": bundle.info["n_features_reduced"]}
-        save_json({"train_per_class": n, "reducer": config.REDUCE.method, "feature_sets": done}, ABLATION)
+        save_json({"train_per_class": n, "reducer": reduce.resolve_method(), "feature_sets": done}, ABLATION)
 
 
 def run_cv(data: Data, folds: int, force: bool) -> None:
@@ -225,21 +269,24 @@ def main() -> int:
         data = Data()
         log.info("%d images, %d classes, fused dimension %d", len(data.index), data.index["label"].nunique(),
                  data.X("fused").shape[1])
+    if "select" in todo:
+        with stage("SELECT dimensionality reduction (training-set CV)", log):
+            run_select(data, args.force)
     if "main" in todo:
-        with stage(f"MAIN experiment ({config.SAMPLING.main_train_per_class}/class, fused, {config.REDUCE.method})", log):
+        with stage(f"MAIN experiment ({config.SAMPLING.main_train_per_class}/class, fused, {reduce.resolve_method()})", log):
             run_main(data, args.force)
-    if "reduction" in todo:
-        with stage("REDUCTION comparison (PCA vs LDA)", log):
-            run_reduction(data, args.force)
-    if "ablation" in todo:
-        with stage("ABLATION (single descriptors vs fused)", log):
-            run_ablation(data, args.force)
-    if "cv" in todo:
-        with stage(f"CROSS-VALIDATION ({args.cv_folds}-fold)", log):
-            run_cv(data, args.cv_folds, args.force)
     if "curve" in todo:
         with stage("LEARNING CURVE", log):
             run_curve(data, args.sizes, args.force)
+    if "ablation" in todo:
+        with stage("ABLATION (single descriptors vs fused)", log):
+            run_ablation(data, args.force)
+    if "reduction" in todo:
+        with stage("REDUCTION comparison (PCA vs LDA)", log):
+            run_reduction(data, args.force)
+    if "cv" in todo:
+        with stage(f"CROSS-VALIDATION ({args.cv_folds}-fold)", log):
+            run_cv(data, args.cv_folds, args.force)
     log.info("Total time %.1f min. Next: python scripts/run_evaluation.py", (time.perf_counter() - t0) / 60)
     return 0
 

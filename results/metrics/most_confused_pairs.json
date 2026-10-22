@@ -1,141 +1,131 @@
 {
   "model": "stack",
-  "total_errors": 2128,
+  "total_errors": 1738,
   "n_test": 11400,
   "pairs": [
     {
       "class_a": "i",
       "class_b": "ii",
-      "a_as_b": 42,
-      "b_as_a": 49,
+      "a_as_b": 39,
+      "b_as_a": 52,
       "total_confusions": 91,
-      "a_as_b_rate": 0.21,
-      "b_as_a_rate": 0.245,
+      "a_as_b_rate": 0.195,
+      "b_as_a_rate": 0.26,
       "pair_error_rate": 0.2275
     },
     {
       "class_a": "h",
       "class_b": "thha",
-      "a_as_b": 40,
-      "b_as_a": 38,
-      "total_confusions": 78,
-      "a_as_b_rate": 0.2,
-      "b_as_a_rate": 0.19,
-      "pair_error_rate": 0.195
-    },
-    {
-      "class_a": "five",
-      "class_b": "six",
-      "a_as_b": 24,
-      "b_as_a": 29,
-      "total_confusions": 53,
-      "a_as_b_rate": 0.12,
-      "b_as_a_rate": 0.145,
-      "pair_error_rate": 0.1325
-    },
-    {
-      "class_a": "ja",
-      "class_b": "n",
-      "a_as_b": 26,
-      "b_as_a": 27,
-      "total_confusions": 53,
-      "a_as_b_rate": 0.13,
-      "b_as_a_rate": 0.135,
-      "pair_error_rate": 0.1325
+      "a_as_b": 41,
+      "b_as_a": 48,
+      "total_confusions": 89,
+      "a_as_b_rate": 0.205,
+      "b_as_a_rate": 0.24,
+      "pair_error_rate": 0.2225
     },
     {
       "class_a": "p",
       "class_b": "thha",
-      "a_as_b": 24,
-      "b_as_a": 29,
-      "total_confusions": 53,
-      "a_as_b_rate": 0.12,
-      "b_as_a_rate": 0.145,
-      "pair_error_rate": 0.1325
+      "a_as_b": 29,
+      "b_as_a": 25,
+      "total_confusions": 54,
+      "a_as_b_rate": 0.145,
+      "b_as_a_rate": 0.125,
+      "pair_error_rate": 0.135
     },
     {
-      "class_a": "bh",
-      "class_b": "ph",
-      "a_as_b": 19,
-      "b_as_a": 24,
-      "total_confusions": 43,
-      "a_as_b_rate": 0.095,
-      "b_as_a_rate": 0.12,
-      "pair_error_rate": 0.1075
+      "class_a": "five",
+      "class_b": "six",
+      "a_as_b": 18,
+      "b_as_a": 33,
+      "total_confusions": 51,
+      "a_as_b_rate": 0.09,
+      "b_as_a_rate": 0.165,
+      "pair_error_rate": 0.1275
     },
     {
       "class_a": "k",
       "class_b": "m",
       "a_as_b": 27,
-      "b_as_a": 15,
-      "total_confusions": 42,
+      "b_as_a": 19,
+      "total_confusions": 46,
       "a_as_b_rate": 0.135,
-      "b_as_a_rate": 0.075,
-      "pair_error_rate": 0.105
+      "b_as_a_rate": 0.095,
+      "pair_error_rate": 0.115
+    },
+    {
+      "class_a": "ja",
+      "class_b": "n",
+      "a_as_b": 20,
+      "b_as_a": 24,
+      "total_confusions": 44,
+      "a_as_b_rate": 0.1,
+      "b_as_a_rate": 0.12,
+      "pair_error_rate": 0.11
+    },
+    {
+      "class_a": "d",
+      "class_b": "th",
+      "a_as_b": 22,
+      "b_as_a": 19,
+      "total_confusions": 41,
+      "a_as_b_rate": 0.11,
+      "b_as_a_rate": 0.095,
+      "pair_error_rate": 0.1025
     },
     {
       "class_a": "h",
       "class_b": "p",
-      "a_as_b": 18,
-      "b_as_a": 21,
-      "total_confusions": 39,
-      "a_as_b_rate": 0.09,
-      "b_as_a_rate": 0.105,
-      "pair_error_rate": 0.0975
+      "a_as_b": 22,
+      "b_as_a": 15,
+      "total_confusions": 37,
+      "a_as_b_rate": 0.11,
+      "b_as_a_rate": 0.075,
+      "pair_error_rate": 0.0925
     },
     {
       "class_a": "r",
       "class_b": "th",
       "a_as_b": 17,
-      "b_as_a": 19,
-      "total_confusions": 36,
-      "a_as_b_rate": 0.085,
-      "b_as_a_rate": 0.095,
-      "pair_error_rate": 0.09
-    },
-    {
-      "class_a": "d",
-      "class_b": "th",
-      "a_as_b": 21,
-      "b_as_a": 13,
+      "b_as_a": 17,
       "total_confusions": 34,
-      "a_as_b_rate": 0.105,
-      "b_as_a_rate": 0.065,
+      "a_as_b_rate": 0.085,
+      "b_as_a_rate": 0.085,
       "pair_error_rate": 0.085
     },
     {
-      "class_a": "nine",
-      "class_b": "six",
-      "a_as_b": 11,
-      "b_as_a": 14,
-      "total_confusions": 25,
-      "a_as_b_rate": 0.055,
-      "b_as_a_rate": 0.07,
-      "pair_error_rate": 0.0625
-    },
-    {
-      "class_a": "o",
-      "class_b": "ou",
-      "a_as_b": 16,
-      "b_as_a": 9,
-      "total_confusions": 25,
-      "a_as_b_rate": 0.08,
-      "b_as_a_rate": 0.045,
-      "pair_error_rate": 0.0625
+      "class_a": "bh",
+      "class_b": "ph",
+      "a_as_b": 10,
+      "b_as_a": 20,
+      "total_confusions": 30,
+      "a_as_b_rate": 0.05,
+      "b_as_a_rate": 0.1,
+      "pair_error_rate": 0.075
     },
     {
       "class_a": "th",
       "class_b": "thh",
-      "a_as_b": 17,
+      "a_as_b": 16,
       "b_as_a": 8,
-      "total_confusions": 25,
-      "a_as_b_rate": 0.085,
+      "total_confusions": 24,
+      "a_as_b_rate": 0.08,
       "b_as_a_rate": 0.04,
-      "pair_error_rate": 0.0625
+      "pair_error_rate": 0.06
     },
     {
-      "class_a": "dha",
-      "class_b": "tha",
+      "class_a": "o",
+      "class_b": "ou",
+      "a_as_b": 8,
+      "b_as_a": 14,
+      "total_confusions": 22,
+      "a_as_b_rate": 0.04,
+      "b_as_a_rate": 0.07,
+      "pair_error_rate": 0.055
+    },
+    {
+      "class_a": "ai",
+      "class_b": "e",
       "a_as_b": 12,
       "b_as_a": 9,
       "total_confusions": 21,
@@ -144,44 +134,24 @@
       "pair_error_rate": 0.0525
     },
     {
-      "class_a": "ai",
-      "class_b": "am",
-      "a_as_b": 8,
-      "b_as_a": 12,
+      "class_a": "b",
+      "class_b": "gh",
+      "a_as_b": 10,
+      "b_as_a": 10,
       "total_confusions": 20,
-      "a_as_b_rate": 0.04,
-      "b_as_a_rate": 0.06,
+      "a_as_b_rate": 0.05,
+      "b_as_a_rate": 0.05,
       "pair_error_rate": 0.05
     },
     {
-      "class_a": "b",
-      "class_b": "gh",
+      "class_a": "dha",
+      "class_b": "tha",
       "a_as_b": 10,
       "b_as_a": 9,
       "total_confusions": 19,
       "a_as_b_rate": 0.05,
       "b_as_a_rate": 0.045,
       "pair_error_rate": 0.0475
-    },
-    {
-      "class_a": "ai",
-      "class_b": "e",
-      "a_as_b": 11,
-      "b_as_a": 7,
-      "total_confusions": 18,
-      "a_as_b_rate": 0.055,
-      "b_as_a_rate": 0.035,
-      "pair_error_rate": 0.045
-    },
-    {
-      "class_a": "four",
-      "class_b": "l",
-      "a_as_b": 8,
-      "b_as_a": 10,
-      "total_confusions": 18,
-      "a_as_b_rate": 0.04,
-      "b_as_a_rate": 0.05,
-      "pair_error_rate": 0.045
     },
     {
       "class_a": "kh",
@@ -194,78 +164,88 @@
       "pair_error_rate": 0.045
     },
     {
-      "class_a": "am",
-      "class_b": "e",
-      "a_as_b": 7,
-      "b_as_a": 8,
-      "total_confusions": 15,
-      "a_as_b_rate": 0.035,
-      "b_as_a_rate": 0.04,
-      "pair_error_rate": 0.0375
+      "class_a": "oo",
+      "class_b": "u",
+      "a_as_b": 5,
+      "b_as_a": 13,
+      "total_confusions": 18,
+      "a_as_b_rate": 0.025,
+      "b_as_a_rate": 0.065,
+      "pair_error_rate": 0.045
     },
     {
-      "class_a": "bh",
-      "class_b": "m",
-      "a_as_b": 10,
-      "b_as_a": 5,
+      "class_a": "nine",
+      "class_b": "six",
+      "a_as_b": 7,
+      "b_as_a": 9,
+      "total_confusions": 16,
+      "a_as_b_rate": 0.035,
+      "b_as_a_rate": 0.045,
+      "pair_error_rate": 0.04
+    },
+    {
+      "class_a": "b",
+      "class_b": "chh",
+      "a_as_b": 8,
+      "b_as_a": 7,
       "total_confusions": 15,
-      "a_as_b_rate": 0.05,
-      "b_as_a_rate": 0.025,
+      "a_as_b_rate": 0.04,
+      "b_as_a_rate": 0.035,
       "pair_error_rate": 0.0375
     },
     {
       "class_a": "dha",
       "class_b": "thha",
       "a_as_b": 6,
-      "b_as_a": 8,
-      "total_confusions": 14,
-      "a_as_b_rate": 0.03,
-      "b_as_a_rate": 0.04,
-      "pair_error_rate": 0.035
-    },
-    {
-      "class_a": "one",
-      "class_b": "three",
-      "a_as_b": 7,
-      "b_as_a": 7,
-      "total_confusions": 14,
-      "a_as_b_rate": 0.035,
-      "b_as_a_rate": 0.035,
-      "pair_error_rate": 0.035
-    },
-    {
-      "class_a": "aa",
-      "class_b": "sh",
-      "a_as_b": 6,
-      "b_as_a": 7,
-      "total_confusions": 13,
-      "a_as_b_rate": 0.03,
-      "b_as_a_rate": 0.035,
-      "pair_error_rate": 0.0325
-    },
-    {
-      "class_a": "b",
-      "class_b": "chh",
-      "a_as_b": 7,
-      "b_as_a": 6,
-      "total_confusions": 13,
-      "a_as_b_rate": 0.035,
-      "b_as_a_rate": 0.03,
-      "pair_error_rate": 0.0325
-    },
-    {
-      "class_a": "b",
-      "class_b": "k",
-      "a_as_b": 3,
       "b_as_a": 9,
-      "total_confusions": 12,
-      "a_as_b_rate": 0.015,
+      "total_confusions": 15,
+      "a_as_b_rate": 0.03,
       "b_as_a_rate": 0.045,
-      "pair_error_rate": 0.03
+      "pair_error_rate": 0.0375
     },
     {
-      "class_a": "b",
-      "class_b": "tha",
+      "class_a": "ai",
+      "class_b": "am",
+      "a_as_b": 9,
+      "b_as_a": 5,
+      "total_confusions": 14,
+      "a_as_b_rate": 0.045,
+      "b_as_a_rate": 0.025,
+      "pair_error_rate": 0.035
+    },
+    {
+      "class_a": "bh",
+      "class_b": "m",
+      "a_as_b": 12,
+      "b_as_a": 2,
+      "total_confusions": 14,
+      "a_as_b_rate": 0.06,
+      "b_as_a_rate": 0.01,
+      "pair_error_rate": 0.035
+    },
+    {
+      "class_a": "g",
+      "class_b": "nn",
+      "a_as_b": 3,
+      "b_as_a": 11,
+      "total_confusions": 14,
+      "a_as_b_rate": 0.015,
+      "b_as_a_rate": 0.055,
+      "pair_error_rate": 0.035
+    },
+    {
+      "class_a": "ph",
+      "class_b": "shr",
+      "a_as_b": 5,
+      "b_as_a": 8,
+      "total_confusions": 13,
+      "a_as_b_rate": 0.025,
+      "b_as_a_rate": 0.04,
+      "pair_error_rate": 0.0325
+    },
+    {
+      "class_a": "dha",
+      "class_b": "h",
       "a_as_b": 7,
       "b_as_a": 5,
       "total_confusions": 12,
@@ -274,34 +254,54 @@
       "pair_error_rate": 0.03
     },
     {
-      "class_a": "dha",
-      "class_b": "h",
-      "a_as_b": 8,
-      "b_as_a": 4,
-      "total_confusions": 12,
-      "a_as_b_rate": 0.04,
-      "b_as_a_rate": 0.02,
-      "pair_error_rate": 0.03
+      "class_a": "aa",
+      "class_b": "sh",
+      "a_as_b": 2,
+      "b_as_a": 9,
+      "total_confusions": 11,
+      "a_as_b_rate": 0.01,
+      "b_as_a_rate": 0.045,
+      "pair_error_rate": 0.0275
+    },
+    {
+      "class_a": "d",
+      "class_b": "thh",
+      "a_as_b": 5,
+      "b_as_a": 5,
+      "total_confusions": 10,
+      "a_as_b_rate": 0.025,
+      "b_as_a_rate": 0.025,
+      "pair_error_rate": 0.025
+    },
+    {
+      "class_a": "four",
+      "class_b": "l",
+      "a_as_b": 4,
+      "b_as_a": 6,
+      "total_confusions": 10,
+      "a_as_b_rate": 0.02,
+      "b_as_a_rate": 0.03,
+      "pair_error_rate": 0.025
     },
     {
       "class_a": "i",
       "class_b": "thha",
       "a_as_b": 7,
-      "b_as_a": 5,
-      "total_confusions": 12,
+      "b_as_a": 3,
+      "total_confusions": 10,
       "a_as_b_rate": 0.035,
-      "b_as_a_rate": 0.025,
-      "pair_error_rate": 0.03
+      "b_as_a_rate": 0.015,
+      "pair_error_rate": 0.025
     },
     {
-      "class_a": "ph",
-      "class_b": "shr",
-      "a_as_b": 7,
+      "class_a": "k",
+      "class_b": "ph",
+      "a_as_b": 5,
       "b_as_a": 5,
-      "total_confusions": 12,
-      "a_as_b_rate": 0.035,
+      "total_confusions": 10,
+      "a_as_b_rate": 0.025,
       "b_as_a_rate": 0.025,
-      "pair_error_rate": 0.03
+      "pair_error_rate": 0.025
     }
   ]
 }

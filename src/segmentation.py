@@ -38,6 +38,7 @@ FLAG_TEXT = {
     "narrow": "unusually narrow: may be a fragment of a character",
     "tall": "unusually tall: may include parts of another line",
     "connected": "part of a long connected stroke: cursive writing could not be split reliably",
+    "resegmented": "split from a joined group by recognition-guided segmentation: the cut is the model's best guess",
 }
 
 
@@ -260,7 +261,7 @@ def segment(image: np.ndarray, keep_steps: bool = True) -> SegmentationResult:
     refined: list[list[int]] = []
     for c0, c1, ya, yb, li in raw:
         w = c1 - c0
-        too_wide = (len(raw) >= S.min_chars_for_stats and w > S.wide_blob_ratio * med_w) or w > 1.6 * line_h[li]
+        too_wide = (len(raw) >= S.min_chars_for_stats and w > S.wide_blob_ratio * med_w) or w > S.max_char_aspect * line_h[li]
         if not too_wide:
             refined.append([c0, c1, ya, yb, li]); continue
         band = binary[ya:yb, c0:c1].copy()

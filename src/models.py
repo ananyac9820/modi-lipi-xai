@@ -159,7 +159,7 @@ def train(X: np.ndarray, y: np.ndarray, feature_set: str = "fused", reducer: str
         balance: family-balanced fusion on/off (default from config).
         base: which base learners to include.
     """
-    reducer = (reducer or config.REDUCE.method).lower()
+    reducer = reduce.resolve_method(reducer)
     classes, y_idx = np.unique(np.asarray(y), return_inverse=True)
     counts = np.bincount(y_idx)
     if counts.min() < M.stack_cv:

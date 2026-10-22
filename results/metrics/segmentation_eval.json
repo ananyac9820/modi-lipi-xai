@@ -1,0 +1,54 @@
+{
+  "method": "synthetic words from test-split character images; letters only; 3-5 characters",
+  "split": "test",
+  "reseg_piece_penalty": 0.0,
+  "settings": {
+    "separated": {
+      "overlap": -28,
+      "headline": false
+    },
+    "touching": {
+      "overlap": 6,
+      "headline": true
+    }
+  },
+  "summary": {
+    "separated": {
+      "plain": {
+        "words": 120,
+        "correct_count_rate": 0.8833333333333333,
+        "character_error_rate": 0.20491803278688525,
+        "character_accuracy_when_count_correct": 0.8372641509433962,
+        "exact_word_accuracy": 0.45,
+        "mean_seconds_per_word": 1.5645927950002563
+      },
+      "reseg": {
+        "words": 120,
+        "correct_count_rate": 0.8833333333333333,
+        "character_error_rate": 0.2028688524590164,
+        "character_accuracy_when_count_correct": 0.8372641509433962,
+        "exact_word_accuracy": 0.45,
+        "mean_seconds_per_word": 1.6007410841673846
+      }
+    },
+    "touching": {
+      "plain": {
+        "words": 120,
+        "correct_count_rate": 0.058333333333333334,
+        "character_error_rate": 0.8176229508196722,
+        "character_accuracy_when_count_correct": 0.5928571428571427,
+        "exact_word_accuracy": 0.008333333333333333,
+        "mean_seconds_per_word": 1.5116300983325346
+      },
+      "reseg": {
+        "words": 120,
+        "correct_count_rate": 0.4166666666666667,
+        "character_error_rate": 0.6413934426229508,
+        "character_accuracy_when_count_correct": 0.6163333333333333,
+        "exact_word_accuracy": 0.1,
+        "mean_seconds_per_word": 2.843712870835346
+      }
+    }
+  },
+  "note": "Real manuscripts are harder (ligatures, slant, variable spacing); this measures the segmentation logic under controlled conditions with known answers."
+}

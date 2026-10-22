@@ -114,24 +114,24 @@
   },
   "d": {
    "category": "consonant",
-   "devanagari": null,
-   "modi_unicode": null,
+   "devanagari": "ड",
+   "modi_unicode": "𑘚",
    "verified": false,
-   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+   "note": "matched by shape to the Unicode Modi code chart (Pandey 2011, Fig. 1); see results/figures/label_verification_sheet.png - confirm before relying on it"
   },
   "dh": {
    "category": "consonant",
-   "devanagari": null,
-   "modi_unicode": null,
+   "devanagari": "ढ",
+   "modi_unicode": "𑘛",
    "verified": false,
-   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+   "note": "matched by shape to the Unicode Modi code chart (Pandey 2011, Fig. 1); see results/figures/label_verification_sheet.png - confirm before relying on it"
   },
   "dha": {
    "category": "consonant",
-   "devanagari": null,
-   "modi_unicode": null,
+   "devanagari": "ध",
+   "modi_unicode": "𑘠",
    "verified": false,
-   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+   "note": "matched by shape to the Unicode Modi code chart (Pandey 2011, Fig. 1); see results/figures/label_verification_sheet.png - confirm before relying on it"
   },
   "dyn": {
    "category": "consonant",
@@ -219,17 +219,17 @@
   },
   "n": {
    "category": "consonant",
-   "devanagari": null,
-   "modi_unicode": null,
+   "devanagari": "न",
+   "modi_unicode": "𑘡",
    "verified": false,
-   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+   "note": "matched by shape to the Unicode Modi code chart (Pandey 2011, Fig. 1); see results/figures/label_verification_sheet.png - confirm before relying on it"
   },
   "nn": {
    "category": "consonant",
-   "devanagari": null,
-   "modi_unicode": null,
+   "devanagari": "ण",
+   "modi_unicode": "𑘜",
    "verified": false,
-   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+   "note": "matched by shape to the Unicode Modi code chart (Pandey 2011, Fig. 1); see results/figures/label_verification_sheet.png - confirm before relying on it"
   },
   "p": {
    "category": "consonant",
@@ -275,38 +275,38 @@
   },
   "ta": {
    "category": "consonant",
-   "devanagari": null,
-   "modi_unicode": null,
+   "devanagari": "त",
+   "modi_unicode": "𑘝",
    "verified": false,
-   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+   "note": "matched by shape to the Unicode Modi code chart (Pandey 2011, Fig. 1); see results/figures/label_verification_sheet.png - confirm before relying on it"
   },
   "th": {
    "category": "consonant",
-   "devanagari": null,
-   "modi_unicode": null,
+   "devanagari": "ट",
+   "modi_unicode": "𑘘",
    "verified": false,
-   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+   "note": "matched by shape to the Unicode Modi code chart (Pandey 2011, Fig. 1); see results/figures/label_verification_sheet.png - confirm before relying on it"
   },
   "tha": {
    "category": "consonant",
-   "devanagari": null,
-   "modi_unicode": null,
+   "devanagari": "थ",
+   "modi_unicode": "𑘞",
    "verified": false,
-   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+   "note": "matched by shape to the Unicode Modi code chart (Pandey 2011, Fig. 1); see results/figures/label_verification_sheet.png - confirm before relying on it"
   },
   "thh": {
    "category": "consonant",
-   "devanagari": null,
-   "modi_unicode": null,
+   "devanagari": "ठ",
+   "modi_unicode": "𑘙",
    "verified": false,
-   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+   "note": "matched by shape to the Unicode Modi code chart (Pandey 2011, Fig. 1); see results/figures/label_verification_sheet.png - confirm before relying on it"
   },
   "thha": {
    "category": "consonant",
-   "devanagari": null,
-   "modi_unicode": null,
+   "devanagari": "द",
+   "modi_unicode": "𑘟",
    "verified": false,
-   "note": "dental/retroflex pair: the dataset's romanised folder name does not say which letter this is"
+   "note": "matched by shape to the Unicode Modi code chart (Pandey 2011, Fig. 1); see results/figures/label_verification_sheet.png - confirm before relying on it"
   },
   "tr": {
    "category": "consonant",
@@ -400,6 +400,6 @@
    "note": "inferred from the dataset's romanised folder name"
   }
  },
- "about": "Display aid only; the model predicts the dataset's folder names. Devanagari and Modi Unicode values are inferred from the romanised folder names and have NOT been verified against the glyph images. Set 'verified': true after checking results/figures/class_reference_sheet.png.",
+ "about": "Display aid only; the model predicts the dataset's folder names. 47 mappings are inferred from the romanised folder names; the 10 dental/retroflex classes were matched by shape to the Unicode code chart (results/figures/label_verification_sheet.png). None is human-verified yet: set 'verified': true after checking.",
  "unverified_count": 57
 }
