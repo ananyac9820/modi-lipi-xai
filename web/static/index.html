@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#15295a">
+  <meta name="description" content="Recognising handwritten Modi script with handcrafted features and classical machine learning, with SHAP explanations.">
+  <title>Modi Lipi XAI</title>
+  <link rel="icon" href="img/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&family=Noto+Sans+Modi&display=swap">
+  <link rel="stylesheet" href="css/paper.css">
+</head>
+<body data-page="home">
+  <header class="masthead">
+    <div class="wrap">
+      <div class="masthead-row">
+        <div>
+          <h1 id="greeting">Modi Lipi XAI</h1>
+          <div class="chip-pill" id="chip"><span>57 characters</span><span class="dot"></span><span>handwritten Modi</span></div>
+        </div>
+        <a class="seal" href="script.html" title="मो - Modi" aria-label="Browse the Modi script">&#x11626;&#x1163B;</a>
+      </div>
+    </div>
+    <div data-art="hero"></div>
+  </header>
+
+  <main class="wrap">
+    <div class="stats" id="stats" aria-label="Key results">
+      <div class="card stat skeleton"></div><div class="card stat skeleton"></div><div class="card stat skeleton"></div>
+    </div>
+    <div class="dots" id="dots" role="tablist" aria-label="Result cards"></div>
+
+    <h2 class="section-title">Project status</h2>
+    <ul class="rows" id="status">
+      <li class="skeleton" style="height:70px"></li><li class="skeleton" style="height:70px"></li><li class="skeleton" style="height:70px"></li>
+    </ul>
+
+    <h2 class="section-title">The question</h2>
+    <article class="card">
+      <h3>When does hand-made feature engineering stop being enough?</h3>
+      <p class="muted" style="font-size:15px">Modi was used to write Marathi for about seven centuries, and most of the archive is unread.
+        This project recognises single handwritten characters with three handcrafted descriptors and classical models,
+        explains every prediction with SHAP, and measures how much training data a plain CNN needs to overtake it.</p>
+      <div id="mini-curve" class="skeleton" style="min-height:200px"></div>
+      <div class="btn-row" style="margin-top:14px">
+        <a class="btn" href="read.html">Read a manuscript</a>
+        <a class="btn ghost" href="results.html#curve">See the full curve</a>
+      </div>
+    </article>
+
+    <h2 class="section-title">How it reads</h2>
+    <ol class="rows" id="pipeline">
+      <li><a class="row" href="read.html" style="--accent:var(--blue-400)"><span class="title">Clean and segment<small>remove frame and grid lines, split lines and characters</small></span><span class="meta">64×64</span><span class="pill pill-todo sm">step 1</span></a></li>
+      <li><a class="row" href="explain.html" style="--accent:var(--blue-600)"><span class="title">Describe with three descriptors<small>HOG stroke direction, Zernike shape, LBP texture</small></span><span class="meta">2,261</span><span class="pill pill-todo sm">step 2</span></a></li>
+      <li><a class="row" href="results.html#models" style="--accent:var(--gold)"><span class="title">Classify<small>LDA, then RF, SVM and XGBoost, stacked</small></span><span class="meta">4 models</span><span class="pill pill-todo sm">step 3</span></a></li>
+      <li><a class="row" href="explain.html" style="--accent:var(--navy-800)"><span class="title">Explain<small>Kernel SHAP over 35 feature groups</small></span><span class="meta">35</span><span class="pill pill-todo sm">step 4</span></a></li>
+    </ol>
+
+    <p class="foot-note">Semester data-science project · classical ML only in the app · seed 42, fully reproducible</p>
+  </main>
+
+  <script src="js/layout.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>
