@@ -54,6 +54,8 @@ const ART_DEFS = `
     <filter id="ps" x="-10%" y="-20%" width="120%" height="150%"><feDropShadow dx="0" dy="2.4" stdDeviation="2.2" flood-color="#081634" flood-opacity=".5"/></filter>
     <filter id="ps-soft" x="-10%" y="-20%" width="120%" height="150%"><feDropShadow dx="0" dy="1.6" stdDeviation="1.4" flood-color="#5a4318" flood-opacity=".35"/></filter>
     <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .10 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+    <linearGradient id="edge-g" gradientUnits="userSpaceOnUse" x1="-10" x2="410" y1="0" y2="0"><stop offset="0" stop-color="#000"/><stop offset=".06" stop-color="#fff"/><stop offset=".94" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
+    <mask id="edge-fade" maskUnits="userSpaceOnUse" x="-320" y="0" width="1040" height="320"><rect x="-10" y="0" width="420" height="320" fill="url(#edge-g)"/></mask>
     <linearGradient id="river" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9c4e6"/><stop offset="1" stop-color="#6f97c8"/></linearGradient>
   </defs>`;
 
@@ -63,9 +65,29 @@ const CURL = `
   <path d="M30 108c6-18 18-30 36-34 14-3 24 2 28 10-10-4-22-2-30 6-10 10-12 26-4 42H24c0-8 2-16 6-24z" fill="#4677b8"/>
   <path d="M8 100c8-14 20-26 36-32M16 112c6-10 14-18 26-24" stroke="#d8cfbd" stroke-width="2" fill="none" stroke-linecap="round"/>`;
 
+/* full-width wave band from x=-320 to 720, used to extend the scene on wide screens */
+function band(y, amp, colour, phase = 0, bottom = 300) {
+  let d = `M-320 ${y}`;
+  for (let x = -320; x < 720; x += 110) {
+    const k = ((x / 110) | 0) + phase;
+    d += `c30 ${-amp * (k % 2 ? 1 : .6)} 70 ${-amp * (k % 2 ? .4 : 1)} 110 0`;
+  }
+  return `<path d="${d}V${bottom}H-320z" fill="${colour}"/>`;
+}
+
+const SIDE_CLOUD = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 24c2-14 16-20 28-14 6-14 26-16 36-4 10-10 28-8 34 6 8-2 16 2 20 10v10H0z" fill="#d6c094"/><path d="M14 30c4-8 14-10 22-6 6-8 18-8 24 0 8-4 18-2 22 6v6H14z" fill="#e8d9b7"/></g>`;
+
+function heroViewBox() { return innerWidth / Math.min(340, innerWidth * .56) > 2.4 ? "-220 64 840 236" : "0 64 400 236"; }
+
 function heroArt() {
-  return `<svg class="hero-art" viewBox="0 64 400 236" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Cut-paper illustration of a paper boat sailing down a river between layered blue waves">
+  return `<svg class="hero-art" id="hero-art" viewBox="${heroViewBox()}" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Cut-paper illustration of a paper boat sailing down a river between layered blue waves">
   ${ART_DEFS}
+  <g filter="url(#ps-soft)">${SIDE_CLOUD(-200, 84, 1)}${SIDE_CLOUD(470, 76, 1.2)}</g>
+  <g filter="url(#ps)">
+    ${band(134, 14, "#6f97c8")}${band(156, 16, "#4f80bf", 1)}${band(186, 18, "#2f63a8")}
+    ${band(216, 18, "#24508f", 1)}${band(248, 16, "#1c3670")}
+  </g>
+  <g mask="url(#edge-fade)">
   <g filter="url(#ps-soft)">
     <path d="M222 104c2-16 18-24 32-18 6-16 28-20 40-6 10-14 32-14 42 2 12-8 30-6 38 8 8-4 18-2 26 4v24H222z" fill="#d6c094"/>
     <path d="M250 112c4-12 18-16 28-10 8-12 26-12 34 0 10-8 26-6 32 6 10-6 24-4 30 4 8-2 16 0 26 6v10H250z" fill="#e8d9b7"/>
@@ -99,8 +121,10 @@ function heroArt() {
     <path d="M410 232c-40-10-80-6-108 4-20 8-40 16-52 30-6 12 0 26 10 34h150z" fill="#1c3670"/>
     <g transform="translate(332 236) scale(-.56 .56)">${CURL}</g>
   </g>
+  </g>
+  ${band(288, 8, "#f3ecdf", 0, 320).replace("<path", '<path filter="url(#ps)"')}
   <path d="M-10 286c40-10 70-12 104-6 40 7 66 12 106 4s70-10 104-4 60 8 106 0v30H-10z" fill="#f3ecdf" filter="url(#ps)"/>
-  <rect width="400" height="300" fill="#fff" filter="url(#grain)" opacity=".7" style="mix-blend-mode:overlay"/>
+  <rect x="-320" width="1040" height="300" fill="#fff" filter="url(#grain)" opacity=".7" style="mix-blend-mode:overlay"/>
 </svg>`;
 }
 
@@ -241,4 +265,5 @@ document.addEventListener("DOMContentLoaded", () => {
   renderTabbar();
   const art = $("[data-art]");
   if (art) art.outerHTML = art.dataset.art === "hero" ? heroArt() : stripArt();
+  addEventListener("resize", () => { const h = $("#hero-art"); if (h) h.setAttribute("viewBox", heroViewBox()); });
 });
