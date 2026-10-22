@@ -447,52 +447,75 @@ results are reproducible.
 ## Results
 
 All numbers are on the **fixed test set: 200 images per class × 57 classes = 11,400 images**, never
-used for training or tuning. Main experiment: fused HOG + Zernike + LBP features, family-balanced,
-PCA to 300 dimensions (85.5% of variance), **500 training images per class** (28,500 images).
+used for training or tuning. Main experiment: fused HOG + Zernike + LBP features (2,261), reduced
+with **LDA** (chosen over PCA on training data only, see below), **500 training images per
+class** (28,500 images).
 
-| Model | Test accuracy | Macro-F1 | Digits | Vowels | Consonants | Train time | Size |
+| Model | Test accuracy | Macro-F1 | Digits | Vowels | Consonants | Fit time | Size |
 |---|---|---|---|---|---|---|---|
-| Random Forest | 74.57% | 0.743 | 82.0% | 81.8% | 70.0% | 2 min | 225 MB |
-| **SVM (RBF)** | **84.50%** | **0.845** | **91.2%** | **89.1%** | **81.0%** | 3 min | 37 MB |
-| XGBoost | 78.22% | 0.783 | 85.3% | 83.0% | 74.6% | 68 min* | 3 MB |
-| Stacking ensemble | 81.33% | 0.813 | 88.3% | 85.3% | 78.0% | 100 min* | 268 MB |
+| Random Forest | 84.03% | 0.839 | 89.8% | 86.4% | 81.6% | 41 s | 113 MB |
+| **SVM (RBF)** | **86.36%** | 0.863 | 92.7% | 88.9% | 83.7% | 27 s | 9 MB |
+| XGBoost | 83.75% | 0.838 | 90.0% | 86.1% | 81.2% | 4 min | 3 MB |
+| Stacking ensemble | 84.75% | 0.847 | 91.0% | 87.2% | 82.1% | 14 min | 204 MB |
 
-\* Measured on a laptop CPU shared with another heavy job, so absolute times are inflated.
+Fit times are on a laptop CPU that was often shared with the CNN baseline, so treat them as rough.
+
+### Learning curve: when does the CNN catch up?
+
+Same seeded splits and the same fixed test set for every model; the CNN is the untuned reference
+described below.
+
+| Train / class | SVM | Stack | Best classical | Reference CNN | CNN − best |
+|---|---|---|---|---|---|
+| 72 | 80.4% | 77.4% | 80.4% (SVM) | 72.3% | -8.1 |
+| 90 | 81.2% | 78.8% | 81.2% (SVM) | 77.8% | -3.4 |
+| 250 | 84.5% | 83.1% | 84.5% (SVM) | 85.1% | +0.6 |
+| 500 | 86.4% | 84.8% | 86.4% (SVM) | still training | – |
+| 1000 | 87.9% | 86.5% | 87.9% (SVM) | still training | – |
+| 2000 | 88.9% | 87.6% | 88.9% (SVM) | still training | – |
+
+**The crossover lies between 90 and 250 images per class.** Up to 90, the handcrafted pipeline beats the plain CNN; at 250 the CNN is ahead.
+The CNN points at 500, 1000, 2000 images per class are still training (they run over several nights with per-epoch checkpoints), so whether the gap keeps widening is not known yet.
+The 72-per-class point matches only the *sample size* of earlier Modi papers (46 classes × 90
+images, about 72 of them for training); their data, splits and metrics differ, so it is
+approximately, not directly, comparable.
 
 ### What the results say (stated plainly)
 
-- **The SVM alone is the best classical model, beating the stacking ensemble by 3.2 points.** The
-  same thing happened at 72 images per class (SVM 75.3% vs stack 69.8%). Likely cause: with 3
-  internal folds, the meta-learner learns from base models trained on two-thirds of the data and
-  from much weaker RF/XGBoost outputs. **This contradicts the assumption that stacking helps,** and
-  is reported as a finding, not hidden. The app still uses the stack because it gives calibrated
-  probabilities, and every report also shows the best single model.
-- **Digits are easiest and consonants hardest,** for every model: 91% vs 81% for the SVM.
-- **Most errors are look-alike confusions:** 1,772 of the 2,128 errors (83%) stay inside the same
-  category. The most confused pairs are `i`↔`ii` (91 test images, 22.8% of the pair), `h`↔`thha` (78),
-  `five`↔`six`, `ja`↔`n` and `p`↔`thha` (53 each). See `results/figures/most_confused_pairs.png`.
-- Hardest classes (F1): `thha` 47%, `h` 53%, `p` 57%, `th` 66%, `b` 68%. Easiest: `one` 94%, `eight`
-  94%, `zero` 93%.
+- **The SVM alone is the best classical model, 1.6 points ahead of the stacking
+  ensemble, and the stack never beats the SVM at any curve point.** With 3 internal folds the
+  meta-learner learns from base models trained on two-thirds of the data and from weaker RF and
+  XGBoost outputs. This contradicts the assumption that stacking helps, and is reported as a
+  finding. The app still uses the stack as planned, and every report also shows the best single model.
+- **PCA or LDA was decided on training data only** (3-fold CV with RF and SVM): LDA
+  84.5% vs PCA 79.7%. LDA mostly helps the Random Forest
+  (74.5% → 83.4% in CV); the SVM gains less. The earlier PCA results are archived in
+  `results/metrics/archive_v1_pca/`.
+- **Descriptors (SVM, ablation at 500/class):** HOG alone 83.6%, LBP alone 79.3%,
+  Zernike alone 54.0%, all three 86.4%. Fusion adds 2.8 points over HOG
+  alone. Family balancing makes no difference under LDA (86.4% without it), as expected,
+  since LDA rescales the features anyway.
+- **Digits are easiest and consonants hardest** for every model.
+- **Most errors are look-alike confusions:** 1,439 of the 1,738 stack errors (83%) stay inside the
+  same category. Most confused pairs: `i`↔`ii` (91), `h`↔`thha` (89), `p`↔`thha` (54), `five`↔`six` (51), `k`↔`m` (46).
+- Hardest classes (F1): `thha` 47%, `h` 57%, `p` 62%, `th` 68%, `ii` 71%. Easiest: `two` 97%, `eight` 96%, `one` 95%.
 - **Explainability (global SHAP, 171 test images, stacking ensemble):** share of total importance
-  is HOG 43.6%, **LBP 39.4%**, Zernike 17.0%. LBP, the descriptor none of the surveyed papers uses,
-  carries about two-fifths of the decisions. Read the family shares with care: Zernike has 3 groups
-  against 16 each for HOG and LBP, and **per group the most influential feature in the whole model
-  is Zernike's fine shape detail (orders 9+).** The evidence sits in the centre of the glyph, while
-  the image edges contribute almost nothing.
+  is **HOG 65.7%**, LBP 30.9%, Zernike 3.3%. LBP is 20% of the inputs but carries
+  almost a third of the evidence; Zernike is 2% of the inputs and carries about 3%. The centre four
+  cells of the 4×4 grid carry about half of the HOG evidence; the top row, where the headline runs
+  across almost every letter, carries little.
 - **The explanations are faithful and exact:** hiding the 3 groups SHAP ranks highest lowers the
-  predicted probability by 0.447 on average, versus 0.084 for 3 random groups (5.3×). The additivity
-  error is 0.0000.
-- Learning curve, ablation, PCA vs LDA and cross-validation results are written to
-  `results/metrics/` as each experiment finishes, and the dashboard reads them live.
+  predicted probability by 0.484 on average, versus 0.062 for 3 random groups
+  (7.8×). The maximum additivity error is 1e-07.
 
 ### Comparison with the literature (context only, not a like-for-like comparison)
 
 The surveyed deep-learning papers report 86–98.92% on a **46-class, 90-images-per-class** benchmark,
 and the classical papers report 97.77–99.3% on **private** datasets of undisclosed size. This project
-reports **84.5% (SVM) / 81.3% (stack)** on **57 classes of a public dataset**, with a fixed held-out
+reports **86.4% (SVM) / 84.8% (stack)** at 500 images per class on **57 classes of a public dataset**, with a fixed held-out
 test set of 11,400 images and no tuning on that test set. The numbers are **not comparable**: they
 differ in dataset, class count, split and metric (several papers report validation or even training
-accuracy). They are placed side by side in the app only with that warning.
+accuracy). They are listed side by side in the app (Results → Papers) only with that warning.
 
 ## Reference CNN baseline (not part of the pipeline)
 

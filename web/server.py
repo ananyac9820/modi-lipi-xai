@@ -202,8 +202,9 @@ async def api_results(_: Request) -> JSONResponse:
     reducer = read_json(MET / "reducer_selection.json")
     seg = read_json(MET / "segmentation_eval.json")
     cat = read_json(MET / "per_category_results.json")
+    literature = read_json(ASSETS / "literature.json")
     return JSONResponse({"pairs": pairs, "per_class": per_class, "ablation": ablation, "reducer": reducer,
-                         "segmentation": seg, "category_errors": cat})
+                         "segmentation": seg, "category_errors": cat, "literature": literature})
 
 
 async def api_explain_global(_: Request) -> JSONResponse:

@@ -173,6 +173,8 @@ function initTabs(root = document, onShow = () => {}) {
       if (panel) panel.hidden = !on;
     });
     if (push) history.replaceState(null, "", "#" + id);
+    const active = buttons.find((b) => b.dataset.tab === id);
+    if (active) list.scrollTo({ left: active.offsetLeft - (list.clientWidth - active.offsetWidth) / 2, behavior: push ? "smooth" : "auto" });
     onShow(id);
   };
   buttons.forEach((b, i) => {

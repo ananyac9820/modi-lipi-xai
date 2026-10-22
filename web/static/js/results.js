@@ -118,6 +118,26 @@ function segmentPanel(res) {
     <div class="note" style="margin-top:14px">Recognition-guided re-segmentation is what makes joined writing readable at all, but cursive Modi is still the weakest link: the classifier is far more reliable than the cuts.</div>`;
 }
 
+function papersPanel(res, ov) {
+  const lit = res.literature;
+  if (!lit?.entries) return `<div class="note">No literature table found.</div>`;
+  const m = ov.main;
+  const tone = (a) => (/deep|cnn|vgg|resnet|incep/i.test(a) ? "var(--gold)" : /hybrid/i.test(a) ? "var(--green)" : "var(--blue-600)");
+  return `
+    <div class="note warn">Not a like-for-like comparison. These papers use different datasets, class counts, splits and metrics
+      (often validation or even training accuracy, several on private data). They are context, not a leaderboard.</div>
+    <article class="card" style="margin-top:14px;--accent:var(--navy-800)">
+      <h3>This project</h3>
+      <p style="margin:0">${pct(m.accuracy.svm)}% (SVM) and ${pct(m.accuracy.stack)}% (stack) on a fixed, held-out test set of
+        ${fmtInt(m.n_test)} images, 57 classes of a public dataset, ${m.train_per_class} training images per class. No tuning on the test set.</p>
+    </article>
+    <h2 class="section-title">Published results</h2>
+    <ul class="rows">${lit.entries.map((e) => `<li><div class="row" style="--accent:${tone(e.approach)};grid-template-columns:1fr auto">
+      <span class="title">${esc(e.work)}<small>${esc(e.approach)} · ${esc(e.dataset)}</small></span>
+      <span class="pill ${e["public data?"] === "yes" ? "pill-done" : e["public data?"] === "no" ? "pill-todo" : "pill-review"} sm" title="Public data?">${esc(e["public data?"] === "yes" ? "public" : e["public data?"] === "no" ? "private" : e["public data?"] === "partly" ? "partly" : "unclear")}</span>
+      <span class="meta" style="grid-column:1 / -1;white-space:normal">${esc(e["reported accuracy"])}</span></div></li>`).join("")}</ul>`;
+}
+
 async function main() {
   try {
     const [c, ov, res] = await Promise.all([getJSON("/api/curves"), getJSON("/api/overview"), getJSON("/api/results")]);
@@ -126,6 +146,7 @@ async function main() {
     $("#panel-features").innerHTML = featuresPanel(res);
     $("#panel-errors").innerHTML = errorsPanel(res);
     $("#panel-segment").innerHTML = segmentPanel(res);
+    $("#panel-papers").innerHTML = papersPanel(res, ov);
   } catch (e) {
     $("#panel-curve").innerHTML = `<div class="note warn">Could not load results: ${esc(e.message)}</div>`;
   }
