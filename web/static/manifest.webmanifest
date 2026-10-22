@@ -1,0 +1,16 @@
+{
+  "name": "Modi Lipi XAI",
+  "short_name": "Modi XAI",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f3ecdf",
+  "theme_color": "#15295a",
+  "icons": [
+    {
+      "src": "img/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
