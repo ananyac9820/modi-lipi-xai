@@ -140,18 +140,30 @@ class Recognizer:
         if image is None or not hasattr(image, "shape") or image.size == 0:
             raise ModiError("The uploaded file could not be read as an image.")
         t0 = time.perf_counter()
-        seg = segmentation.segment(image)
-        if resegment and seg.boxes:
-            from src import resegment as rs
-            rs.apply(seg, self.piece_confidence)
+        h, w = image.shape[:2]
+        seg = None
+        if single is None:
+            seg = segmentation.segment(image)
+            # A squarish image with one text line is almost always one character;
+            # splitting it only hurts (it is read like a training image instead).
+            if len(seg.lines) == 1 and w <= config.SEGMENT.single_char_max_aspect * h and len(seg.boxes) <= 3:
+                single = True
+        if single:
+            seg = segmentation.whole_image(image)
+        else:
+            if seg is None:
+                seg = segmentation.segment(image)
+            if resegment and seg.boxes:
+                from src import resegment as rs
+                rs.apply(seg, self.piece_confidence)
         t_seg = time.perf_counter() - t0
-        is_single = single if single is not None else len(seg.boxes) == 1
+        is_single = bool(single) or len(seg.boxes) == 1
         chars: list[CharPrediction] = []
         feats, ok_idx = [], []
         t1 = time.perf_counter()
         for k, (box, crop) in enumerate(zip(seg.boxes, seg.crops)):
             try:
-                res = preprocess.preprocess_array(crop, keep_steps=True, grid_lines=False)
+                res = preprocess.preprocess_array(crop, keep_steps=True, grid_lines=is_single)
                 f = fusion.extract_one(res.final, self.bundle.feature_set)
                 feats.append(f); ok_idx.append(k)
                 chars.append(CharPrediction(box.order, box.as_dict(), crop, res.final, f, None, 0.0, "low", [],

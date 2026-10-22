@@ -52,3 +52,6 @@ logs/
 
 # --- reference paper PDFs: copyrighted, kept local only (see docs/03_reference_papers/INDEX.md for links) ---
 docs/03_reference_papers/*.pdf
+
+# --- demo images built from unused dataset images (not redistributed) ---
+demo_unseen/

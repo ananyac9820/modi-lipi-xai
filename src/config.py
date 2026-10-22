@@ -195,6 +195,7 @@ class SegmentationConfig:
     """Parameters for splitting a word/line image into single characters."""
 
     max_working_width: int = 1600         # downscale very large uploads for speed
+    single_char_max_aspect: float = 1.3   # auto mode: one line and width <= 1.3 x height -> read as one character
     line_min_gap_ratio: float = 0.01      # min empty-row run (fraction of height) separating lines
     line_min_height_ratio: float = 0.02   # lines thinner than this fraction of height are noise
     projection_noise_ratio: float = 0.02  # a row/col is "empty" if ink < ratio * max profile

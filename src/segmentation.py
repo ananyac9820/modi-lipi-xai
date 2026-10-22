@@ -357,6 +357,28 @@ def segment(image: np.ndarray, keep_steps: bool = True) -> SegmentationResult:
     return SegmentationResult(gray, binary, boxes, crops, lines, warnings, skew, scale, steps)
 
 
+def whole_image(image: np.ndarray) -> SegmentationResult:
+    """Treat the whole image as ONE character (no splitting).
+
+    The crop handed to the classifier is the original grayscale image, so it is
+    preprocessed exactly like the training images. Cutting a lone character
+    with ``segment`` re-binarises it and can split or trim it, which costs a
+    lot of accuracy on isolated characters.
+    """
+    gray = preprocess.to_gray(image)
+    den = preprocess.denoise(gray)
+    if not preprocess.has_contrast(den):
+        return SegmentationResult(gray, np.zeros_like(gray), [], [], [], ["The image looks blank: no ink was found."])
+    binary, _ = preprocess.binarize(den)
+    binary, _ = preprocess.remove_border_artifacts(binary)
+    ys, xs = np.nonzero(binary)
+    if xs.size == 0:
+        return SegmentationResult(gray, binary, [], [], [], ["No characters were detected."])
+    x0, x1, y0, y1 = int(xs.min()), int(xs.max()) + 1, int(ys.min()), int(ys.max()) + 1
+    box = CharBox(x0, y0, x1 - x0, y1 - y0, 0, 1)
+    return SegmentationResult(gray, binary, [box], [gray], [(y0, y1)], [])
+
+
 def draw_boxes(result: SegmentationResult, labels: list[str] | None = None,
                colours: list[tuple[int, int, int]] | None = None) -> np.ndarray:
     """RGB image of ``result.display`` with numbered boxes."""
