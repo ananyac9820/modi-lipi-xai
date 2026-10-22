@@ -224,7 +224,7 @@ async def api_script(_: Request) -> JSONResponse:
 
 @lru_cache(maxsize=128)
 def _glyph_png(label: str) -> bytes | None:
-    folder = config.PATHS.processed / label
+    folder = config.PATHS.data_processed / label
     if not folder.is_dir():
         return None
     files = sorted(folder.glob("*.png"))
@@ -372,7 +372,30 @@ routes = [
     Route("/figures/{name}", figure_file),
     Mount("/", StaticFiles(directory=STATIC, html=True)),
 ]
-app = Starlette(routes=routes)
+
+
+class Revalidate:
+    """Pages and scripts are small: make browsers re-check them on every load
+    (cheap 304s via ETag) so an updated page is never served stale."""
+
+    def __init__(self, app) -> None:
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http" or scope["path"].startswith(("/api/glyph", "/figures/", "/samples/")):
+            return await self.app(scope, receive, send)
+
+        async def send_wrapper(message):
+            if message["type"] == "http.response.start":
+                headers = [(k, v) for k, v in message.get("headers", []) if k.lower() != b"cache-control"]
+                headers.append((b"cache-control", b"no-cache"))
+                message["headers"] = headers
+            await send(message)
+
+        await self.app(scope, receive, send_wrapper)
+
+
+app = Revalidate(Starlette(routes=routes))
 
 
 def main() -> None:

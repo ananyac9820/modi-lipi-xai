@@ -160,8 +160,12 @@ function initTabs(root = document, onShow = () => {}) {
       next.focus(); show(next.dataset.tab);
     });
   });
-  const hash = location.hash.slice(1);
-  show(buttons.some((b) => b.dataset.tab === hash) ? hash : buttons[0].dataset.tab, false);
+  const fromHash = () => {
+    const hash = location.hash.slice(1);
+    return buttons.some((b) => b.dataset.tab === hash) ? hash : null;
+  };
+  addEventListener("hashchange", () => { const h = fromHash(); if (h) show(h, false); });
+  show(fromHash() || buttons[0].dataset.tab, false);
   return show;
 }
 
