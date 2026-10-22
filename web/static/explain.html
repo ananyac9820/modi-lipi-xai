@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#15295a">
+  <title>Explain · Modi Lipi XAI</title>
+  <link rel="icon" href="img/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&family=Noto+Sans+Modi&display=swap">
+  <link rel="stylesheet" href="css/paper.css">
+</head>
+<body data-page="explain">
+  <header class="masthead short">
+    <div class="wrap">
+      <div class="kicker">Explainability</div>
+      <h1>Why the model decides</h1>
+      <p class="lede">Kernel SHAP over 35 groups of features: where on the page, and which kind of evidence, moves each prediction.</p>
+    </div>
+    <div data-art="strip"></div>
+  </header>
+
+  <main class="wrap">
+    <div class="tabs" role="tablist" aria-label="Explanation views">
+      <button role="tab" data-tab="overview">Overview</button>
+      <button role="tab" data-tab="regions">Regions</button>
+      <button role="tab" data-tab="pairs">Look-alikes</button>
+      <button role="tab" data-tab="faith">Trust</button>
+    </div>
+    <section class="panel" id="panel-overview" role="tabpanel"><div class="card"><div class="skeleton" style="height:200px"></div></div></section>
+    <section class="panel" id="panel-regions" role="tabpanel" hidden></section>
+    <section class="panel" id="panel-pairs" role="tabpanel" hidden></section>
+    <section class="panel" id="panel-faith" role="tabpanel" hidden></section>
+  </main>
+
+  <script src="js/layout.js"></script>
+  <script src="js/explain.js"></script>
+</body>
+</html>

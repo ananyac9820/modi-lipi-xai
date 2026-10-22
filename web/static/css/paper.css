@@ -313,8 +313,8 @@ a.row:active { transform: translateY(1px); box-shadow: 0 1px 0 rgba(255, 255, 25
 
 /* bars */
 .bars { display: grid; gap: 9px; }
-.bar { display: grid; grid-template-columns: minmax(84px, 38%) 1fr auto; gap: 10px; align-items: center; font-size: 14px; }
-.bar .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-soft); }
+.bar { display: grid; grid-template-columns: minmax(84px, 44%) 1fr auto; gap: 10px; align-items: center; font-size: 14px; }
+.bar .name { color: var(--ink-soft); line-height: 1.2; overflow-wrap: anywhere; }
 .bar .track { height: 12px; background: var(--paper-deep); border-radius: 6px; overflow: hidden; }
 .bar .fill { display: block; height: 100%; border-radius: 6px; background: var(--blue-600); }
 .bar .num { font-variant-numeric: tabular-nums; color: var(--ink); min-width: 46px; text-align: right; }
