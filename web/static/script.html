@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#15295a">
+  <title>Script · Modi Lipi XAI</title>
+  <link rel="icon" href="img/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&family=Noto+Sans+Modi&display=swap">
+  <link rel="stylesheet" href="css/paper.css">
+</head>
+<body data-page="script">
+  <header class="masthead short">
+    <div class="wrap">
+      <div class="masthead-row">
+        <div>
+          <div class="kicker">The script</div>
+          <h1>Modi characters</h1>
+          <p class="lede">All 57 classes the model knows, with a real handwritten sample from the dataset.</p>
+        </div>
+        <span class="seal" aria-hidden="true">&#x11600;</span>
+      </div>
+    </div>
+    <div data-art="strip"></div>
+  </header>
+
+  <main class="wrap">
+    <div class="tabs" role="tablist" aria-label="Character groups">
+      <button role="tab" data-tab="consonant">Consonants</button>
+      <button role="tab" data-tab="vowel">Vowels</button>
+      <button role="tab" data-tab="digit">Digits</button>
+      <button role="tab" data-tab="about">About</button>
+    </div>
+    <section class="panel" id="panel-consonant" role="tabpanel"><div class="glyph-grid"><div class="card skeleton" style="height:140px"></div><div class="card skeleton" style="height:140px"></div><div class="card skeleton" style="height:140px"></div></div></section>
+    <section class="panel" id="panel-vowel" role="tabpanel" hidden></section>
+    <section class="panel" id="panel-digit" role="tabpanel" hidden></section>
+    <section class="panel" id="panel-about" role="tabpanel" hidden>
+      <article class="card">
+        <h3>About Modi</h3>
+        <p>Modi (मोडी) is a cursive script that was used to write Marathi for several centuries, for revenue records, court papers,
+          letters and accounts across Maharashtra, until Devanagari replaced it in the twentieth century. Writers kept the pen on
+          the paper, so letters hang from a continuous headline and run into each other.</p>
+        <p>Large archives are still written in Modi and few people can read them, which is why character recognition is useful here.</p>
+      </article>
+      <article class="card">
+        <h3>About these labels</h3>
+        <p>Class names come from the dataset’s romanised folder names. The Devanagari shown beside them was matched by hand against the
+          Unicode Modi chart and has <b>not yet been checked by a Modi reader</b>. A few names (for example the dental and retroflex
+          consonants) are easy to mix up, so please treat them as provisional.</p>
+        <a class="figure-link" href="/figures/label_verification_sheet.png"><img src="/figures/label_verification_sheet.png" alt="Sheet for checking each class label against the Unicode chart" loading="lazy"></a>
+        <p class="muted" style="margin-top:8px">The verification sheet: dataset samples next to the Unicode chart glyph for each class.</p>
+      </article>
+    </section>
+  </main>
+
+  <script src="js/layout.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>

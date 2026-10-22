@@ -134,6 +134,7 @@ p { margin: 0 0 .8em; }
   overflow: hidden;
 }
 .card + .card { margin-top: 14px; }
+:is(.glyph-grid, .facts, .stats, .heat-pair, .two-col) > .card { margin-top: 0; }
 .card h3 { font-size: 18px; margin-bottom: 6px; }
 .card .muted, .muted { color: var(--muted); font-size: 14px; }
 
@@ -144,7 +145,6 @@ p { margin: 0 0 .8em; }
   margin: -34px -16px 0; padding: 0 16px 14px; position: relative; z-index: 3;
   scrollbar-width: none; overscroll-behavior-x: contain; scroll-padding-inline: 16px;
 }
-.stats > .card + .card { margin-top: 0; }
 .stats::-webkit-scrollbar { display: none; }
 .stat {
   scroll-snap-align: start;
