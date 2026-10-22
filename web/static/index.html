@@ -34,25 +34,25 @@
     <div class="dots" id="dots" role="tablist" aria-label="Result cards"></div>
 
     <h2 class="section-title">Project status</h2>
-    <ul class="rows" id="status">
+    <ul class="rows two-up" id="status">
       <li class="skeleton" style="height:70px"></li><li class="skeleton" style="height:70px"></li><li class="skeleton" style="height:70px"></li>
     </ul>
 
     <h2 class="section-title">The question</h2>
-    <article class="card">
+    <article class="card"><div class="panel-grid even"><div>
       <h3>When does hand-made feature engineering stop being enough?</h3>
       <p class="muted" style="font-size:15px">Modi was used to write Marathi for about seven centuries, and most of the archive is unread.
         This project recognises single handwritten characters with three handcrafted descriptors and classical models,
         explains every prediction with SHAP, and measures how much training data a plain CNN needs to overtake it.</p>
-      <div id="mini-curve" class="skeleton" style="min-height:200px"></div>
       <div class="btn-row" style="margin-top:14px">
         <a class="btn" href="read.html">Read a manuscript</a>
         <a class="btn ghost" href="results.html#curve">See the full curve</a>
-      </div>
-    </article>
+      </div></div>
+      <div id="mini-curve" class="skeleton" style="min-height:200px"></div>
+    </div></article>
 
     <h2 class="section-title">How it reads</h2>
-    <ol class="rows" id="pipeline">
+    <ol class="rows two-up" id="pipeline">
       <li><a class="row" href="read.html" style="--accent:var(--blue-400)"><span class="title">Clean and segment<small>remove frame and grid lines, split lines and characters</small></span><span class="meta">64×64</span><span class="pill pill-todo sm">step 1</span></a></li>
       <li><a class="row" href="explain.html" style="--accent:var(--blue-600)"><span class="title">Describe with three descriptors<small>HOG stroke direction, Zernike shape, LBP texture</small></span><span class="meta">2,261</span><span class="pill pill-todo sm">step 2</span></a></li>
       <li><a class="row" href="results.html#models" style="--accent:var(--gold)"><span class="title">Classify<small>LDA, then RF, SVM and XGBoost, stacked</small></span><span class="meta">4 models</span><span class="pill pill-todo sm">step 3</span></a></li>

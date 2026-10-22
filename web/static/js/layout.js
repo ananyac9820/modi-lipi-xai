@@ -77,7 +77,15 @@ function band(y, amp, colour, phase = 0, bottom = 300) {
 
 const SIDE_CLOUD = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 24c2-14 16-20 28-14 6-14 26-16 36-4 10-10 28-8 34 6 8-2 16 2 20 10v10H0z" fill="#d6c094"/><path d="M14 30c4-8 14-10 22-6 6-8 18-8 24 0 8-4 18-2 22 6v6H14z" fill="#e8d9b7"/></g>`;
 
-function heroViewBox() { return innerWidth / Math.min(340, innerWidth * .56) > 2.4 ? "-220 64 840 236" : "0 64 400 236"; }
+function heroViewBox() {
+  const el = document.getElementById("hero-art");
+  const w = el ? el.clientWidth : innerWidth;
+  const h = el ? el.clientHeight : innerWidth * 236 / 400;
+  return w / Math.max(h, 1) > 1.85 ? "-220 64 840 236" : "0 64 400 236";
+}
+
+/* chart canvas width per layout band; pages re-render when the band changes */
+const chartWidth = () => (innerWidth >= 1024 ? 560 : innerWidth >= 720 ? 640 : 360);
 
 function heroArt() {
   return `<svg class="hero-art" id="hero-art" viewBox="${heroViewBox()}" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Cut-paper illustration of a paper boat sailing down a river between layered blue waves">
@@ -232,8 +240,8 @@ function bars(items, { max, colour = "var(--blue-600)", fmt = (v) => pct(v) + "%
 
 /* ---------------- line chart (learning curves) ----------------
    series: [{name, colour, dash, points:[{x,y}]}]; x on a log scale. */
-function lineChart({ series, xTicks, yMin, yMax, yFmt = (v) => Math.round(v * 100) + "%", xLabel = "", band = null, height = 250 }) {
-  const W = 360, H = height, L = 40, R = 12, T = 12, B = 38;
+function lineChart({ series, xTicks, yMin, yMax, yFmt = (v) => Math.round(v * 100) + "%", xLabel = "", band = null, height = 250, width = chartWidth() }) {
+  const W = width, H = height, L = 40, R = 12, T = 12, B = 38;
   const lx = (v) => Math.log(v);
   const x0 = lx(Math.min(...xTicks)), x1 = lx(Math.max(...xTicks));
   const X = (v) => L + ((lx(v) - x0) / (x1 - x0)) * (W - L - R);
@@ -267,5 +275,15 @@ document.addEventListener("DOMContentLoaded", () => {
   renderTabbar();
   const art = $("[data-art]");
   if (art) art.outerHTML = art.dataset.art === "hero" ? heroArt() : stripArt();
-  addEventListener("resize", () => { const h = $("#hero-art"); if (h) h.setAttribute("viewBox", heroViewBox()); });
+  const hero = $("#hero-art");
+  if (hero) hero.setAttribute("viewBox", heroViewBox());
+  let band = chartWidth(), t;
+  addEventListener("resize", () => {
+    clearTimeout(t);
+    t = setTimeout(() => {
+      const h = $("#hero-art");
+      if (h) h.setAttribute("viewBox", heroViewBox());
+      if (chartWidth() !== band) { band = chartWidth(); dispatchEvent(new Event("layoutchange")); }
+    }, 120);
+  });
 });

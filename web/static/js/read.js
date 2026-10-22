@@ -51,7 +51,7 @@ function renderResult() {
     </article>
     <h2 class="section-title">Characters</h2>
     <p class="section-sub">Tap a character to see why the model chose it.</p>
-    <ol class="rows">${r.chars.map(charRow).join("")}</ol>` :
+    <ol class="rows char-grid">${r.chars.map(charRow).join("")}</ol>` :
     `<div class="note">No characters were found. Try a tighter crop, darker ink or a sharper photo.</div>`}`;
   $$(".char-row", out).forEach((b) => b.addEventListener("click", () => openChar(+b.dataset.k)));
   $("#dl-csv")?.addEventListener("click", downloadCSV);

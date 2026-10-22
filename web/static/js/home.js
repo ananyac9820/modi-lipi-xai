@@ -75,6 +75,11 @@ async function main() {
       <span class="title">${esc(s.title)}</span><span class="meta">${esc(s.meta)}</span><span class="pill ${cls}">${txt}</span></a></li>`;
   }).join("");
 
+  drawMini(curves);
+  addEventListener("layoutchange", () => drawMini(curves));
+}
+
+function drawMini(curves) {
   const best = curves.classical.map((p) => ({ x: p.n, y: Math.max(p.rf ?? 0, p.svm ?? 0, p.xgb ?? 0, p.stack ?? 0) }));
   const series = [
     { name: "Best classical model", colour: "var(--navy-800)", points: best },

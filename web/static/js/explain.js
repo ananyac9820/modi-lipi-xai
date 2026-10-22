@@ -14,7 +14,7 @@ function famRows(g) {
 
 function overview(g) {
   const top = g.groups.slice(0, 10);
-  return `
+  return `<div class="panel-grid"><div>
     <article class="card">
       <h3>Where the evidence comes from</h3>
       <p class="muted">Share of total |SHAP| over ${g.n_images} test images (${g.images_per_class} per character).</p>
@@ -23,10 +23,11 @@ function overview(g) {
     </article>
     ${famRows(g)}
     <div class="note" style="margin-top:14px">Zernike moments are 2% of the inputs and carry about ${pct(g.family_share.zernike, 0)}% of the evidence. HOG is 78% of the inputs and carries ${pct(g.family_share.hog, 0)}%. LBP punches above its size.</div>
-    <h2 class="section-title">The ten strongest groups</h2>
+    </div><div>
+    <h2 class="section-title" style="margin-top:0">The ten strongest groups</h2>
     <div class="card">${bars(top.map((x) => ({ name: x.group.replace(/^(HOG|LBP|Zernike): /, "$1 · ").replace("stroke direction, ", "").replace("local stroke pattern, ", ""), title: x.group,
       value: x.mean_abs_shap, colour: FAMILY[x.family].c })), { fmt: (v) => v.toFixed(3) })}
-      <p class="muted" style="margin-top:10px">Mean absolute change in the predicted class’s probability.</p></div>`;
+      <p class="muted" style="margin-top:10px">Mean absolute change in the predicted class’s probability.</p></div></div></div>`;
 }
 
 function gridMap(grid, colour, title) {
@@ -60,7 +61,7 @@ function regions(g) {
 function pairs(p) {
   if (!p?.pairs?.length) return `<div class="note">No contrastive analysis yet.</div>`;
   return `<p class="section-sub" style="margin-top:0">For the pairs the model confuses most: which feature groups push toward the true character rather than its look-alike, averaged over the test images of each pair.</p>
-    ${p.pairs.map((q, i) => {
+    <div class="card-grid">${p.pairs.map((q, i) => {
       const [a, b] = q.pair;
       const fam = q.family_share_of_distinguishing_evidence || {};
       return `<article class="card">
@@ -72,12 +73,12 @@ function pairs(p) {
         <div style="margin-top:12px">${bars(q.top_distinguishing_groups.slice(0, 4).map((x) => ({ name: x.group.replace(/^(HOG|LBP|Zernike): /, "$1 · ").replace("stroke direction, ", "").replace("local stroke pattern, ", ""), title: x.group,
           value: x.contrast, colour: FAMILY[x.group.split(":")[0].toLowerCase()]?.c })), { fmt: (v) => v.toFixed(3) })}</div>
       </article>`;
-    }).join("")}`;
+    }).join("")}</div>`;
 }
 
 function faith(g) {
   const f = g.faithfulness_deletion_test;
-  return `
+  return `<div class="panel-grid"><div>
     <article class="card">
       <h3>Does SHAP point at what the model really uses?</h3>
       <p>Deletion test: replace the ${f.groups_removed} groups SHAP ranks highest with their average value and see how far the
@@ -86,14 +87,15 @@ function faith(g) {
                { name: `${f.groups_removed} random groups`, value: f.mean_probability_drop_random, colour: "var(--sand)" }], { max: 1, strongFirst: true })}
       <p class="muted" style="margin-top:10px">Mean drop in probability, ${g.n_images} images. A ${(f.mean_probability_drop_top_shap / f.mean_probability_drop_random).toFixed(1)}× larger drop means the explanation is faithful to the model.</p>
     </article>
-    <div class="facts" style="margin-top:14px">
+    </div><div>
+    <div class="facts">
       <div class="card fact"><div class="k">Groups</div><div class="v">35</div></div>
       <div class="card fact"><div class="k">Samples per explanation</div><div class="v">${g.nsamples}</div></div>
       <div class="card fact"><div class="k">Additivity error (max)</div><div class="v">${g.max_additivity_error.toExponential(0)}</div></div>
       <div class="card fact"><div class="k">Accuracy on this sample</div><div class="v">${pct(g.accuracy_on_sample, 0)}%</div></div>
     </div>
     <details class="more card" style="margin-top:14px"><summary>Method</summary>
-      <p style="margin-top:10px">${esc(g.method)}. Features are grouped (16 HOG regions, 16 LBP regions, 3 Zernike detail bands) so each explanation is about something a reader can point to, instead of 2,261 individual numbers.</p></details>`;
+      <p style="margin-top:10px">${esc(g.method)}. Features are grouped (16 HOG regions, 16 LBP regions, 3 Zernike detail bands) so each explanation is about something a reader can point to, instead of 2,261 individual numbers.</p></details></div></div>`;
 }
 
 async function main() {

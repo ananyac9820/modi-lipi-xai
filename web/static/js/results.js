@@ -19,17 +19,17 @@ function curvePanel(c) {
       <td>${fmtTime(p.train_time_s)}</td><td>${cnn ? fmtTime(cnn.train_time_s) : "–"}</td></tr>`;
   }).join("");
   const cross = c.crossover?.between;
-  return `
+  return `<div class="panel-grid even"><div>
     <article class="card">
       <h3>Accuracy as training data grows</h3>
       <p class="muted">Same seeded splits and the same fixed test set for every model.</p>
       ${lineChart({ series, xTicks: c.planned, yMin: lo, yMax: hi, xLabel: "training images per class (log scale)", band: cross, height: 270 })}
       ${legend(series)}
-    </article>
+    </article></div><div>
     ${cross ? `<div class="note" style="margin-top:14px"><b>Crossover between ${cross[0]} and ${cross[1]} images per class.</b>
       Up to ${cross[0]}, the handcrafted pipeline beats a plain CNN; from ${cross[1]} the CNN is ahead${c.cnn.length < c.planned.length
         ? `. The larger sizes (${c.planned.filter((n) => !cnnBy[n]).join(", ")}) are still training, so whether the gap keeps growing is not known yet.` : " at every larger size measured."}</div>` : ""}
-    <h2 class="section-title">Point by point</h2>
+    <h2 class="section-title" style="margin-top:${cross ? 26 : 0}px">Point by point</h2>
     <div class="card table-scroll"><table class="table">
       <thead><tr><th>/class</th><th>Best classical</th><th>CNN</th><th>CNN − best</th><th>Classical fit</th><th>CNN fit</th></tr></thead>
       <tbody>${rows}</tbody></table></div>
@@ -40,7 +40,7 @@ function curvePanel(c) {
       see about 10% fewer images, which would favour the classical side.</p>
       <p>The 72-per-class point only matches the sample size of earlier Modi papers; their test sets and
       preprocessing differ, so it is approximately, not directly, comparable.</p>
-      <p class="muted">Classical pipeline: ${esc(c.feature_set || "")} features, ${esc((c.reducer || "").toUpperCase())} reduction.</p></details>`;
+      <p class="muted">Classical pipeline: ${esc(c.feature_set || "")} features, ${esc((c.reducer || "").toUpperCase())} reduction.</p></details></div></div>`;
 }
 
 function modelsPanel(ov, res) {
@@ -53,16 +53,18 @@ function modelsPanel(ov, res) {
   const cats = ["consonant", "vowel", "digit"];
   return `
     <p class="section-sub" style="margin-top:0">${m.train_per_class} training images per class, ${fmtInt(m.n_test)} test images.</p>
+    <div class="panel-grid"><div>
     <ul class="rows">${rows}</ul>
     ${m.accuracy.stack < m.accuracy[best] ? `<div class="note" style="margin-top:14px">The stacking ensemble does not beat the single SVM here. It stays the app’s model as planned, and the gap is reported rather than hidden.</div>` : ""}
-    <h2 class="section-title">By character type</h2>
+    </div><div>
+    <h2 class="section-title" style="margin-top:0">By character type</h2>
     <div class="card">${cats.map((cat) => `<p style="margin:10px 0 6px;font-weight:600;text-transform:capitalize">${cat}s</p>` +
       bars(ORDER.map((k) => ({ name: MODEL_NAME[k], value: m.per_category[k]?.[cat], colour: COLOURS[k] })), { max: 1 })).join("")}
       ${res.category_errors ? `<p class="muted" style="margin-top:12px">${fmtInt(res.category_errors.errors_within_same_category)} of the stack’s errors stay within the same type (a consonant read as another consonant); ${fmtInt(res.category_errors.errors_across_categories)} cross types.</p>` : ""}</div>
     ${r ? `<h2 class="section-title">PCA or LDA?</h2>
     <div class="card"><p>Chosen on training data only (3-fold CV, RF and SVM), before touching the test set.</p>
       ${bars(Object.entries(r.overall_cv_accuracy).map(([k, v]) => ({ name: k.toUpperCase(), value: v, colour: k === r.selected ? "var(--navy-800)" : "var(--sand)" })), { max: 1, strongFirst: false })}
-      <p class="muted" style="margin-top:8px">Selected: <b>${r.selected.toUpperCase()}</b>.</p></div>` : ""}`;
+      <p class="muted" style="margin-top:8px">Selected: <b>${r.selected.toUpperCase()}</b>.</p></div>` : ""}</div></div>`;
 }
 
 function featuresPanel(res) {
@@ -73,7 +75,7 @@ function featuresPanel(res) {
   const NICE = { hog: "HOG only", lbp: "LBP only", zernike: "Zernike only", fused: "All three, family-balanced", fused_plain: "All three, as concatenated" };
   const nice = (k) => NICE[k] || k;
   const acc = Object.fromEntries(sets.map((s) => [s.k, s.acc]));
-  return `
+  return `<div class="panel-grid">
     <article class="card">
       <h3>Which descriptors earn their place?</h3>
       <p class="muted">SVM accuracy at ${a.train_per_class} images per class with each descriptor set, ${esc((a.reducer || "").toUpperCase())} reduction.</p>
@@ -81,7 +83,7 @@ function featuresPanel(res) {
     </article>
     ${acc.hog != null && acc.fused != null ? `<div class="note" style="margin-top:14px">HOG alone reaches ${pct(acc.hog)}%; fusing all three descriptors adds
       ${(100 * (Math.max(acc.fused, acc.fused_plain ?? 0) - acc.hog)).toFixed(1)} points. Zernike on its own is weak (${pct(acc.zernike)}%), which matches its small SHAP share.
-      ${acc.fused_plain != null && Math.abs(acc.fused - acc.fused_plain) < 0.002 ? "Balancing the three families makes no difference after LDA, which rescales features anyway." : ""}</div>` : ""}`;
+      ${acc.fused_plain != null && Math.abs(acc.fused - acc.fused_plain) < 0.002 ? "Balancing the three families makes no difference after LDA, which rescales features anyway." : ""}</div>` : ""}</div>`;
 }
 
 function errorsPanel(res) {
@@ -93,9 +95,9 @@ function errorsPanel(res) {
       <span class="meta">${pct(q.pair_error_rate, 0)}%</span></div></li>`).join("");
   return `
     <p class="section-sub" style="margin-top:0">${fmtInt(p.total_errors)} errors out of ${fmtInt(p.n_test)} test images (${MODEL_NAME[p.model] || p.model}). The most confused pairs:</p>
-    <ul class="rows">${rows}</ul>
+    <div class="panel-grid"><div><ul class="rows">${rows}</ul></div><div>
     <p class="muted" style="margin-top:12px">Percentage = share of the pair’s 400 test images read as the other one. The Explain tab shows which strokes separate each pair.</p>
-    <a class="figure-link" href="/figures/confusion_matrix.png"><img src="/figures/confusion_matrix.png" alt="Confusion matrix of all 57 classes" loading="lazy"></a>`;
+    <a class="figure-link" href="/figures/confusion_matrix.png"><img src="/figures/confusion_matrix.png" alt="Confusion matrix of all 57 classes" loading="lazy"></a></div></div>`;
 }
 
 function segmentPanel(res) {
@@ -113,8 +115,8 @@ function segmentPanel(res) {
   };
   return `
     <p class="section-sub" style="margin-top:0">${s.summary.separated.plain.words} synthetic 3–5 letter words built from test-split images. Re-segmentation settings were tuned on training-split words only.</p>
-    ${block("separated", "Letters with small gaps", "The easy case: each character is its own blob.")}
-    ${block("touching", "Letters joined by a headline", "The hard case, like real Modi: one connected stroke along the top.")}
+    <div class="card-grid">${block("separated", "Letters with small gaps", "The easy case: each character is its own blob.")}
+    ${block("touching", "Letters joined by a headline", "The hard case, like real Modi: one connected stroke along the top.")}</div>
     <div class="note" style="margin-top:14px">Recognition-guided re-segmentation is what makes joined writing readable at all, but cursive Modi is still the weakest link: the classifier is far more reliable than the cuts.</div>`;
 }
 
@@ -132,7 +134,7 @@ function papersPanel(res, ov) {
         ${fmtInt(m.n_test)} images, 57 classes of a public dataset, ${m.train_per_class} training images per class. No tuning on the test set.</p>
     </article>
     <h2 class="section-title">Published results</h2>
-    <ul class="rows">${lit.entries.map((e) => `<li><div class="row" style="--accent:${tone(e.approach)};grid-template-columns:1fr auto">
+    <ul class="rows two-up">${lit.entries.map((e) => `<li><div class="row" style="--accent:${tone(e.approach)};grid-template-columns:1fr auto">
       <span class="title">${esc(e.work)}<small>${esc(e.approach)} · ${esc(e.dataset)}</small></span>
       <span class="pill ${e["public data?"] === "yes" ? "pill-done" : e["public data?"] === "no" ? "pill-todo" : "pill-review"} sm" title="Public data?">${esc(e["public data?"] === "yes" ? "public" : e["public data?"] === "no" ? "private" : e["public data?"] === "partly" ? "partly" : "unclear")}</span>
       <span class="meta" style="grid-column:1 / -1;white-space:normal">${esc(e["reported accuracy"])}</span></div></li>`).join("")}</ul>`;
@@ -153,3 +155,4 @@ async function main() {
 }
 
 document.addEventListener("DOMContentLoaded", () => { initTabs(); main(); });
+addEventListener("layoutchange", main);
