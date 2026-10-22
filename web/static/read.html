@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#15295a">
+  <title>Read · Modi Lipi XAI</title>
+  <link rel="icon" href="img/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&family=Noto+Sans+Modi&display=swap">
+  <link rel="stylesheet" href="css/paper.css">
+</head>
+<body data-page="read">
+  <header class="masthead short">
+    <div class="wrap">
+      <div class="kicker">Recognise</div>
+      <h1>Read Modi</h1>
+      <p class="lede">Photograph a word, pick a sample or write a character yourself.</p>
+    </div>
+    <div data-art="strip"></div>
+  </header>
+
+  <main class="wrap">
+    <div class="tabs" role="tablist" aria-label="Input">
+      <button role="tab" data-tab="upload">Upload</button>
+      <button role="tab" data-tab="samples">Samples</button>
+      <button role="tab" data-tab="draw">Draw</button>
+    </div>
+
+    <section class="panel" id="panel-upload" role="tabpanel">
+      <label class="dropzone card" id="drop">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16.5V18a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1.5M12 15V4m0 0L7.5 8.5M12 4l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <strong>Choose or take a photo</strong>
+        <span class="muted">Dark ink on light paper works best. A word or a few lines is ideal.</span>
+        <input type="file" id="file" accept="image/*" class="sr-only">
+      </label>
+    </section>
+
+    <section class="panel" id="panel-samples" role="tabpanel" hidden>
+      <ul class="rows" id="sample-list"></ul>
+    </section>
+
+    <section class="panel" id="panel-draw" role="tabpanel" hidden>
+      <div class="pad-wrap">
+        <canvas class="pad" id="pad" width="512" height="512" aria-label="Drawing pad: write one Modi character"></canvas>
+        <div class="pad-guide" aria-hidden="true"></div>
+      </div>
+      <p class="muted" style="margin:10px 2px">Write one character, large, with the top bar (shirorekha) along the dashed line.</p>
+      <div class="btn-row">
+        <button class="btn ghost" id="undo" type="button">Undo</button>
+        <button class="btn ghost" id="clear" type="button">Clear</button>
+        <button class="btn" id="read-drawing" type="button">Read it</button>
+      </div>
+    </section>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;flex-wrap:wrap">
+      <span class="muted">Treat the image as</span>
+      <div class="segmented" role="radiogroup" aria-label="Segmentation mode">
+        <label><input type="radio" name="mode" value="auto" checked><span>Auto</span></label>
+        <label><input type="radio" name="mode" value="single"><span>One character</span></label>
+        <label><input type="radio" name="mode" value="line"><span>Text</span></label>
+      </div>
+    </div>
+
+    <div id="out"></div>
+  </main>
+
+  <script src="js/layout.js"></script>
+  <script src="js/read.js"></script>
+</body>
+</html>

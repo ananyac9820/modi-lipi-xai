@@ -1,4 +1,4 @@
-﻿/* Modi Lipi XAI - "cut paper" design system.
+/* Modi Lipi XAI - "cut paper" design system.
    Navy night sky, layered blue paper waves, cream card stock, gold ink. */
 
 :root {
@@ -410,9 +410,9 @@ details.more summary { cursor: pointer; color: var(--blue-600); font-weight: 500
   .two-col > .card + .card { margin-top: 0; }
 }
 @media (max-width: 380px) {
-  .row { grid-template-columns: 1fr auto; }
-  .row .meta { grid-column: 1; grid-row: 2; font-size: 15px; margin-top: -6px; }
-  .row .pill { grid-column: 2; grid-row: 1 / span 2; }
+  .row:not(.char-row) { grid-template-columns: 1fr auto; }
+  .row:not(.char-row) .meta { grid-column: 1; grid-row: 2; font-size: 15px; margin-top: -6px; }
+  .row:not(.char-row) .pill { grid-column: 2; grid-row: 1 / span 2; }
   .stat .label { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {

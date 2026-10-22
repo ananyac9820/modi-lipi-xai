@@ -1,4 +1,4 @@
-﻿/* Shared page furniture: tab bar, paper-cut header art, in-page tabs,
+/* Shared page furniture: tab bar, paper-cut header art, in-page tabs,
    bottom sheet, small SVG charts and formatting helpers. */
 
 const NAV = [
@@ -17,9 +17,9 @@ const NAV = [
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const pct = (x, d = 1) => (x == null ? "â€“" : (100 * x).toFixed(d));
-const fmtInt = (n) => (n == null ? "â€“" : Number(n).toLocaleString("en-IN"));
-const fmtTime = (s) => (s == null ? "â€“" : s < 90 ? `${Math.round(s)} s` : s < 5400 ? `${Math.round(s / 60)} min` : `${(s / 3600).toFixed(1)} h`);
+const pct = (x, d = 1) => (x == null ? "–" : (100 * x).toFixed(d));
+const fmtInt = (n) => (n == null ? "–" : Number(n).toLocaleString("en-IN"));
+const fmtTime = (s) => (s == null ? "–" : s < 90 ? `${Math.round(s)} s` : s < 5400 ? `${Math.round(s / 60)} min` : `${(s / 3600).toFixed(1)} h`);
 const MODEL_NAME = { rf: "Random Forest", svm: "SVM (RBF)", xgb: "XGBoost", stack: "Stacking ensemble", cnn: "Reference CNN" };
 const FAMILY = { hog: { name: "HOG", what: "stroke direction", c: "var(--hog)" }, lbp: { name: "LBP", what: "local stroke texture", c: "var(--lbp)" }, zernike: { name: "Zernike", what: "overall shape", c: "var(--zernike)" } };
 
@@ -133,7 +133,7 @@ function hill(tone = "blue") {
     <path d="M30 44c10-10 22-14 34-12 14 2 22-8 34-10 8-1 16 1 22 4v18z" fill="${a}"/></svg>`;
 }
 
-const BOAT_LOADER = `<div class="boat-loader" role="status"><svg viewBox="0 0 60 40" aria-hidden="true"><path d="M29 2v28" stroke="#8a7a5c" stroke-width="1.5"/><path d="M31 4 46 28H31z" fill="#fff" stroke="#d8c7a4"/><path d="M27 9 16 28h11z" fill="#e7dcc6"/><path d="M10 30h40l-6 7H16z" fill="#2f63a8"/></svg><span class="msg">Readingâ€¦</span></div>`;
+const BOAT_LOADER = `<div class="boat-loader" role="status"><svg viewBox="0 0 60 40" aria-hidden="true"><path d="M29 2v28" stroke="#8a7a5c" stroke-width="1.5"/><path d="M31 4 46 28H31z" fill="#fff" stroke="#d8c7a4"/><path d="M27 9 16 28h11z" fill="#e7dcc6"/><path d="M10 30h40l-6 7H16z" fill="#2f63a8"/></svg><span class="msg">Reading…</span></div>`;
 
 /* ---------------- in-page tabs ---------------- */
 function initTabs(root = document, onShow = () => {}) {
