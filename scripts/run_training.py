@@ -188,7 +188,10 @@ def run_reduction(data: Data, force: bool) -> None:
 def run_ablation(data: Data, force: bool) -> None:
     n = config.SAMPLING.main_train_per_class
     done = (load_json(ABLATION) if ABLATION.exists() and not force else {}).get("feature_sets", {})
+    # single families, leave-one-out pairs (what does each family add on top of
+    # the other two?) and the full fusion with and without family balancing
     variants = [("hog", "hog", None), ("zernike", "zernike", None), ("lbp", "lbp", None),
+                ("hog+lbp", "hog+lbp", True), ("hog+zernike", "hog+zernike", True), ("zernike+lbp", "zernike+lbp", True),
                 ("fused_plain", "fused", False), ("fused", "fused", True)]
     for key, fset, balance in variants:
         if key in done:

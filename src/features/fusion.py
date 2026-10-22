@@ -3,6 +3,8 @@
 Feature sets:
     "hog", "zernike", "lbp"  - one descriptor family alone (for the ablation)
     "fused"                  - all three concatenated in ``config.DESCRIPTORS`` order
+    "hog+lbp" etc.           - any two families joined with "+" (leave-one-out ablation:
+                               fused minus this pair shows what the dropped family adds)
 
 Extraction results are cached per descriptor in ``data/features/`` and keyed
 by (image list, preprocessing parameters, descriptor parameters), so a change
@@ -44,6 +46,9 @@ def families(feature_set: str) -> tuple[str, ...]:
         return config.DESCRIPTORS
     if feature_set in EXTRACTORS:
         return (feature_set,)
+    parts = tuple(feature_set.split("+"))
+    if len(parts) > 1 and all(p in EXTRACTORS for p in parts) and len(set(parts)) == len(parts):
+        return tuple(f for f in config.DESCRIPTORS if f in parts)      # canonical order
     raise ModiError(f"Unknown feature set '{feature_set}'. Choose from {config.FEATURE_SETS}.")
 
 

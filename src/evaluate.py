@@ -26,7 +26,8 @@ FIG, MET = config.PATHS.figures, config.PATHS.metrics
 BG, INK, SAFFRON, GREEN = "#fbf7ef", "#1f3a5f", "#c8812a", "#5b8c5a"
 MODEL_COLOURS = {"rf": "#5b8c5a", "svm": "#8c4a5b", "xgb": "#c8812a", "stack": "#1f3a5f"}
 FEATURE_SET_LABELS = {"hog": "HOG only", "zernike": "Zernike only", "lbp": "LBP only",
-                      "fused_plain": "Fused (plain concat)", "fused": "Fused (family-balanced)"}
+                      "hog+lbp": "HOG + LBP (no Zernike)", "hog+zernike": "HOG + Zernike (no LBP)",
+                      "zernike+lbp": "Zernike + LBP (no HOG)", "fused_plain": "Fused (plain concat)", "fused": "Fused (family-balanced)"}
 
 
 # ---------------------------------------------------------------------------

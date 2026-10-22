@@ -205,3 +205,16 @@ class TestResegmentation:
         r.boxes[0].flags.append("wide")
         n = resegment.apply(r, lambda crops: np.array([0.95 if c.shape[1] > 100 else 0.1 for c in crops]))
         assert n == 0 and len(r.boxes) == 1
+
+
+def test_leave_one_out_feature_sets_are_canonical_and_sliced():
+    from src.features import fusion
+
+    assert fusion.families("lbp+hog") == ("hog", "lbp")
+    sl = fusion.slices("hog+lbp")
+    assert sl["hog"].stop == sl["lbp"].start
+    assert sl["lbp"].stop == fusion.n_features("hog") + fusion.n_features("lbp")
+    import pytest
+    from src.utils import ModiError
+    with pytest.raises(ModiError):
+        fusion.families("hog+hog")

@@ -72,7 +72,9 @@ function featuresPanel(res) {
   if (!a) return `<div class="note">Ablation results are not available yet.</div>`;
   const sets = Object.entries(a.feature_sets).map(([k, v]) => ({ k, acc: v.models?.svm?.accuracy ?? Math.max(...Object.values(v.models || {}).map((x) => x.accuracy)) }))
     .sort((x, y) => y.acc - x.acc);
-  const NICE = { hog: "HOG only", lbp: "LBP only", zernike: "Zernike only", fused: "All three, family-balanced", fused_plain: "All three, as concatenated" };
+  const NICE = { hog: "HOG only", lbp: "LBP only", zernike: "Zernike only", "hog+lbp": "HOG + LBP (no Zernike)",
+    "hog+zernike": "HOG + Zernike (no LBP)", "zernike+lbp": "Zernike + LBP (no HOG)",
+    fused: "All three, family-balanced", fused_plain: "All three, as concatenated" };
   const nice = (k) => NICE[k] || k;
   const acc = Object.fromEntries(sets.map((s) => [s.k, s.acc]));
   return `<div class="panel-grid">
