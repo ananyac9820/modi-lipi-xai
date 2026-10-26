@@ -494,7 +494,9 @@ approximately, not directly, comparable.
 - **Descriptors (SVM, ablation at 500/class):** HOG alone 83.6%, LBP alone 79.3%,
   Zernike alone 54.0%, all three 86.4%. Fusion adds 2.8 points over HOG
   alone. Family balancing makes no difference under LDA (86.4% without it), as expected,
-  since LDA rescales the features anyway.
+  since LDA rescales the features anyway. Dropping one family at a time shows what each one adds on top
+  of the other two: without HOG 81.4% (-4.9), without LBP 83.9%
+  (-2.4), without Zernike 86.0% (-0.3). Zernike adds very little once HOG and LBP are in.
 - **Digits are easiest and consonants hardest** for every model.
 - **Most errors are look-alike confusions:** 1,439 of the 1,738 stack errors (83%) stay inside the
   same category. Most confused pairs: `i`↔`ii` (91), `h`↔`thha` (89), `p`↔`thha` (54), `five`↔`six` (51), `k`↔`m` (46).
