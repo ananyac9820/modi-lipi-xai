@@ -1,0 +1,17 @@
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Times New Roman", "fontSize": "17px", "primaryColor": "#ffffff", "primaryBorderColor": "#1c3670", "primaryTextColor": "#111111", "lineColor": "#1c3670"}, "flowchart": {"nodeSpacing": 14, "rankSpacing": 20, "wrappingWidth": 420, "padding": 6}}}%%
+flowchart TB
+  A["Character image: grayscale, Otsu thresholding, border and speck removal, resize to 64 x 64"]
+  A --> C["HOG (1,764)"]
+  A --> D["Zernike (49)"]
+  A --> E["LBP (448)"]
+  C --> F["Standardise, join (2,261 values), reduce with LDA"]
+  D --> F
+  E --> F
+  F --> H["Random Forest"]
+  F --> I["SVM (RBF)"]
+  F --> J["XGBoost"]
+  H --> K["Stacking with a logistic regression meta-learner"]
+  I --> K
+  J --> K
+  K --> L["Predicted class and confidence"]
+  K --> M["Grouped Kernel SHAP explanation"]

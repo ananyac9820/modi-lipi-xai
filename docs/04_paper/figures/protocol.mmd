@@ -1,0 +1,10 @@
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Times New Roman", "fontSize": "17px", "primaryColor": "#ffffff", "primaryBorderColor": "#1c3670", "primaryTextColor": "#111111", "lineColor": "#1c3670"}, "flowchart": {"nodeSpacing": 14, "rankSpacing": 20, "wrappingWidth": 420, "padding": 6}}}%%
+flowchart TB
+  A["MODI-HChar: 57 classes, about 10,100 images each, shuffled once per class with a fixed seed"]
+  A --> C["Fixed test set: 200 per class (11,400)"]
+  A --> D["Nested training sets: 72 to 2,000 per class"]
+  D --> E["Handcrafted pipeline (RF, SVM, XGBoost, stack)"]
+  D --> F["Plain CNN, untuned, same images"]
+  C --> G["Same scoring code on the same test set"]
+  E --> G
+  F --> G
