@@ -1,10 +1,11 @@
-# Modi Lipi XAI
+# Handwritten Modi Character Recognition using Handcrafted Features
 
-**Explainable recognition of handwritten Modi script using classical machine learning, with no deep
-learning, and a measurement of how far handcrafted features carry as training data grows.**
+**Modi Lipi XAI** (the code and web app in this repository) recognises handwritten Modi characters with three
+handcrafted features (HOG, Zernike moments, LBP) and classical machine learning, explains each prediction
+with SHAP, and compares the result with a simple CNN trained on the same data.
 
 **Headline:** 57 handwritten Modi characters, public MODI-HChar dataset, fixed held-out test set of
-11,400 images: **SVM 84.5%**, stacking ensemble 81.3% at 500 training images per class, on a laptop
+11,400 images: **SVM 86.4%**, stacking ensemble 84.8% at 500 training images per class, on a laptop
 CPU, with a SHAP explanation for every prediction. See [Results](#results).
 
 ### Quick start
