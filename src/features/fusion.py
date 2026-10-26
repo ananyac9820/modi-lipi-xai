@@ -1,5 +1,8 @@
 """Descriptor fusion, single-descriptor extraction and feature caching.
 
+Objective 1 (synopsis): joins HOG, Zernike and LBP into one 2,261-value feature vector, and builds
+the single-feature and leave-one-out sets used in the ablation.
+
 Feature sets:
     "hog", "zernike", "lbp"  - one descriptor family alone (for the ablation)
     "fused"                  - all three concatenated in ``config.DESCRIPTORS`` order

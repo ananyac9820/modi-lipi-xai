@@ -1,5 +1,7 @@
 """Stage 6 - Evaluation: metrics, confusion analysis, ablation and figures.
 
+Objective 3 (synopsis): most_confused_pairs lists which characters the model mixes up.
+
 First-class outputs (none of the surveyed papers publishes them):
   * per-class precision / recall / F1 for every character
   * the full confusion matrix

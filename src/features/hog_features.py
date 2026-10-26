@@ -1,5 +1,7 @@
 """Histogram of Oriented Gradients: stroke direction and edge layout.
 
+Objective 1 (synopsis): HOG is one of the three handcrafted features used instead of raw pixels.
+
 HOG divides the glyph into cells, records in each cell how much edge energy
 points in each direction, and normalises over overlapping blocks. It is the
 "where are the strokes and which way do they run" descriptor. It is NOT

@@ -1,5 +1,8 @@
 """Stage 7 - Explainability with SHAP.
 
+Objective 3 (synopsis): SHAP explanations. GroupedExplainer.explain explains one prediction,
+run_global gives the overall picture, contrast_pairs explains the most confused pairs.
+
 WHAT IS EXPLAINED
 The final stacking ensemble's class probabilities, as a function of the fused
 handcrafted features (before scaling / PCA), so explanations are in terms a

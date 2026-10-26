@@ -1,5 +1,7 @@
 """Untuned reference CNN for the learning-curve comparison.
 
+Objective 4 (synopsis): the simple CNN we compare against, trained on exactly the same splits.
+
 WHY UNTUNED: the comparison is only credible if neither side was tuned to
 make the other look good or bad. The architecture and training protocol are
 textbook defaults fixed in ``config.CNN_BASELINE`` before any result was seen,

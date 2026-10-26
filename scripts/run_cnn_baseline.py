@@ -1,5 +1,7 @@
 """REFERENCE BASELINE: train the untuned CNN at every learning-curve point.
 
+Objective 4 (synopsis): trains the comparison CNN at every training size.
+
 Uses exactly the same seeded splits and fixed test set as the classical
 models, scores with the same function, and writes
 results/metrics/learning_curve_cnn.json plus the headline comparison figure

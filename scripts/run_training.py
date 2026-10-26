@@ -1,5 +1,8 @@
 """Stage 5 runner: train and evaluate the classical models.
 
+Objectives 1, 2 and 4 (synopsis): run_ablation tests what each feature adds (1), run_main compares
+RF, SVM, XGBoost and stacking (2), run_curve trains the classical models at each data size (4).
+
 Experiments (each one is saved as soon as it finishes, so the script resumes):
   0. SELECT     choose PCA vs LDA by 3-fold CV on the main TRAINING set (RF + SVM); test set unused
   1. MAIN       fused features + PCA, 500 training images per class -> RF, SVM, XGBoost, stacking

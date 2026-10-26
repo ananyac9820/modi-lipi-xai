@@ -1,5 +1,8 @@
 """Stage 1 - Preprocessing of single-character images.
 
+Objective 1 (synopsis): cleans each image with Otsu thresholding (idea from Anam & Gupta, 2015)
+before the handcrafted features are computed.
+
 Pipeline for one image:
     read (unicode-safe, alpha flattened onto white)
     -> grayscale

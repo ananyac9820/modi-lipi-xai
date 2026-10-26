@@ -1,5 +1,8 @@
 """Stage 5 - Models: Random Forest, SVM (RBF), XGBoost and a stacking ensemble.
 
+Objective 2 (synopsis): Random Forest, SVM and XGBoost, and the stacking ensemble that combines them
+(make_base, make_stack, train).
+
 Layout of a trained model:
 
     fused features --> [ StandardScaler -> FamilyBalancer -> PCA/LDA ]   (preprocessor, fitted once)
