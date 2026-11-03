@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#15295a">
-  <meta name="description" content="Recognising handwritten Modi script with handcrafted features and classical machine learning, with SHAP explanations.">
+  <meta name="description" content="Recognising handwritten Modi script with an SVM on handcrafted features and a small specialist for each look-alike pair.">
   <title>Modi Lipi XAI</title>
   <link rel="icon" href="img/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
@@ -38,37 +38,36 @@
       <li class="skeleton" style="height:70px"></li><li class="skeleton" style="height:70px"></li><li class="skeleton" style="height:70px"></li>
     </ul>
 
-    <h2 class="section-title">The question</h2>
+    <h2 class="section-title">The new idea</h2>
     <article class="card"><div class="panel-grid even"><div>
-      <h3>When does hand-made feature engineering stop being enough?</h3>
-      <p class="muted" style="font-size:15px">Modi was used to write Marathi for about seven centuries, and most of the archive is unread.
-        This project recognises single handwritten characters with three handcrafted descriptors and classical models,
-        explains every prediction with SHAP, and measures how much training data a plain CNN needs to overtake it.</p>
+      <h3>A specialist for every look-alike pair</h3>
+      <p class="muted" style="font-size:15px">Modi was used to write Marathi for centuries, and most of the archive is unread. Paper after paper on recognising it says look-alike characters are the hard part.
+        So when our SVM is stuck between two look-alikes, a small specialist makes the final call, looking only at the regions of the character that SHAP says separate those two.</p>
       <div class="btn-row" style="margin-top:14px">
-        <a class="btn" href="read.html">Read a manuscript</a>
-        <a class="btn ghost" href="results.html#curve">See the full curve</a>
+        <a class="btn" href="read.html">Read a character</a>
+        <a class="btn ghost" href="results.html#lookalikes">See the results</a>
       </div></div>
-      <div id="mini-curve" class="skeleton" style="min-height:200px"></div>
+      <div id="mini-pairs"></div>
     </div></article>
 
     <h2 class="section-title">Our objectives</h2>
     <p class="section-sub">Tap one to see where it shows up in the app.</p>
     <ol class="rows two-up" id="objectives">
-      <li><a class="row" href="results.html#features" style="--accent:var(--blue-600)"><span class="title">Recognise 57 characters with HOG, Zernike and LBP<small>Results &rsaquo; Features: what each feature adds</small></span><span class="meta">86.4%</span><span class="pill pill-progress sm">Objective 1</span></a></li>
-      <li><a class="row" href="results.html#models" style="--accent:var(--gold)"><span class="title">Compare RF, SVM and XGBoost, and try stacking<small>Results &rsaquo; Models: all four on the same test set</small></span><span class="meta">4 models</span><span class="pill pill-progress sm">Objective 2</span></a></li>
-      <li><a class="row" href="explain.html" style="--accent:var(--green)"><span class="title">Explain with SHAP, list confused pairs<small>Explain page, Results &rsaquo; Errors, and tap any character on Read</small></span><span class="meta">35 groups</span><span class="pill pill-progress sm">Objective 3</span></a></li>
-      <li><a class="row" href="results.html#curve" style="--accent:var(--navy-800)"><span class="title">Compare with a simple CNN on small data<small>Results &rsaquo; Curve: same splits, same test set</small></span><span class="meta">72 to 2,000</span><span class="pill pill-progress sm">Objective 4</span></a></li>
+      <li><a class="row" href="results.html#model" style="--accent:var(--blue-600)"><span class="title">Recognise 57 characters with one SVM<small>Results &rsaquo; Model</small></span><span class="pill pill-progress sm">Objective 1</span></a></li>
+      <li><a class="row" href="explain.html#pairs" style="--accent:var(--gold)"><span class="title">Find the pairs it mixes up, and what separates them<small>Explain &rsaquo; Look-alikes, Results &rsaquo; Errors</small></span><span class="pill pill-progress sm">Objective 2</span></a></li>
+      <li><a class="row" href="read.html" style="--accent:var(--green)"><span class="title">A small specialist for each look-alike pair<small>Read: tap a character and it says if a specialist decided</small></span><span class="pill pill-progress sm">Objective 3</span></a></li>
+      <li><a class="row" href="results.html#lookalikes" style="--accent:var(--navy-800)"><span class="title">Test whether they really reduce mistakes<small>Results &rsaquo; Look-alikes, pair by pair</small></span><span class="pill pill-progress sm">Objective 4</span></a></li>
     </ol>
 
     <h2 class="section-title">How it reads</h2>
     <ol class="rows two-up" id="pipeline">
-      <li><a class="row" href="read.html" style="--accent:var(--blue-400)"><span class="title">Clean and segment<small>remove frame and grid lines, split lines and characters</small></span><span class="meta">64×64</span><span class="pill pill-todo sm">step 1</span></a></li>
-      <li><a class="row" href="explain.html" style="--accent:var(--blue-600)"><span class="title">Describe with three descriptors<small>HOG stroke direction, Zernike shape, LBP texture</small></span><span class="meta">2,261</span><span class="pill pill-todo sm">step 2</span></a></li>
-      <li><a class="row" href="results.html#models" style="--accent:var(--gold)"><span class="title">Classify<small>LDA, then RF, SVM and XGBoost, stacked</small></span><span class="meta">4 models</span><span class="pill pill-todo sm">step 3</span></a></li>
-      <li><a class="row" href="explain.html" style="--accent:var(--navy-800)"><span class="title">Explain<small>Kernel SHAP over 35 feature groups</small></span><span class="meta">35</span><span class="pill pill-todo sm">step 4</span></a></li>
+      <li><a class="row" href="read.html" style="--accent:var(--blue-400)"><span class="title">Clean and segment<small>remove frame and grid lines, split lines and characters</small></span><span class="pill pill-todo sm">step 1</span></a></li>
+      <li><a class="row" href="explain.html" style="--accent:var(--blue-600)"><span class="title">Measure the shape<small>HOG, Zernike moments and LBP, reduced with LDA</small></span><span class="pill pill-todo sm">step 2</span></a></li>
+      <li><a class="row" href="results.html#model" style="--accent:var(--gold)"><span class="title">Ask the SVM<small>it scores all 57 characters</small></span><span class="pill pill-todo sm">step 3</span></a></li>
+      <li><a class="row" href="results.html#lookalikes" style="--accent:var(--navy-800)"><span class="title">Check for look-alikes<small>if the top two are a known pair, its specialist decides</small></span><span class="pill pill-todo sm">step 4</span></a></li>
     </ol>
 
-    <p class="foot-note">Handwritten Modi Character Recognition using Handcrafted Features · semester data-science project · classical ML only in the app · seed 42, fully reproducible</p>
+    <p class="foot-note">Handwritten Modi Character Recognition using Handcrafted Features · semester data-science project · seed 42</p>
   </main>
 
   <script src="js/layout.js"></script>

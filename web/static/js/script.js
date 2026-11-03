@@ -34,7 +34,7 @@ function openLabel(name) {
     </div>
     <h3 class="section-title" style="font-size:18px">On the test set</h3>
     ${m.f1 != null ? bars([{ name: "Precision", value: m.precision }, { name: "Recall", value: m.recall }, { name: "F1", value: m.f1, colour: "var(--navy-800)" }], { max: 1 }) : `<p class="muted">No test metrics yet.</p>`}
-    <p class="muted" style="margin-top:8px">200 test images, stacking ensemble.</p>
+    <p class="muted" style="margin-top:8px">200 test images, SVM with look-alike specialists.</p>
     ${confused.length ? `<h3 class="section-title" style="font-size:18px">Most often mixed up with</h3>
       <ul class="rows">${confused.map((p) => {
         const other = p.class_a === name ? p.class_b : p.class_a;

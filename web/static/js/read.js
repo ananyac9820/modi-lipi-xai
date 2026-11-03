@@ -9,7 +9,7 @@ async function recognise(form, name) {
   form.append("mode", mode());
   const out = $("#out");
   out.innerHTML = `<div class="card" style="margin-top:18px">${BOAT_LOADER}</div>`;
-  const msgs = ["Cleaning the page…", "Finding lines and characters…", "Measuring strokes: HOG, Zernike, LBP…", "Asking four models…"];
+  const msgs = ["Cleaning the page…", "Finding lines and characters…", "Measuring strokes: HOG, Zernike, LBP…", "Asking the SVM…"];
   let i = 0;
   const msgEl = $(".msg", out);
   msgEl.textContent = msgs[0];
@@ -88,7 +88,7 @@ function openChar(k) {
     ${c.flags.map((f) => `<div class="note warn" style="margin-top:14px">Segmentation: ${esc(f.text)}</div>`).join("")}
     <h3 class="section-title" style="font-size:18px;margin-top:20px">Top guesses</h3>
     ${bars(c.top.map((t, i) => ({ name: `${t.label}  ${t.devanagari || ""}`, value: t.proba, colour: i ? "var(--sand)" : "var(--navy-800)" })), { max: 1, strongFirst: true })}
-    <p class="muted" style="margin-top:10px">Each model on its own: ${Object.entries(c.votes).map(([m, v]) => `<b>${m.toUpperCase()}</b> ${esc(v)}`).join(" · ")}</p>
+    ${c.specialist ? `<div class="note" style="margin-top:12px">The SVM's first choice was <b>${esc(c.votes.svm)}</b>. Its top two guesses were the look-alike pair <b>${esc(c.specialist.pair.join(" / "))}</b>, so that pair's specialist made the final call: <b>${esc(c.label)}</b>.</div>` : ""}
     <h3 class="section-title" style="font-size:18px">Why this answer</h3>
     <div id="why"><button class="btn block" type="button" id="explain-btn">Explain with SHAP</button>
       <p class="muted" style="margin-top:8px">Measures how 35 regions of the three descriptors moved the probability. Takes a few seconds.</p></div>`);

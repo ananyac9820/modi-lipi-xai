@@ -137,35 +137,32 @@ def curves() -> dict[str, Any]:
 
 
 def project_status() -> list[dict[str, str]]:
-    """The 'focus' list on the home page: real state of each part of the project."""
-    c = curves()
-    planned = c["planned"]
-    n_cnn = len(c["cnn"])
-    n_cl = len(c["classical"])
+    """The status list on the home page: real state of each part of the project."""
+    look = read_json(MET / "lookalike.json")
     seg = read_json(MET / "segmentation_eval.json")
     shap = read_json(SHAP_DIR / "global_importance.json")
     labels = label_info()
     n_verified = sum(bool(v.get("verified")) for v in labels.values())
-    out = [
-        {"title": "Classical learning curve", "meta": f"{n_cl}/{len(planned)} pts",
-         "status": "done" if n_cl >= len(planned) else "progress", "href": "results.html#curve"},
-        {"title": "Reference CNN on the same splits", "meta": f"{n_cnn}/{len(planned)} pts",
-         "status": "done" if n_cnn >= len(planned) else "progress", "href": "results.html#curve"},
-        {"title": "SHAP explanations, 35 feature groups", "meta": f"{shap['n_images']} imgs" if shap else "-",
-         "status": "done" if shap else "todo", "href": "explain.html"},
-        {"title": "Word segmentation evaluation", "meta": "test words" if seg else "-",
+    done = "done" if look else "todo"
+    return [
+        {"title": "One SVM on handcrafted features", "meta": f"{100 * look['accuracy']['svm_vote']:.1f}%" if look else "-",
+         "status": done, "href": "results.html#model"},
+        {"title": "Find the look-alike pairs with SHAP", "meta": f"{len(look['candidate_pairs'])} pairs" if look else "-",
+         "status": "done" if look and shap else "todo", "href": "explain.html#pairs"},
+        {"title": "Specialists for look-alike pairs", "meta": f"{len(look['pairs_kept'])} kept" if look else "-",
+         "status": done, "href": "results.html#lookalikes"},
+        {"title": "Test on the fixed test set", "meta": f"{100 * look['accuracy']['final']:.1f}%" if look else "-",
+         "status": done, "href": "results.html#lookalikes"},
+        {"title": "Word segmentation check", "meta": "test words" if seg else "-",
          "status": "done" if seg else "todo", "href": "results.html#segment"},
         {"title": "Devanagari labels checked by a reader", "meta": f"{n_verified}/{len(labels)}",
          "status": "done" if labels and n_verified == len(labels) else "review", "href": "script.html"},
     ]
-    return out
 
 
 def overview() -> dict[str, Any]:
     ds = read_json(MET / "dataset_summary.json") or {}
     mc = read_json(MET / "model_comparison.json") or {}
-    c = curves()
-    best_cl = max(c["classical"], key=lambda p: p["n"]) if c["classical"] else None
     models = mc.get("models", {})
     best = mc.get("best_model")
     return {
@@ -178,8 +175,7 @@ def overview() -> dict[str, Any]:
                  "per_category": {m: {k: r(x) for k, x in v.get("per_category_accuracy", {}).items()} for m, v in models.items()},
                  "fit_seconds": mc.get("fit_seconds"), "inference_ms": mc.get("inference_ms_per_image"),
                  "size_bytes": mc.get("model_size_bytes"), "n_test": mc.get("n_test")},
-        "largest_point": best_cl,
-        "crossover": c["crossover"],
+        "lookalike": read_json(MET / "lookalike.json"),
         "status": project_status(),
     }
 
@@ -196,14 +192,14 @@ async def api_curves(_: Request) -> JSONResponse:
 
 
 async def api_results(_: Request) -> JSONResponse:
-    pairs = read_json(MET / "most_confused_pairs.json") or {}
-    per_class = read_json(MET / "per_class_metrics.json")
-    ablation = read_json(MET / "ablation.json")
+    pairs = read_json(MET / "confused_pairs_final.json") or {}
+    per_class = read_json(MET / "per_class_final.json")
+    look = read_json(MET / "lookalike.json")
     reducer = read_json(MET / "reducer_selection.json")
     seg = read_json(MET / "segmentation_eval.json")
     cat = read_json(MET / "per_category_results.json")
     literature = read_json(ASSETS / "literature.json")
-    return JSONResponse({"pairs": pairs, "per_class": per_class, "ablation": ablation, "reducer": reducer,
+    return JSONResponse({"pairs": pairs, "per_class": per_class, "lookalike": look, "reducer": reducer,
                          "segmentation": seg, "category_errors": cat, "literature": literature})
 
 
@@ -216,7 +212,7 @@ async def api_explain_global(_: Request) -> JSONResponse:
 
 
 async def api_script(_: Request) -> JSONResponse:
-    pc = read_json(MET / "per_class_metrics.json")
+    pc = read_json(MET / "per_class_final.json")
     f1 = {row["label"]: {k: r(row[k]) for k in ("f1", "precision", "recall")}
           for row in (pc or {}).get("classes", [])}
     labels = [{"label": k, **v, **({"metrics": f1[k]} if k in f1 else {})} for k, v in sorted(label_info().items())]
@@ -287,7 +283,7 @@ def _recognise(img: np.ndarray, mode: str) -> dict[str, Any]:
             "confidence": r(c.confidence), "level": c.level, "error": c.error,
             "top": [{"label": t["label"], "proba": r(t["proba"]), "devanagari": info.get(t["label"], {}).get("devanagari")}
                     for t in c.top],
-            "votes": c.model_votes, "flags": [{"flag": f, "text": segmentation.FLAG_TEXT.get(f, f)}
+            "votes": c.model_votes, "specialist": c.specialist, "flags": [{"flag": f, "text": segmentation.FLAG_TEXT.get(f, f)}
                                               for f in c.box.get("flags", [])],
             "line": c.box.get("line"),
             "crop": png_data_uri(c.crop, 160),
@@ -354,7 +350,7 @@ async def api_explain(request: Request) -> JSONResponse:
 
 
 async def api_health(_: Request) -> JSONResponse:
-    model = config.PATHS.models / "main_stack.joblib"
+    model = config.PATHS.models / "main_svm_lookalike.joblib"
     return JSONResponse({"ok": True, "model_available": model.exists()})
 
 
