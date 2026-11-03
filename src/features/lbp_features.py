@@ -1,6 +1,6 @@
 """Local Binary Patterns: local micro-structure at stroke ends and junctions.
 
-Objective 1 (synopsis): LBP is one of the three handcrafted features used instead of raw pixels.
+Objective 1: LBP is one of the three handcrafted features the SVM uses.
 
 For every pixel, LBP compares it with a ring of neighbours and records the
 resulting pattern: flat region, edge, corner, line end, spot. Histograms of

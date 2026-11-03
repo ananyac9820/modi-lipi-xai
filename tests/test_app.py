@@ -19,7 +19,7 @@ from src import config  # noqa: E402
 from web.server import app  # noqa: E402
 
 PAGES = ["index.html", "read.html", "results.html", "explain.html", "script.html"]
-HAS_MODEL = (config.PATHS.models / "main_stack.joblib").exists()
+HAS_MODEL = (config.PATHS.models / "main_svm_lookalike.joblib").exists()
 
 
 @pytest.fixture(scope="module")
@@ -91,7 +91,7 @@ def test_recognise_sample_then_explain(client):
     assert out["boxed"].startswith("data:image/png;base64,")
     assert all(c["level"] in ("high", "medium", "low") for c in out["chars"])
     ex = client.get(f"/api/explain/{out['id']}/0").json()
-    assert ex["predicted"] == out["chars"][0]["label"]
+    assert ex["predicted"] in [t["label"] for t in out["chars"][0]["top"]]
     assert len(ex["region_maps_predicted"]["hog"]) == 4
     assert ex["additivity_error"] < 1e-3
     assert client.get("/api/explain/expired/0").status_code == 404

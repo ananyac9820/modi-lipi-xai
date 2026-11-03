@@ -441,6 +441,22 @@ class AppConfig:
 
 
 # ---------------------------------------------------------------------------
+# Look-alike specialists (the project's new idea, src/lookalike.py)
+# ---------------------------------------------------------------------------
+@dataclass(frozen=True)
+class LookalikeConfig:
+    """Settings for the SHAP-guided specialists. Fixed before the test set was scored."""
+
+    top_pairs: int = 15                   # candidate pairs, from training confusions
+    top_regions: int = 10                 # feature groups (of 35) each specialist keeps
+    shap_images: int = 30                 # images used to rank the groups of one pair
+    shap_samples: int = 150               # Kernel SHAP evaluations per image
+    folds: int = 3                        # out-of-fold checks on the training set
+    specialist_C: float = 1.0
+    n_jobs: int = 8
+
+
+# ---------------------------------------------------------------------------
 # Logging
 # ---------------------------------------------------------------------------
 LOG_FORMAT: str = "%(asctime)s | %(levelname)-7s | %(name)s | %(message)s"
@@ -466,6 +482,7 @@ MODELS = ModelConfig()
 CNN_BASELINE = CNNBaselineConfig()
 EXPLAIN = ExplainConfig()
 APP = AppConfig()
+LOOKALIKE = LookalikeConfig()
 
 
 def as_dict() -> dict[str, Any]:

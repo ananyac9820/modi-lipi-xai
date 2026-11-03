@@ -1,7 +1,7 @@
 """Stage 5 - Models: Random Forest, SVM (RBF), XGBoost and a stacking ensemble.
 
-Objective 2 (synopsis): Random Forest, SVM and XGBoost, and the stacking ensemble that combines them
-(make_base, make_stack, train).
+Objective 1 uses make_base("svm") and make_preprocessor from here. The other models were earlier
+experiments and are no longer part of an objective.
 
 Layout of a trained model:
 

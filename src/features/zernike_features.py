@@ -1,6 +1,6 @@
 """Zernike moments: rotation-invariant global shape.
 
-Objective 1 (synopsis): Zernike moments are one of the three handcrafted features
+Objective 1: Zernike moments are one of the three handcrafted features
 (chosen after Kulkarni et al., 2014).
 
 The glyph is projected onto Zernike polynomials defined on a disc centred on

@@ -1,6 +1,6 @@
 """Stage 7 - Explainability with SHAP.
 
-Objective 3 (synopsis): SHAP explanations. GroupedExplainer.explain explains one prediction,
+Objective 2: SHAP explanations. GroupedExplainer.explain explains one prediction,
 run_global gives the overall picture, contrast_pairs explains the most confused pairs.
 
 WHAT IS EXPLAINED
@@ -210,11 +210,13 @@ def load_explainer(force: bool = False, bundle: models.TrainedModels | None = No
     model that is already in memory. Caching the whole explainer would pickle
     the 270 MB model a second time.
     """
-    bundle = bundle or models.load(MAIN_MODEL)
+    from src import lookalike
+
+    bundle = bundle or lookalike.load()
     baseline = None
     if BASELINE_PATH.exists() and not force:
         try:
-            if BASELINE_PATH.stat().st_mtime >= MAIN_MODEL.stat().st_mtime:
+            if BASELINE_PATH.stat().st_mtime >= lookalike.MODEL_PATH.stat().st_mtime:
                 baseline = np.load(BASELINE_PATH)
                 if baseline.shape != (sum(len(g["columns"]) for g in build_groups(bundle.feature_set)),):
                     baseline = None
@@ -282,7 +284,7 @@ def run_global(force: bool = False) -> dict[str, Any]:
     total = sum(fam_imp.values()) or 1.0
     sl = fusion.slices(exp.bundle.feature_set)
     result = {
-        "model": "stacking ensemble", "method": "Kernel SHAP over 35 feature groups; baseline = mean training feature vector",
+        "model": "SVM", "method": "Kernel SHAP over 35 feature groups; baseline = mean training feature vector",
         "n_images": int(len(X)), "images_per_class": per_class, "nsamples": E.kernel_nsamples,
         "family_importance": fam_imp,
         "family_share": {f: v / total for f, v in fam_imp.items()},
@@ -345,7 +347,7 @@ def plot_global(result: dict[str, Any], path: Path = GLOBAL_FIG) -> Path:
     ax.barh(range(len(top)), [g["mean_abs_shap"] for g in top], color=[colours[g["family"]] for g in top])
     ax.set_yticks(range(len(top))); ax.set_yticklabels([g["group"] for g in top], fontsize=8)
     ax.set_xlabel("mean |SHAP| on the predicted class probability")
-    ax.set_title(f"Top feature groups (stacking ensemble, {result['n_images']} test images)", fontsize=10)
+    ax.set_title(f"Top feature groups (SVM, {result['n_images']} test images)", fontsize=10)
     for a in fig.axes:
         for side in ("top", "right"):
             a.spines[side].set_visible(False)

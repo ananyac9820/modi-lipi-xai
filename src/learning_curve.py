@@ -1,6 +1,6 @@
 """Learning-curve bookkeeping shared by the classical pipeline and the CNN
 
-Objective 4 (synopsis): scores the classical models and the CNN the same way at each training size.
+Earlier experiment, no longer part of an objective: scores the classical models and the CNN the same way.
 reference baseline, plus the project's headline figure.
 
 Both sides MUST score predictions through :func:`score_predictions` so their

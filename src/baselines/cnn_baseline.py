@@ -1,6 +1,6 @@
 """Untuned reference CNN for the learning-curve comparison.
 
-Objective 4 (synopsis): the simple CNN we compare against, trained on exactly the same splits.
+Earlier experiment, no longer part of an objective: a simple CNN trained on exactly the same splits.
 
 WHY UNTUNED: the comparison is only credible if neither side was tuned to
 make the other look good or bad. The architecture and training protocol are

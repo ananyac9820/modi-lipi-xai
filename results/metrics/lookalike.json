@@ -1,0 +1,575 @@
+{
+  "method": "SVM on LDA features; for known look-alike pairs a binary SVM on SHAP-chosen regions decides",
+  "train_per_class": 500,
+  "n_test": 11400,
+  "settings": {
+    "top_pairs": 15,
+    "top_regions": 10,
+    "shap_images": 30,
+    "shap_samples": 150,
+    "folds": 3,
+    "specialist_C": 1.0
+  },
+  "candidate_pairs": [
+    [
+      "h",
+      "thha"
+    ],
+    [
+      "i",
+      "ii"
+    ],
+    [
+      "ja",
+      "n"
+    ],
+    [
+      "p",
+      "thha"
+    ],
+    [
+      "d",
+      "th"
+    ],
+    [
+      "h",
+      "p"
+    ],
+    [
+      "five",
+      "six"
+    ],
+    [
+      "th",
+      "thh"
+    ],
+    [
+      "k",
+      "m"
+    ],
+    [
+      "bh",
+      "ph"
+    ],
+    [
+      "r",
+      "th"
+    ],
+    [
+      "o",
+      "ou"
+    ],
+    [
+      "dha",
+      "tha"
+    ],
+    [
+      "ai",
+      "e"
+    ],
+    [
+      "b",
+      "chh"
+    ]
+  ],
+  "training_checks": [
+    {
+      "pair": [
+        "h",
+        "thha"
+      ],
+      "images": 485,
+      "svm_right": 338,
+      "specialist_right": 352
+    },
+    {
+      "pair": [
+        "i",
+        "ii"
+      ],
+      "images": 869,
+      "svm_right": 674,
+      "specialist_right": 705
+    },
+    {
+      "pair": [
+        "ja",
+        "n"
+      ],
+      "images": 788,
+      "svm_right": 662,
+      "specialist_right": 671
+    },
+    {
+      "pair": [
+        "p",
+        "thha"
+      ],
+      "images": 273,
+      "svm_right": 220,
+      "specialist_right": 220
+    },
+    {
+      "pair": [
+        "d",
+        "th"
+      ],
+      "images": 460,
+      "svm_right": 387,
+      "specialist_right": 393
+    },
+    {
+      "pair": [
+        "h",
+        "p"
+      ],
+      "images": 176,
+      "svm_right": 137,
+      "specialist_right": 137
+    },
+    {
+      "pair": [
+        "five",
+        "six"
+      ],
+      "images": 701,
+      "svm_right": 634,
+      "specialist_right": 637
+    },
+    {
+      "pair": [
+        "th",
+        "thh"
+      ],
+      "images": 556,
+      "svm_right": 498,
+      "specialist_right": 502
+    },
+    {
+      "pair": [
+        "k",
+        "m"
+      ],
+      "images": 540,
+      "svm_right": 474,
+      "specialist_right": 476
+    },
+    {
+      "pair": [
+        "bh",
+        "ph"
+      ],
+      "images": 616,
+      "svm_right": 558,
+      "specialist_right": 549
+    },
+    {
+      "pair": [
+        "r",
+        "th"
+      ],
+      "images": 498,
+      "svm_right": 447,
+      "specialist_right": 448
+    },
+    {
+      "pair": [
+        "o",
+        "ou"
+      ],
+      "images": 752,
+      "svm_right": 705,
+      "specialist_right": 713
+    },
+    {
+      "pair": [
+        "dha",
+        "tha"
+      ],
+      "images": 352,
+      "svm_right": 320,
+      "specialist_right": 323
+    },
+    {
+      "pair": [
+        "ai",
+        "e"
+      ],
+      "images": 612,
+      "svm_right": 575,
+      "specialist_right": 585
+    },
+    {
+      "pair": [
+        "b",
+        "chh"
+      ],
+      "images": 222,
+      "svm_right": 201,
+      "specialist_right": 206
+    }
+  ],
+  "pairs_kept": [
+    [
+      "h",
+      "thha"
+    ],
+    [
+      "i",
+      "ii"
+    ],
+    [
+      "ja",
+      "n"
+    ],
+    [
+      "d",
+      "th"
+    ],
+    [
+      "five",
+      "six"
+    ],
+    [
+      "th",
+      "thh"
+    ],
+    [
+      "k",
+      "m"
+    ],
+    [
+      "r",
+      "th"
+    ],
+    [
+      "o",
+      "ou"
+    ],
+    [
+      "dha",
+      "tha"
+    ],
+    [
+      "ai",
+      "e"
+    ],
+    [
+      "b",
+      "chh"
+    ]
+  ],
+  "accuracy": {
+    "svm_vote": 0.8635964912280701,
+    "svm_score": 0.862719298245614,
+    "final": 0.8678070175438597
+  },
+  "macro_f1_final": 0.8677598394804706,
+  "by_category": {
+    "consonant": {
+      "svm": 0.8364285714285714,
+      "final": 0.8391428571428572
+    },
+    "digit": {
+      "svm": 0.9255,
+      "final": 0.9325
+    },
+    "vowel": {
+      "svm": 0.8870833333333333,
+      "final": 0.8975
+    }
+  },
+  "images_consulted": 2936,
+  "on_consulted": {
+    "svm_correct": 2402,
+    "final_correct": 2460
+  },
+  "against_svm_score": {
+    "fixed": 161,
+    "broken": 103,
+    "p_value": 0.00043017749488177354
+  },
+  "against_svm_vote": {
+    "fixed": 182,
+    "broken": 134,
+    "p_value": 0.008092985900399093
+  },
+  "per_pair": [
+    {
+      "pair": [
+        "h",
+        "thha"
+      ],
+      "regions": [
+        "HOG: stroke direction, upper-middle centre-right",
+        "HOG: stroke direction, lower-middle centre-right",
+        "HOG: stroke direction, upper-middle right",
+        "HOG: stroke direction, lower-middle left",
+        "HOG: stroke direction, lower-middle centre-left",
+        "HOG: stroke direction, top centre-right",
+        "HOG: stroke direction, upper-middle left",
+        "HOG: stroke direction, upper-middle centre-left",
+        "LBP: local stroke pattern, lower-middle centre-left",
+        "HOG: stroke direction, lower-middle right"
+      ],
+      "images_consulted": 251,
+      "errors_svm": 174,
+      "errors_final": 179,
+      "correct_svm": 158,
+      "correct_final": 153
+    },
+    {
+      "pair": [
+        "i",
+        "ii"
+      ],
+      "regions": [
+        "HOG: stroke direction, top right",
+        "HOG: stroke direction, top centre-right",
+        "LBP: local stroke pattern, top right",
+        "HOG: stroke direction, upper-middle right",
+        "HOG: stroke direction, bottom centre-left",
+        "HOG: stroke direction, lower-middle centre-right",
+        "LBP: local stroke pattern, top centre-right",
+        "LBP: local stroke pattern, upper-middle right",
+        "HOG: stroke direction, upper-middle centre-left",
+        "HOG: stroke direction, upper-middle centre-right"
+      ],
+      "images_consulted": 374,
+      "errors_svm": 111,
+      "errors_final": 92,
+      "correct_svm": 272,
+      "correct_final": 291
+    },
+    {
+      "pair": [
+        "ja",
+        "n"
+      ],
+      "regions": [
+        "LBP: local stroke pattern, upper-middle left",
+        "LBP: local stroke pattern, upper-middle centre-left",
+        "HOG: stroke direction, upper-middle centre-right",
+        "HOG: stroke direction, upper-middle centre-left",
+        "HOG: stroke direction, lower-middle left",
+        "Zernike: medium detail (orders 5-8)",
+        "Zernike: fine detail (orders 9+)",
+        "HOG: stroke direction, lower-middle centre-left",
+        "HOG: stroke direction, upper-middle left",
+        "HOG: stroke direction, top centre-left"
+      ],
+      "images_consulted": 310,
+      "errors_svm": 69,
+      "errors_final": 77,
+      "correct_svm": 261,
+      "correct_final": 253
+    },
+    {
+      "pair": [
+        "d",
+        "th"
+      ],
+      "regions": [
+        "HOG: stroke direction, upper-middle centre-right",
+        "HOG: stroke direction, lower-middle centre-left",
+        "HOG: stroke direction, upper-middle centre-left",
+        "HOG: stroke direction, lower-middle centre-right",
+        "HOG: stroke direction, lower-middle left",
+        "HOG: stroke direction, upper-middle left",
+        "LBP: local stroke pattern, upper-middle centre-left",
+        "HOG: stroke direction, bottom centre-right",
+        "HOG: stroke direction, bottom centre-left",
+        "LBP: local stroke pattern, lower-middle centre-right"
+      ],
+      "images_consulted": 196,
+      "errors_svm": 107,
+      "errors_final": 94,
+      "correct_svm": 157,
+      "correct_final": 162
+    },
+    {
+      "pair": [
+        "five",
+        "six"
+      ],
+      "regions": [
+        "HOG: stroke direction, upper-middle centre-left",
+        "HOG: stroke direction, lower-middle centre-left",
+        "HOG: stroke direction, upper-middle centre-right",
+        "HOG: stroke direction, lower-middle centre-right",
+        "HOG: stroke direction, bottom centre-left",
+        "HOG: stroke direction, lower-middle left",
+        "LBP: local stroke pattern, upper-middle centre-left",
+        "HOG: stroke direction, bottom left",
+        "HOG: stroke direction, upper-middle left",
+        "LBP: local stroke pattern, bottom left"
+      ],
+      "images_consulted": 298,
+      "errors_svm": 76,
+      "errors_final": 62,
+      "correct_svm": 247,
+      "correct_final": 261
+    },
+    {
+      "pair": [
+        "th",
+        "thh"
+      ],
+      "regions": [
+        "LBP: local stroke pattern, lower-middle centre-left",
+        "HOG: stroke direction, lower-middle centre-left",
+        "HOG: stroke direction, lower-middle left",
+        "LBP: local stroke pattern, lower-middle left",
+        "LBP: local stroke pattern, lower-middle centre-right",
+        "HOG: stroke direction, lower-middle centre-right",
+        "HOG: stroke direction, upper-middle centre-left",
+        "HOG: stroke direction, bottom left",
+        "HOG: stroke direction, upper-middle centre-right",
+        "HOG: stroke direction, upper-middle left"
+      ],
+      "images_consulted": 217,
+      "errors_svm": 90,
+      "errors_final": 80,
+      "correct_svm": 174,
+      "correct_final": 180
+    },
+    {
+      "pair": [
+        "k",
+        "m"
+      ],
+      "regions": [
+        "HOG: stroke direction, upper-middle centre-left",
+        "HOG: stroke direction, upper-middle left",
+        "HOG: stroke direction, lower-middle centre-left",
+        "HOG: stroke direction, lower-middle left",
+        "HOG: stroke direction, upper-middle centre-right",
+        "HOG: stroke direction, lower-middle centre-right",
+        "LBP: local stroke pattern, upper-middle centre-left",
+        "LBP: local stroke pattern, upper-middle left",
+        "Zernike: fine detail (orders 9+)",
+        "HOG: stroke direction, upper-middle right"
+      ],
+      "images_consulted": 245,
+      "errors_svm": 76,
+      "errors_final": 67,
+      "correct_svm": 203,
+      "correct_final": 212
+    },
+    {
+      "pair": [
+        "r",
+        "th"
+      ],
+      "regions": [
+        "HOG: stroke direction, upper-middle centre-right",
+        "HOG: stroke direction, upper-middle centre-left",
+        "HOG: stroke direction, lower-middle centre-right",
+        "HOG: stroke direction, lower-middle centre-left",
+        "LBP: local stroke pattern, lower-middle left",
+        "LBP: local stroke pattern, upper-middle centre-left",
+        "HOG: stroke direction, lower-middle left",
+        "HOG: stroke direction, upper-middle left",
+        "HOG: stroke direction, bottom centre-right",
+        "HOG: stroke direction, upper-middle right"
+      ],
+      "images_consulted": 217,
+      "errors_svm": 83,
+      "errors_final": 76,
+      "correct_svm": 181,
+      "correct_final": 180
+    },
+    {
+      "pair": [
+        "o",
+        "ou"
+      ],
+      "regions": [
+        "HOG: stroke direction, top centre-right",
+        "HOG: stroke direction, top centre-left",
+        "LBP: local stroke pattern, top centre-right",
+        "LBP: local stroke pattern, top centre-left",
+        "HOG: stroke direction, upper-middle centre-right",
+        "HOG: stroke direction, upper-middle centre-left",
+        "HOG: stroke direction, bottom centre-right",
+        "HOG: stroke direction, lower-middle centre-left",
+        "HOG: stroke direction, upper-middle right",
+        "HOG: stroke direction, upper-middle left"
+      ],
+      "images_consulted": 335,
+      "errors_svm": 35,
+      "errors_final": 31,
+      "correct_svm": 309,
+      "correct_final": 313
+    },
+    {
+      "pair": [
+        "dha",
+        "tha"
+      ],
+      "regions": [
+        "HOG: stroke direction, lower-middle centre-left",
+        "HOG: stroke direction, upper-middle left",
+        "HOG: stroke direction, lower-middle left",
+        "HOG: stroke direction, upper-middle centre-left",
+        "HOG: stroke direction, upper-middle centre-right",
+        "LBP: local stroke pattern, upper-middle left",
+        "HOG: stroke direction, lower-middle centre-right",
+        "LBP: local stroke pattern, lower-middle centre-right",
+        "LBP: local stroke pattern, lower-middle centre-left",
+        "HOG: stroke direction, bottom centre-right"
+      ],
+      "images_consulted": 147,
+      "errors_svm": 108,
+      "errors_final": 101,
+      "correct_svm": 128,
+      "correct_final": 135
+    },
+    {
+      "pair": [
+        "ai",
+        "e"
+      ],
+      "regions": [
+        "HOG: stroke direction, top centre-right",
+        "HOG: stroke direction, top centre-left",
+        "LBP: local stroke pattern, top centre-right",
+        "LBP: local stroke pattern, top centre-left",
+        "HOG: stroke direction, upper-middle centre-left",
+        "HOG: stroke direction, upper-middle centre-right",
+        "HOG: stroke direction, top right",
+        "Zernike: fine detail (orders 9+)",
+        "HOG: stroke direction, lower-middle centre-right",
+        "HOG: stroke direction, top left"
+      ],
+      "images_consulted": 241,
+      "errors_svm": 37,
+      "errors_final": 35,
+      "correct_svm": 225,
+      "correct_final": 227
+    },
+    {
+      "pair": [
+        "b",
+        "chh"
+      ],
+      "regions": [
+        "HOG: stroke direction, lower-middle centre-right",
+        "HOG: stroke direction, upper-middle centre-right",
+        "HOG: stroke direction, lower-middle right",
+        "HOG: stroke direction, lower-middle centre-left",
+        "HOG: stroke direction, bottom centre-right",
+        "HOG: stroke direction, bottom right",
+        "LBP: local stroke pattern, upper-middle centre-right",
+        "HOG: stroke direction, bottom centre-left",
+        "LBP: local stroke pattern, lower-middle centre-right",
+        "HOG: stroke direction, upper-middle right"
+      ],
+      "images_consulted": 105,
+      "errors_svm": 84,
+      "errors_final": 78,
+      "correct_svm": 87,
+      "correct_final": 93
+    }
+  ]
+}

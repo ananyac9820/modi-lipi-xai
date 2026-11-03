@@ -19,12 +19,11 @@ from typing import Any
 
 import numpy as np
 
-from src import config, models, preprocess, segmentation
+from src import config, lookalike, preprocess, segmentation
 from src.features import fusion
 from src.utils import ModiError, get_logger
 
 log = get_logger("predict")
-MAIN_MODEL = config.PATHS.models / "main_stack.joblib"
 LABELS_FILE = Path(__file__).resolve().parent / "labels.json"
 
 
@@ -60,6 +59,7 @@ class CharPrediction:
     top: list[dict[str, Any]]
     model_votes: dict[str, str] = field(default_factory=dict)
     error: str | None = None
+    specialist: dict[str, Any] | None = None
     steps: dict[str, np.ndarray] = field(default_factory=dict)
 
     def summary(self, label_info: dict[str, dict[str, Any]]) -> dict[str, Any]:
@@ -67,7 +67,7 @@ class CharPrediction:
         return {"order": self.order, "label": self.label, "devanagari": info.get("devanagari"),
                 "mapping_verified": info.get("verified"), "confidence": round(self.confidence, 4),
                 "confidence_level": self.level, "top3": self.top, "base_model_votes": self.model_votes,
-                "segmentation_flags": self.box.get("flags", []), "error": self.error, "box": self.box}
+                "segmentation_flags": self.box.get("flags", []), "specialist": self.specialist, "error": self.error, "box": self.box}
 
 
 @dataclass
@@ -95,18 +95,18 @@ class RecognitionResult:
 
 
 class Recognizer:
-    """Loads the trained stacking ensemble once and recognises images."""
+    """Loads the SVM with its look-alike specialists once and recognises images."""
 
-    def __init__(self, model_path: Path = MAIN_MODEL) -> None:
+    def __init__(self, model_path: Path = lookalike.MODEL_PATH) -> None:
         self.model_path = Path(model_path)
-        self._bundle: models.TrainedModels | None = None
+        self._bundle: lookalike.LookalikeModel | None = None
         self._explainer = None
         self.label_info = load_label_info()
 
     @property
-    def bundle(self) -> models.TrainedModels:
+    def bundle(self) -> lookalike.LookalikeModel:
         if self._bundle is None:
-            self._bundle = models.load(self.model_path)
+            self._bundle = lookalike.load(self.model_path)
         return self._bundle
 
     @property
@@ -175,21 +175,27 @@ class Recognizer:
         t2 = time.perf_counter()
         if feats:
             X = np.vstack(feats)
-            Z = self.bundle.transform(X)
-            proba = self.bundle.predict_proba(Z, reduced=True)
-            votes = {m: self.bundle.predict("rf" if m == "rf" else m, Z, reduced=True)
-                     for m in self.bundle.stack.named_estimators_}
+            proba = self.bundle.predict_proba(X)
+            d = self.bundle.decide(X)
+            index_of = {str(name): i for i, name in enumerate(self.classes)}
             for row, k in enumerate(ok_idx):
                 p = proba[row]
-                order = np.argsort(p)[::-1][: config.APP.top_k]
+                # The final decision goes first; the rest follow the SVM's probabilities.
+                win = index_of[str(d["final"][row])]
+                rest = [i for i in np.argsort(p)[::-1] if i != win]
+                order = [win, *rest][: config.APP.top_k]
                 c = chars[k]
-                c.label = str(self.classes[order[0]])
-                c.confidence = float(p[order[0]])
+                c.label = str(self.classes[win])
+                c.confidence = float(p[win])
                 # Low segmentation confidence caps how sure we claim to be.
                 seg_conf = float(c.box.get("segmentation_confidence", 1.0))
                 c.level = confidence_level(c.confidence * (1.0 if seg_conf >= 0.99 else seg_conf))
                 c.top = [{"label": str(self.classes[i]), "proba": float(p[i])} for i in order]
-                c.model_votes = {m: str(v[row]) for m, v in votes.items()}
+                c.model_votes = {"svm": str(d["svm"][row])}
+                if d["specialist"][row] is not None:
+                    pair = d["specialist"][row]
+                    c.model_votes["specialist"] = c.label
+                    c.specialist = {"pair": [str(x) for x in pair], "regions": self.bundle.specialists[pair].regions[:3]}
         t_pred = time.perf_counter() - t2
         return RecognitionResult(seg, chars, {"segmentation": round(t_seg, 3), "features": round(t_feat, 3),
                                               "prediction": round(t_pred, 3)}, is_single)
