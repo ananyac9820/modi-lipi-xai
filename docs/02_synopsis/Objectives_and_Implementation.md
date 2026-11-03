@@ -2,12 +2,11 @@
 
 Project: Handwritten Modi Character Recognition using Handcrafted Features (Group TY-A2)
 
-All paths are inside the project folder `modi-lipi-xai`. Every file listed below also has a line at the top
-saying which objective it belongs to (search the code for "(synopsis)").
+All paths are inside the project folder `modi-lipi-xai`. To train and test everything for objectives 2, 3 and 4, run `python scripts\run_lookalike.py`.
 
-## Objective 1: Recognise 57 Modi characters using HOG, Zernike moments and LBP instead of raw pixels
+## Objective 1: Recognise 57 Modi characters with one model, an SVM on handcrafted features
 
-Base papers: Kulkarni et al. 2014, Mandke et al. 2024, Anam & Gupta 2015
+Base papers: Mandke et al. 2024, Anam & Gupta 2015, Kulkarni et al. 2014
 
 | What | Where |
 |---|---|
@@ -15,69 +14,74 @@ Base papers: Kulkarni et al. 2014, Mandke et al. 2024, Anam & Gupta 2015
 | HOG features (stroke direction, 1,764 values) | `src/features/hog_features.py`, `extract()` (line 48) |
 | Zernike moments (overall shape, 49 values) | `src/features/zernike_features.py`, `extract()` (line 43) |
 | LBP features (small local patterns, 448 values) | `src/features/lbp_features.py`, `extract()` (line 76) |
-| Joining the three into one 2,261-value vector | `src/features/fusion.py`, `extract_one()` (line 89) |
-| Testing what each feature adds (ablation) | `scripts/run_training.py`, `run_ablation()` (line 191) |
-| Command | `python scripts\run_training.py --only ablation` |
-| Result file | `results/metrics/ablation.json` |
-| In the app | Results page, Features tab |
+| Joining the three into 2,261 values | `src/features/fusion.py`, `extract_one()` (line 89) |
+| Training the SVM on those features, after LDA | `src/lookalike.py`, `fit_svm()` (line 89) |
+| Testing what each feature adds | `scripts/run_training.py`, `run_ablation()` (line 191) |
+| Result files | `results/metrics/lookalike.json`, `results/metrics/ablation.json` |
+| In the app | Results page, Model tab |
 
-What we got (SVM, 500 training images per character): HOG alone 83.6%, LBP alone 79.3%, Zernike alone
-54.0%, all three together 86.4%. Taking one out: without HOG 81.4%, without LBP 83.9%, without Zernike
-86.0%. So HOG matters most, LBP adds a clear gain, and Zernike adds very little once the other two are in.
+What we got: the SVM alone reads 86.36% of the 11,400 test images correctly, against the 77% Mandke et al. report for their SVM (a different dataset, so it is only a rough comparison). Without HOG it falls to 81.4%, without LBP to 83.9%, without Zernike only to 86.0%.
 
-## Objective 2: Compare Random Forest, SVM and XGBoost, and check whether stacking them helps
+## Objective 2: Find the pairs the SVM mixes up most, and use SHAP to see what separates them
 
-Base paper: Ekbote et al. 2022
+Base papers: Kolte & Gupta 2025, Anam & Gupta 2015, Ekbote et al. 2022
 
 | What | Where |
 |---|---|
-| The three models | `src/models.py`, `make_base()` (line 89) |
-| Stacking ensemble | `src/models.py`, `make_stack()` (line 100) |
-| Training everything together | `src/models.py`, `train()` (line 154) |
-| Running the comparison | `scripts/run_training.py`, `run_main()` (line 107) |
-| Command | `python scripts\run_training.py --only main` |
-| Result files | `results/metrics/model_comparison.json`, `results/figures/model_comparison.png` |
-| In the app | Results page, Models tab |
+| The SVM's guesses on held-out training images | `scripts/run_lookalike.py`, `oof_scores()` (line 34) |
+| Counting errors to get the 15 most confused pairs | `scripts/run_lookalike.py`, `main()` (line 84) |
+| SHAP ranking of the 35 regions for one pair | `src/lookalike.py`, `rank_groups()` (line 100) |
+| Picking the top 10 regions | `src/lookalike.py`, `choose_columns()` (line 129) |
+| Most confused pairs on the test set | `src/evaluate.py`, `most_confused_pairs()` (line 58) |
+| SHAP on the main SVM, and for confused pairs | `src/explain.py`, `run_global()` (line 253), `src/explain.py`, `contrast_pairs()` (line 367) |
+| Result files | `results/metrics/confused_pairs_final.json`, `results/shap/confused_pairs_contrast.json` |
+| In the app | Explain page, Look-alikes tab; Results page, Errors tab |
 
-What we got (11,400 test images): SVM 86.4%, stacking 84.8%, Random Forest 84.0%, XGBoost 83.8%.
-Stacking did not beat the SVM on its own, and we report that as it is.
+What we got: 15 candidate pairs from training data. For i and ii, SHAP points to the top right of the character, which is where the extra hook of ii sits.
 
-## Objective 3: Use SHAP to show which part of a character the model looked at, and list the most confused pairs
+## Objective 3: Build a small specialist for each pair, and let it decide when the SVM is stuck between them
 
-Base papers: Kolte & Gupta 2025, Anam & Gupta 2015
-
-| What | Where |
-|---|---|
-| Explaining one prediction | `src/explain.py`, `GroupedExplainer.explain()` (line 142) |
-| Overall importance of each feature and region | `src/explain.py`, `run_global()` (line 251) |
-| Explaining the confused pairs | `src/explain.py`, `contrast_pairs()` (line 365) |
-| Finding the most confused pairs | `src/evaluate.py`, `most_confused_pairs()` (line 58) |
-| Used by the app for any uploaded character | `src/predict.py`, `Recognizer.explain()` (line 205) |
-| Command | `python scripts\run_evaluation.py` |
-| Result files | `results/metrics/most_confused_pairs.json`, `results/shap/global_importance.json`, `results/shap/confused_pairs_contrast.json` |
-| In the app | Read page (tap a character, then "Explain with SHAP"), Explain page, Results page Errors tab |
-
-What we got: the most confused pairs are i and ii (91 test images), h and thha (89) and p and thha (54).
-HOG gives about 66% of the evidence, LBP 31% and Zernike 3%. To check the explanations are real, we
-removed the 3 regions SHAP ranked highest: the model's confidence dropped by 0.48 on average, against
-0.06 when we removed 3 random regions.
-
-## Objective 4: Compare our model with a simple CNN trained on the same small amounts of data
-
-Base papers: Bhong & Kulkarni 2025, Chandankhede et al. 2025, Mandke et al. 2024
+This is the new idea in our project. Base paper: Kolte & Gupta 2025.
 
 | What | Where |
 |---|---|
-| The simple CNN | `src/baselines/cnn_baseline.py`, `PlainCNN` (line 52) |
-| Training and testing it | `src/baselines/cnn_baseline.py`, `train_and_evaluate()` (line 246) |
-| Same training and test images for both models | `src/data_loader.py`, `stratified_split()` (line 440) |
-| Same scoring for both models | `src/learning_curve.py`, `score_predictions()` (line 41) |
-| Classical models at each data size | `scripts/run_training.py`, `run_curve()` (line 251) |
-| CNN at each data size | `scripts/run_cnn_baseline.py`, `main()` (line 82) |
-| Commands | `python scripts\run_training.py --only curve` and `python scripts\run_cnn_baseline.py` |
-| Result files | `results/metrics/learning_curve_classical.json`, `results/metrics/learning_curve_cnn.json` |
-| In the app | Results page, Curve tab (also the small chart on the Home page) |
+| Training one specialist on its 10 regions | `src/lookalike.py`, `fit_specialist()` (line 135) |
+| Checking it on held-out training images | `scripts/run_lookalike.py`, `test_pair_oof()` (line 45) |
+| Keeping it only if it beats the SVM there | `scripts/run_lookalike.py`, `main()` (line 92) |
+| Top two guesses of the SVM | `src/lookalike.py`, `top_two()` (line 69) |
+| The rule: if the top two are a kept pair, the specialist decides | `src/lookalike.py`, `decide()` (line 73) |
+| Using it to read a character | `src/predict.py`, `recognize()` (line 130) |
+| Saved model | `models/main_svm_lookalike.joblib` |
+| In the app | Read page: tap a character, and it says when a specialist decided |
 
-What we got (best classical model vs CNN): 72 images per character 80.4% vs 72.3%, 90 images 81.2% vs
-77.8%, 250 images 84.5% vs 85.1%. So our model does better when data is small, and the CNN catches up
-somewhere between 90 and 250 images per character. The larger sizes are still training.
+What we got: 12 of the 15 specialists passed the training check and were kept.
+
+## Objective 4: Check on a fixed test set whether the specialists really reduce mistakes
+
+Base paper: Bhong & Kulkarni 2025
+
+| What | Where |
+|---|---|
+| Scoring the test set | `scripts/run_lookalike.py`, `main()` (line 104) |
+| McNemar test on paired predictions | `scripts/run_lookalike.py`, `mcnemar()` (line 61) |
+| Result files | `results/metrics/lookalike.json`, `results/metrics/per_class_final.json` |
+| In the app | Results page, Look-alikes tab |
+
+What we got: 86.36% with the SVM alone and 86.78% with the specialists. They fixed 182 images and broke 134 (McNemar p = 0.008). Pair by pair, on the images each specialist decided:
+
+| Pair | Images | SVM right | Final right | Change |
+|---|---|---|---|---|
+| i / ii | 374 | 272 | 291 | +19 |
+| five / six | 298 | 247 | 261 | +14 |
+| k / m | 245 | 203 | 212 | +9 |
+| dha / tha | 147 | 128 | 135 | +7 |
+| th / thh | 217 | 174 | 180 | +6 |
+| b / chh | 105 | 87 | 93 | +6 |
+| d / th | 196 | 157 | 162 | +5 |
+| o / ou | 335 | 309 | 313 | +4 |
+| ai / e | 241 | 225 | 227 | +2 |
+| r / th | 217 | 181 | 180 | -1 |
+| h / thha | 251 | 158 | 153 | -5 |
+| ja / n | 310 | 261 | 253 | -8 |
+
+Nine pairs improve and three get worse.
