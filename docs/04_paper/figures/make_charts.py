@@ -8,7 +8,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-ROOT = Path(r"D:/sem5/Ds/cp/modi-lipi-xai/results")
+ROOT = Path(__file__).resolve().parents[3] / "results"
 OUT = Path(__file__).parent
 j = lambda p: json.loads((ROOT / p).read_text(encoding="utf-8"))
 
@@ -19,39 +19,35 @@ plt.rcParams.update({
     "axes.spines.top": False, "axes.spines.right": False,
 })
 W = 3.4  # single IEEE column, inches
+NAVY, GREY = "#1c3670", "#a8a8a8"
 
-# ---- Fig 3: learning curve ----
-cl, cnn = j("metrics/learning_curve_classical.json"), j("metrics/learning_curve_cnn.json")
-xs = [p["train_per_class"] for p in cl["points"]]
-fig, ax = plt.subplots(figsize=(W, 2.25))
-styles = {"svm": ("SVM (RBF)", "-", "o", "#111111"), "stack": ("Stacking", "-", "s", "#555555"),
-          "rf": ("Random Forest", "-", "^", "#888888"), "xgb": ("XGBoost", "-", "v", "#aaaaaa")}
-for m, (lab, ls, mk, c) in styles.items():
-    ax.plot(xs, [100 * p["models"][m]["accuracy"] for p in cl["points"]], ls, marker=mk, ms=3, lw=1, color=c, label=lab)
-cx = [p["train_per_class"] for p in cnn["points"]]
-ax.plot(cx, [100 * p["accuracy"] for p in cnn["points"]], "--", marker="D", ms=3.2, lw=1.2, color="#1c3670",
-        mfc="white", label="Plain CNN (untuned)")
-ax.axvspan(90, 250, color="#d9d9d9", alpha=0.5, lw=0)
-ax.text(150, 73.2, "crossover", ha="center", fontsize=6.5, style="italic")
-ax.set_xscale("log")
-ax.set_xticks(xs)
-ax.set_xticklabels([str(x) for x in xs])
-ax.minorticks_off()
-ax.set_xlabel("Training images per class (log scale)")
-ax.set_ylabel("Test accuracy (%)")
-ax.set_ylim(70, 91)
-ax.grid(axis="y", lw=0.3, color="#cccccc")
-ax.legend(loc="lower right", frameon=False, ncol=1)
+# ---- Fig 3: wrong answers per pair, before and after the specialist ----
+pairs = j("metrics/lookalike.json")["per_pair"]
+pairs.sort(key=lambda p: p["correct_final"] - p["correct_svm"])
+fig, ax = plt.subplots(figsize=(W, 2.6))
+for i, p in enumerate(pairs):
+    before, after = p["images_consulted"] - p["correct_svm"], p["images_consulted"] - p["correct_final"]
+    ax.plot([before, after], [i, i], color="#777777", lw=1, zorder=1)
+    ax.scatter(before, i, s=20, color=GREY, zorder=2, label="SVM alone" if i == 0 else None)
+    ax.scatter(after, i, s=20, color=NAVY, zorder=3, label="With specialist" if i == 0 else None)
+    d = p["correct_final"] - p["correct_svm"]
+    ax.text(max(before, after) + 2.5, i, f"{d:+d}", va="center", fontsize=6.5)
+ax.set_yticks(range(len(pairs)))
+ax.set_yticklabels([" / ".join(p["pair"]) for p in pairs])
+ax.set_xlim(0, 112)
+ax.set_xlabel("Wrong answers on the images the specialist decided")
+ax.grid(axis="x", lw=0.3, color="#cccccc")
+ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=2, frameon=False)
 fig.tight_layout(pad=0.3)
-fig.savefig(OUT / "fig_curve.png", bbox_inches="tight", pad_inches=0.02)
+fig.savefig(OUT / "fig_pairs.png", bbox_inches="tight", pad_inches=0.02)
 
 # ---- Fig 4: ablation ----
 a = j("metrics/ablation.json")["feature_sets"]
 order = [("zernike", "Zernike only"), ("lbp", "LBP only"), ("hog", "HOG only"), ("zernike+lbp", "Zernike + LBP"),
          ("hog+zernike", "HOG + Zernike"), ("hog+lbp", "HOG + LBP"), ("fused", "All three")]
 vals = [100 * a[k]["models"]["svm"]["accuracy"] for k, _ in order]
-fig, ax = plt.subplots(figsize=(W, 1.9))
-cols = ["#bbbbbb"] * 3 + ["#777777"] * 3 + ["#1c3670"]
+fig, ax = plt.subplots(figsize=(W, 1.75))
+cols = ["#bbbbbb"] * 3 + ["#777777"] * 3 + [NAVY]
 bars = ax.barh(range(len(order)), vals, color=cols, height=0.62)
 for b, v in zip(bars, vals):
     ax.text(v + 0.6, b.get_y() + b.get_height() / 2, f"{v:.1f}", va="center", fontsize=6.5)
@@ -72,7 +68,7 @@ tot = sum(nfeat.values())
 fig, (a1, a2) = plt.subplots(1, 2, figsize=(W, 1.75), gridspec_kw={"width_ratios": [1.25, 1]})
 x = np.arange(3)
 a1.bar(x - 0.19, [100 * nfeat[f] / tot for f in fams], 0.36, color="#bbbbbb", label="Share of features")
-a1.bar(x + 0.19, [100 * g["family_share"][f] for f in fams], 0.36, color="#1c3670", label="Share of SHAP evidence")
+a1.bar(x + 0.19, [100 * g["family_share"][f] for f in fams], 0.36, color=NAVY, label="Share of SHAP evidence")
 for i, f in enumerate(fams):
     a1.text(i + 0.19, 100 * g["family_share"][f] + 1.5, f"{100 * g['family_share'][f]:.0f}", ha="center", fontsize=6)
 a1.set_xticks(x)
@@ -98,4 +94,5 @@ for s in a2.spines.values():
 a2.set_title("(b) HOG evidence by region", fontsize=7)
 fig.tight_layout(pad=0.3)
 fig.savefig(OUT / "fig_shap.png", bbox_inches="tight", pad_inches=0.02)
+print("hog centre share", grid[1:3, 1:3].sum() / grid.sum(), "top row share", grid[0].sum() / grid.sum())
 print("charts written")

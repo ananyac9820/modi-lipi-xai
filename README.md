@@ -1,12 +1,13 @@
 # Handwritten Modi Character Recognition using Handcrafted Features
 
-**Modi Lipi XAI** (the code and web app in this repository) recognises handwritten Modi characters with three
-handcrafted features (HOG, Zernike moments, LBP) and classical machine learning, explains each prediction
-with SHAP, and compares the result with a simple CNN trained on the same data.
+**Modi Lipi XAI** (the code and web app in this repository) recognises handwritten Modi characters with
+one SVM on handcrafted features (HOG, Zernike moments, LBP). When the SVM's top two guesses are a known
+look-alike pair, a small specialist for that pair makes the final call, using only the regions of the
+character that SHAP says separate those two.
 
-**Headline:** 57 handwritten Modi characters, public MODI-HChar dataset, fixed held-out test set of
-11,400 images: **SVM 86.4%**, stacking ensemble 84.8% at 500 training images per class, on a laptop
-CPU, with a SHAP explanation for every prediction. See [Results](#results).
+**Result:** 57 characters, public MODI-HChar dataset, fixed test set of 11,400 images: SVM alone
+**86.36%**, with 12 specialists **86.78%** (182 images fixed, 134 broken, McNemar p = 0.008). Nine pairs
+improve and three get worse. See [Results](#results).
 
 ### Quick start
 
@@ -35,11 +36,7 @@ python scripts/run_feature_extraction.py
 ```
 
 ```bash
-python scripts/run_training.py
-```
-
-```bash
-python scripts/run_evaluation.py
+python scripts/run_lookalike.py
 ```
 
 ```bash
@@ -59,15 +56,12 @@ flowchart LR
     H --> F[Fusion<br/>standardise + family-balance<br/>2,261]
     Z --> F
     L --> F
-    F --> R[PCA / LDA]
-    R --> RF[Random Forest]
+    F --> R[LDA]
     R --> SV[SVM-RBF]
-    R --> XG[XGBoost]
-    RF --> ST[Stacking<br/>logistic regression]
-    SV --> ST
-    XG --> ST
-    ST --> Y[Prediction + confidence]
-    ST --> X[Grouped Kernel SHAP<br/>35 feature groups]
+    SV --> Q{Top two a known<br/>look-alike pair?}
+    Q -- no --> Y[SVM's first guess]
+    Q -- yes --> SP[Pair's specialist<br/>top 10 SHAP regions]
+    SP --> Y2[Specialist's choice]
 ```
 
 Tests: `python -m pytest -q` (17 fast unit tests + a headless end-to-end app test).
@@ -78,69 +72,14 @@ Modi (मोडी) is a cursive script that was used to write Marathi for about
 land records, court documents and administrative letters across Maharashtra. Very few people can
 read it today, so millions of archived documents are effectively locked away.
 
-## Research question
+## Objectives
 
-> **At what training-set size does handcrafted feature engineering stop being competitive with deep
-> learning for Modi script recognition?**
+1. Recognise 57 handwritten Modi characters with one model, an SVM on handcrafted features.
+2. Find which pairs the SVM mixes up most, and use SHAP to see which parts of the character separate each pair.
+3. Build a small specialist for each look-alike pair that looks only at those parts, and let it decide when the SVM's top two guesses are that pair. This is the new idea in the project.
+4. Check on a fixed test set whether the specialists really reduce mistakes, pair by pair, including the pairs that get worse.
 
-None of the ten surveyed papers (2021–2024) can answer this:
-
-- The **deep-learning papers** (CNN, VGG16, ResNet, InceptionV3, LSTM; 86–98.92%) were capped at a
-  benchmark of about **90 images per class**.
-- The **classical papers** (Zernike + DCT with KNN; HOG alone; wavelet + SVD with Euclidean distance;
-  97.77–99.3%) used **private datasets of undisclosed size**. One covers only 27 of 46 characters.
-
-The public MODI-HChar dataset is described by its uploader as having about 10,100 images per class
-(unverified until the loader counts it), roughly two orders of magnitude more than that benchmark. That makes it the first dataset large enough to trace classical performance from the
-benchmark's size upward. **The learning curve is therefore a primary contribution, not a supporting
-chart.**
-
-### What the surveyed papers' own results show
-
-The ~90-per-class regime visibly hurt the deep models. A shallow ResNet9 (98.92%) beats ResNet50
-(91.91%) and InceptionV3 (86%), an inverted ranking that only makes sense as overfitting. Another
-paper reports 97.6% train vs 87.3% validation accuracy, a 10-point gap. This remains a valid
-criticism of those papers. **It is not the justification for this project's choice of method,**
-because this project has far more data available. The question here is empirical: how good can an
-explainable, CPU-only, handcrafted pipeline get, and where does its curve flatten?
-
-### Contributions (gaps this project targets)
-
-1. **Three-family descriptor fusion.** HOG (stroke direction) + Zernike moments (rotation-invariant
-   global shape) + LBP (local texture at stroke junctions). No surveyed paper fuses more than two
-   families, and none uses LBP. An ablation measures each family alone vs fused.
-2. **A stacking ensemble** (Random Forest + SVM-RBF + XGBoost) in place of the single weak classifier
-   (KNN, decision tree, Euclidean distance) used by every classical paper.
-3. **Explainability** with SHAP, globally and per prediction. None of the surveyed papers explains
-   its predictions.
-4. **Per-class error analysis**: a full confusion matrix, a table of the most-confused character
-   pairs, and results broken down by category (digits vs vowels vs consonants).
-5. **The data-regime question**: a learning curve at **72 / 90 / 250 / 500 / 1000 / 2000** training
-   images per class for the classical ensemble **and** an untuned reference CNN, on identical splits.
-   The 2000 point shows whether the curves have flattened.
-
-### About the 72 and 90 points
-
-The surveyed benchmark had 90 images per class *in total*. After a typical 20% test split, that is
-about **72 training images per class**. The 72 point therefore **approximates** the papers' effective
-training size, and the 90 point matches their total per-class count. **Only the sample size is
-comparable.** The dataset, the class inventory (46 vs this dataset's classes) and the handwriting are
-all different. Results at 72 are *approximately comparable* in sample size and never "on equal
-footing" with the published numbers.
-
-### Scope and limits (stated up front)
-
-- **Deep-learning comparison = an untuned reference CNN trained on the same splits.** It is not a
-  comparison against published figures from other datasets. The CNN is a plain, fixed architecture
-  (three conv/BN/ReLU/pool blocks, dropout, dense head) with textbook defaults chosen before any
-  results were seen. It is **deliberately not tuned**: tuning only one side would make the comparison
-  meaningless in either direction. A tuned or larger network could score higher. The finding should
-  be read as *plain CNN vs plain-but-careful classical pipeline*, under identical data, splits, test
-  set, input images and metrics. Details: [Reference CNN baseline](#reference-cnn-baseline-not-part-of-the-pipeline).
-- The CNN is a **baseline only**. It is not in the pipeline, not in `src/models.py` and not in the app.
-- Published accuracies from the surveyed papers appear only in the app's literature table, for
-  context, with an explicit note that they come from other (often private) datasets and are **not
-  directly comparable**.
+[docs/02_synopsis/Objectives_and_Implementation.md](docs/02_synopsis/Objectives_and_Implementation.md) lists where each objective sits in the code.
 
 ## Experimental design
 
@@ -152,11 +91,8 @@ footing" with the published numbers.
   other classes.
 - **Fixed held-out test set:** the first 200 images of every class (see the short-class policy
   below). The same test set is used for every experiment, every curve point and both model families.
-- **Learning curve:** training sets of 72 / 90 / 250 / 500 / 1000 / 2000 images per class, taken
-  from the images after the test block. The sets are nested (72 ⊂ 90 ⊂ 250 ⊂ …).
-- **Main experiment** (model comparison, ablation, confusion analysis, SHAP) = **the 500-per-class
-  point**, so the headline numbers and the learning curve agree exactly. Cross-validation runs
-  inside the training set only.
+- **Training set:** 500 images per class, taken from the images after the test block. Choosing the
+  pairs, the regions and which specialists to keep uses 3-fold out-of-fold predictions on this set only.
 - **Per-category reporting:** every metric is also broken down into digits / vowels / consonants.
 - Only the 2,200-per-class pool these experiments need (200 test + 2,000 train) is preprocessed by
   default. `--max-per-class 0` processes everything.
@@ -180,24 +116,6 @@ footing" with the published numbers.
   to the smooth `test = min(200, max(20, int(0.2 * n)))`, which has no cliff. If none do, the rule
   stays and this note documents why.
 
-### Compute plan for the 2000 point
-
-RBF-SVM training scales roughly quadratically with sample count. `probability=True` adds an internal
-5-fold cross-validation for Platt scaling, and the stacking ensemble's own cross-validation multiplies
-that again. At about 114k training samples this could take days. Plan:
-
-1. Time the SVM alone at 250 and 500 and extrapolate **before** attempting 1000 or 2000.
-2. If infeasible, in order of preference: (a) subsample only the SVM's training data, (b) replace
-   `probability=True` with `decision_function` plus a calibration wrapper, (c) drop the SVM at the
-   largest points and report the ensemble as RF + XGBoost there, clearly labelled.
-3. Any such change is reported as a **compute constraint** at the affected points. The ensemble's
-   composition is never changed silently between points.
-4. If the 2000 point is infeasible for either family, it is cut for **both** curves, never just one.
-
-Measured CNN cost on this laptop is about 4 ms per training image per epoch on CPU, so roughly 7 min
-per epoch at the 2000 point and an estimated ~6 h for the whole CNN curve.
-`python scripts/run_cnn_baseline.py --estimate` re-measures this on the real data.
-
 ## Setup (Python 3.11+, tested on 3.14, CPU only)
 
 ```bash
@@ -219,8 +137,8 @@ HOG, LBP, Zernike, OpenCV and XGBoost on dummy data, and prints PASS/FAIL per li
 python scripts/check_environment.py
 ```
 
-**PyTorch is a baseline dependency, not a pipeline dependency.** It is used only to train the
-reference CNN (`src/baselines/`, `scripts/run_cnn_baseline.py`). The pipeline, the models and the web
+**PyTorch is not used by the main model or the app.** It is only needed for the earlier reference
+CNN experiment (`src/baselines/`, `scripts/run_cnn_baseline.py`). The pipeline, the models and the web
 app never import it. On Windows the pinned PyPI wheel is CPU-only. On Linux, install the CPU build
 first to avoid a multi-GB CUDA download: `pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu`.
 
@@ -307,36 +225,21 @@ by **79%**. That complementarity is the reason for fusing them.
 so HOG's 1,764 values cannot outvote Zernike's 49 in PCA or in the RBF kernel. The ablation compares
 this with plain concatenation.
 
-## Models (stage 5) and compute constraints
+## Models (stage 5)
 
-Every pipeline is: standardise → family-balance → dimensionality reduction → model.
+Every pipeline is: standardise → family-balance → LDA → SVM (RBF, C = 10).
 
-**Choosing PCA or LDA without touching the test set:** `run_training.py --only select` runs 3-fold
-cross-validation on the main training set (RF and SVM, with the reducer refitted inside each fold).
-The winner is written to `results/metrics/reducer_selection.json`, and `REDUCE.method = "auto"` uses
-it everywhere. In the first run, LDA beat PCA on the test set for all four models and trained 10×
-faster. Choosing on that basis would have used the test set for a modelling decision, so the
-choice is made by training-set cross-validation instead. PCA keeps the fewest components reaching
-95% of variance (capped at 300); LDA projects onto at most 56 class-discriminating directions.
+LDA over PCA and the SVM over Random Forest were both chosen on training data, with 3-fold
+cross-validation (`run_training.py --only select`): LDA 84.5% vs PCA 79.7%, SVM 85.5% vs RF 83.4%.
+Random Forest, XGBoost and a stack of all three were also tried, and all came in below the SVM.
 
-- **Random Forest** (400 trees), **SVM-RBF** (C = 10), **XGBoost**, and a **StackingClassifier**
-  whose meta-learner is a logistic regression on the base models' out-of-fold outputs.
-- The base models inside the fitted stack are trained on the full training set, and they are also
-  the "each model on its own" results. Nothing is trained twice.
+**Look-alike specialists (`src/lookalike.py`, `scripts/run_lookalike.py`):**
 
-**Compute constraints (documented, not hidden):**
-
-- The SVM runs **without `probability=True`**, which would add an internal 5-fold Platt-scaling
-  cross-validation to every fit. The stack feeds it the SVM's *decision scores*, and the logistic
-  regression produces the calibrated probabilities.
-- **XGBoost was the bottleneck,** not the SVM. With 57 classes it builds 57 trees per round, and the
-  original 300 rounds × depth 5 took 3–4 min at the smallest curve point. It now uses 200 rounds ×
-  depth 3 with 32 histogram bins, which matched the original's accuracy at 72 images per class
-  (65.2% vs 65.0%) about 4× faster. Multi-output trees were tried and were slower.
-- Stacking uses **3 internal folds** (not 5), and base models train one after another: running them in
-  parallel oversubscribed the CPU and stalled.
-- Cross-validation of the full pipeline uses **3 folds**, because each fold retrains the whole stack.
-- **The ensemble's composition never changes between curve points.**
+1. Out-of-fold SVM guesses on the training set give the 15 most confused pairs.
+2. For each pair, Kernel SHAP (30 images, 150 samples each) on a binary SVM ranks the 35 feature groups.
+3. A specialist is an RBF SVM (C = 1, balanced) on that pair's training images, using only the columns of its top 10 groups.
+4. A specialist is kept only if it beats the SVM on held-out training images. 12 of 15 were kept.
+5. At prediction time, if the SVM's top two (by decision score) are a kept pair, the specialist decides.
 
 ## Segmentation (stage 2)
 
@@ -387,7 +290,7 @@ connected Modi writing is not solved here; the app says so instead of hiding it.
 
 Raw SHAP over 2,261 features would be unreadable and slow, so the features are grouped into **35
 meaningful units**: HOG and LBP evidence in each cell of a 4×4 image grid (16 + 16), and Zernike
-coarse / medium / fine shape (3). **Kernel SHAP** then explains the *stacking ensemble's* probability
+coarse / medium / fine shape (3). **Kernel SHAP** then explains the *SVM's* probability
 for a class against an "average character" baseline (the mean training feature vector). Two checks
 run on every global computation:
 
@@ -410,16 +313,13 @@ A small multi-page site (Starlette, plain HTML/CSS/JS, no front-end framework) d
 first, with a cut-paper look and a bottom tab bar. All numbers on it are read from `results/`, so
 it updates itself when experiments finish.
 
-- **Home:** key results as swipeable cards, the live status of each part of the project (for
-  example how many CNN curve points are done), and a small learning-curve chart.
+- **Home:** key results as swipeable cards, the status of each objective and the new idea.
 - **Read:** upload or photograph a page, pick a bundled sample, or write a character on the drawing
-  pad. Shows numbered boxes coloured by confidence, the assembled reading (romanised and
-  Devanagari), and one row per character. Tapping a character opens its top-3 guesses, each base
-  model's vote, and a SHAP explanation: heat maps over the glyph plus the feature groups that
-  pushed toward the answer, against it, and toward the runner-up. Results download as CSV or JSON.
-- **Results:** the learning curve with the crossover band and a point-by-point table, the four
-  models at 500 images per class, the descriptor ablation, the most confused pairs, and the word
-  segmentation evaluation.
+  pad. Shows numbered boxes coloured by confidence, the assembled reading and one row per character.
+  Tapping a character opens its top guesses, says whether a specialist made the final call, and offers
+  a SHAP explanation. Results download as CSV or JSON.
+- **Results:** the specialists pair by pair, the SVM by character type, the pairs still mixed up most,
+  the word segmentation evaluation, and published results for context.
 - **Explain:** where the SHAP evidence comes from (by descriptor and by region), contrastive SHAP
   for look-alike pairs, and the faithfulness (deletion) test.
 - **Script:** all 57 characters with a real dataset sample, test-set F1, and what each one is
@@ -436,10 +336,10 @@ is in [`web/server.py`](web/server.py); `tests/test_app.py` exercises it end to 
 | Download data | `python scripts/download_data.py` (`--from-zip`, `--force`, `--delete-zip`) |
 | Preprocess + dataset stats | `python scripts/run_preprocessing.py` (`--max-per-class 0` = all, `--summary-only`, `--force`) |
 | Feature extraction | `python scripts/run_feature_extraction.py` (`--force`, `--only hog`) |
-| Training: reducer selection, main, learning curve, ablation, PCA vs LDA, CV | `python scripts/run_training.py` (`--only select main curve ...`, `--sizes ...`, resumes) |
+| Reducer selection and ablation | `python scripts/run_training.py --only select ablation` |
+| **Main model: SVM + specialists** | `python scripts/run_lookalike.py` |
 | Evaluation + figures + SHAP | `python scripts/run_evaluation.py` (`--skip-shap`, `--force-shap`) |
 | App samples + class reference sheet | `python scripts/make_sample_images.py` |
-| *Reference CNN baseline* | `python scripts/run_cnn_baseline.py` (`--estimate`, `--sizes`, `--force`, `--plot-only`) |
 | Web app | `python -m web.server` (`--host 0.0.0.0` for phones on the same network) |
 
 All tunable parameters live in [`src/config.py`](src/config.py). The random seed is fixed at 42, so
@@ -447,113 +347,49 @@ results are reproducible.
 
 ## Results
 
-All numbers are on the **fixed test set: 200 images per class × 57 classes = 11,400 images**, never
-used for training or tuning. Main experiment: fused HOG + Zernike + LBP features (2,261), reduced
-with **LDA** (chosen over PCA on training data only, see below), **500 training images per
-class** (28,500 images).
+All numbers are on the **fixed test set: 200 images per class × 57 classes = 11,400 images**. Training
+uses 500 images per class (28,500 images).
 
-| Model | Test accuracy | Macro-F1 | Digits | Vowels | Consonants | Fit time | Size |
-|---|---|---|---|---|---|---|---|
-| Random Forest | 84.03% | 0.839 | 89.8% | 86.4% | 81.6% | 41 s | 113 MB |
-| **SVM (RBF)** | **86.36%** | 0.863 | 92.7% | 88.9% | 83.7% | 27 s | 9 MB |
-| XGBoost | 83.75% | 0.838 | 90.0% | 86.1% | 81.2% | 4 min | 3 MB |
-| Stacking ensemble | 84.75% | 0.847 | 91.0% | 87.2% | 82.1% | 14 min | 204 MB |
-
-Fit times are on a laptop CPU that was often shared with the CNN baseline, so treat them as rough.
-
-### Learning curve: when does the CNN catch up?
-
-Same seeded splits and the same fixed test set for every model; the CNN is the untuned reference
-described below.
-
-| Train / class | SVM | Stack | Best classical | Reference CNN | CNN − best |
+| Model | Accuracy | Macro-F1 | Digits | Vowels | Consonants |
 |---|---|---|---|---|---|
-| 72 | 80.4% | 77.4% | 80.4% (SVM) | 72.3% | -8.1 |
-| 90 | 81.2% | 78.8% | 81.2% (SVM) | 77.8% | -3.4 |
-| 250 | 84.5% | 83.1% | 84.5% (SVM) | 85.1% | +0.6 |
-| 500 | 86.4% | 84.8% | 86.4% (SVM) | still training | – |
-| 1000 | 87.9% | 86.5% | 87.9% (SVM) | still training | – |
-| 2000 | 88.9% | 87.6% | 88.9% (SVM) | still training | – |
+| SVM alone | 86.36% | 0.863 | 92.7% | 88.9% | 83.7% |
+| **SVM + 12 specialists** | **86.78%** | **0.868** | 93.3% | 89.8% | 83.9% |
 
-**The crossover lies between 90 and 250 images per class.** Up to 90, the handcrafted pipeline beats the plain CNN; at 250 the CNN is ahead.
-The CNN points at 500, 1000, 2000 images per class are still training (they run over several nights with per-epoch checkpoints), so whether the gap keeps widening is not known yet.
-The 72-per-class point matches only the *sample size* of earlier Modi papers (46 classes × 90
-images, about 72 of them for training); their data, splits and metrics differ, so it is
-approximately, not directly, comparable.
+The specialists fixed 182 images and broke 134 (McNemar p = 0.008). Compared with ranking by SVM decision
+score (86.27%), which is how the top two are found, they fixed 161 and broke 103 (p = 0.0004). They act on
+2,936 images (26%), where correct answers go from 2,402 to 2,460.
 
-### What the results say (stated plainly)
+| Pair | Images decided | SVM right | Final right | Change |
+|---|---|---|---|---|
+| i / ii | 374 | 272 | 291 | +19 |
+| five / six | 298 | 247 | 261 | +14 |
+| k / m | 245 | 203 | 212 | +9 |
+| dha / tha | 147 | 128 | 135 | +7 |
+| th / thh | 217 | 174 | 180 | +6 |
+| b / chh | 105 | 87 | 93 | +6 |
+| d / th | 196 | 157 | 162 | +5 |
+| o / ou | 335 | 309 | 313 | +4 |
+| ai / e | 241 | 225 | 227 | +2 |
+| r / th | 217 | 181 | 180 | -1 |
+| h / thha | 251 | 158 | 153 | -5 |
+| ja / n | 310 | 261 | 253 | -8 |
 
-- **The SVM alone is the best classical model, 1.6 points ahead of the stacking
-  ensemble, and the stack never beats the SVM at any curve point.** With 3 internal folds the
-  meta-learner learns from base models trained on two-thirds of the data and from weaker RF and
-  XGBoost outputs. This contradicts the assumption that stacking helps, and is reported as a
-  finding. The app still uses the stack as planned, and every report also shows the best single model.
-- **PCA or LDA was decided on training data only** (3-fold CV with RF and SVM): LDA
-  84.5% vs PCA 79.7%. LDA mostly helps the Random Forest
-  (74.5% → 83.4% in CV); the SVM gains less. The earlier PCA results are archived in
-  `results/metrics/archive_v1_pca/`.
-- **Descriptors (SVM, ablation at 500/class):** HOG alone 83.6%, LBP alone 79.3%,
-  Zernike alone 54.0%, all three 86.4%. Fusion adds 2.8 points over HOG
-  alone. Family balancing makes no difference under LDA (86.4% without it), as expected,
-  since LDA rescales the features anyway. Dropping one family at a time shows what each one adds on top
-  of the other two: without HOG 81.4% (-4.9), without LBP 83.9%
-  (-2.4), without Zernike 86.0% (-0.3). Zernike adds very little once HOG and LBP are in.
-- **Digits are easiest and consonants hardest** for every model.
-- **Most errors are look-alike confusions:** 1,439 of the 1,738 stack errors (83%) stay inside the
-  same category. Most confused pairs: `i`↔`ii` (91), `h`↔`thha` (89), `p`↔`thha` (54), `five`↔`six` (51), `k`↔`m` (46).
-- Hardest classes (F1): `thha` 47%, `h` 57%, `p` 62%, `th` 68%, `ii` 71%. Easiest: `two` 97%, `eight` 96%, `one` 95%.
-- **Explainability (global SHAP, 171 test images, stacking ensemble):** share of total importance
-  is **HOG 65.7%**, LBP 30.9%, Zernike 3.3%. LBP is 20% of the inputs but carries
-  almost a third of the evidence; Zernike is 2% of the inputs and carries about 3%. The centre four
-  cells of the 4×4 grid carry about half of the HOG evidence; the top row, where the headline runs
-  across almost every letter, carries little.
-- **The explanations are faithful and exact:** hiding the 3 groups SHAP ranks highest lowers the
-  predicted probability by 0.484 on average, versus 0.062 for 3 random groups
-  (7.8×). The maximum additivity error is 1e-07.
+- **The SHAP regions matter.** In an early run, specialists on the SHAP regions gave 86.71% (p = 0.002)
+  and specialists on all 2,261 features gave 86.46% (p = 0.11). The table above is a later rerun with the
+  SHAP random numbers seeded. The test set was therefore scored twice, with no settings changed in between.
+- **Features (SVM):** HOG alone 83.6%, LBP alone 79.3%, Zernike alone 54.0%. Without HOG 81.4%, without LBP
+  83.9%, without Zernike 86.0%.
+- **SHAP on the SVM (171 test images):** HOG 65.6% of the evidence, LBP 30.9%, Zernike 3.5%. Hiding the top 3
+  groups lowers the predicted probability by 0.46, against 0.05 for 3 random groups.
+- **Published results** are listed in the app (Results → Papers) for context only. They use different
+  datasets, class counts and splits, so they cannot be compared directly.
 
-### Comparison with the literature (context only, not a like-for-like comparison)
+## Earlier experiments
 
-The surveyed deep-learning papers report 86–98.92% on a **46-class, 90-images-per-class** benchmark,
-and the classical papers report 97.77–99.3% on **private** datasets of undisclosed size. This project
-reports **86.4% (SVM) / 84.8% (stack)** at 500 images per class on **57 classes of a public dataset**, with a fixed held-out
-test set of 11,400 images and no tuning on that test set. The numbers are **not comparable**: they
-differ in dataset, class count, split and metric (several papers report validation or even training
-accuracy). They are listed side by side in the app (Results → Papers) only with that warning.
-
-## Reference CNN baseline (not part of the pipeline)
-
-This exists only to answer the research question. It lives in `src/baselines/` and
-`scripts/run_cnn_baseline.py`, apart from the pipeline, and the app never uses it.
-
-- **Fixed and untuned.** `conv3x3(32)-BN-ReLU-pool → conv3x3(64)-BN-ReLU-pool → conv3x3(128)-BN-ReLU-pool
-  → dropout(0.5) → dense(256)-ReLU → dropout(0.5) → dense(classes)`, about 2.2M parameters. Adam
-  (lr 1e-3), batch 128, early stopping with patience 6 (epoch safety cap 300). These are textbook defaults
-  set in `config.CNN_BASELINE` before any results were seen. No architecture or hyperparameter search
-  is done, so no reviewer can say the baseline was handicapped (or flattered) to suit the classical
-  side.
-- **One protocol correction, made before any CNN result was reported:** the epoch safety cap was
-  40. In the first run it ended training at small curve sizes while validation loss was still
-  falling (72 per class: 0.86 → 0.81 at epoch 39), so early stopping never fired. That would have
-  under-trained the CNN exactly where the crossover matters. The cap was raised to 300, so
-  early stopping (not the cap) ends training. Nothing else changed, and the cap-40 results were
-  discarded.
-- **Identical conditions.** It uses the same seeded splits, the same fixed 200-per-class test set,
-  the same preprocessed 64×64 input images, and the same scoring function
-  (`learning_curve.score_predictions`). Neither side gets augmentation.
-- **No hidden data handicap.** Early stopping uses a 10% validation slice taken from the *training*
-  set only. The CNN is then **refit on 100% of the training set** for the selected number of epochs,
-  so it sees exactly the images the classical models see. **Why the refit matters:** without it, the
-  CNN would train on about 10% fewer images than the classical models at every curve point. That
-  would handicap the CNN and make the comparison **invalid in the classical pipeline's favour**.
-  The validation phase only chooses the epoch count. The refit costs extra training time, which is
-  included in the reported cost. Do not remove it (`config.CNN_BASELINE.refit_on_full_train` must
-  stay `True` for any reported result).
-- **Reproducible.** It is seeded, with `torch.use_deterministic_algorithms(True)`, on CPU.
-- **Reported cost.** Wall-clock training time, parameter count, serialised model size and inference
-  time per image are reported at every point, because compute cost is part of the classical argument.
-- **Headline figure:** `results/figures/learning_curve_classical_vs_cnn.png` plots both accuracy
-  curves against training images per class, shades the crossover region if there is one, marks
-  incomplete points with hollow markers, and shows training time alongside.
+Before settling on one model, we also tried Random Forest (84.0%), XGBoost (83.8%), stacking (84.8%) and an
+untuned CNN on the same splits. That code is still in `src/models.py`, `src/baselines/`,
+`src/learning_curve.py` and `scripts/run_cnn_baseline.py`, but none of it is part of an objective, and the
+main model and the app do not use it.
 
 ## Repository layout
 
@@ -562,7 +398,8 @@ docs/       literature survey, synopsis, reference papers, final report
 data/       raw / processed images and cached features (gitignored)
 src/        pipeline code (preprocess, segmentation, features, reduce, models, evaluate, explain, predict)
             learning_curve.py: shared scoring, curve results, headline figure
-src/baselines/  REFERENCE CNN ONLY: never imported by the pipeline or the app
+src/lookalike.py: the main model, SVM + look-alike specialists
+src/baselines/  earlier CNN experiment, never imported by the main model or the app
 scripts/    standalone entry points, one per stage (+ check_environment.py, run_cnn_baseline.py)
 notebooks/  exploration, feature analysis, results analysis
 models/     trained models (gitignored)

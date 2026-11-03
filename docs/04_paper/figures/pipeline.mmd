@@ -7,11 +7,8 @@ flowchart TB
   C --> F["Standardise, join (2,261 values), reduce with LDA"]
   D --> F
   E --> F
-  F --> H["Random Forest"]
-  F --> I["SVM (RBF)"]
-  F --> J["XGBoost"]
-  H --> K["Stacking with a logistic regression meta-learner"]
-  I --> K
-  J --> K
-  K --> L["Predicted class and confidence"]
-  K --> M["Grouped Kernel SHAP explanation"]
+  F --> I["SVM (RBF) scores all 57 classes"]
+  I --> K{"Top two guesses a known look-alike pair?"}
+  K -- "no" --> L["Answer: SVM's first guess"]
+  K -- "yes" --> M["Pair's specialist: small SVM on the top 10 SHAP regions only"]
+  M --> N["Answer: specialist's choice"]

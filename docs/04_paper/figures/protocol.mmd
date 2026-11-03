@@ -1,10 +1,12 @@
 %%{init: {"theme": "base", "themeVariables": {"fontFamily": "Times New Roman", "fontSize": "17px", "primaryColor": "#ffffff", "primaryBorderColor": "#1c3670", "primaryTextColor": "#111111", "lineColor": "#1c3670"}, "flowchart": {"nodeSpacing": 14, "rankSpacing": 20, "wrappingWidth": 420, "padding": 6}}}%%
 flowchart TB
-  A["MODI-HChar: 57 classes, about 10,100 images each, shuffled once per class with a fixed seed"]
-  A --> C["Fixed test set: 200 per class (11,400)"]
-  A --> D["Nested training sets: 72 to 2,000 per class"]
-  D --> E["Handcrafted pipeline (RF, SVM, XGBoost, stack)"]
-  D --> F["Plain CNN, untuned, same images"]
-  C --> G["Same scoring code on the same test set"]
-  E --> G
-  F --> G
+  A["MODI-HChar: 57 classes, shuffled once per class with a fixed seed"]
+  A --> B["Training set: 500 per class (28,500)"]
+  A --> T["Fixed test set: 200 per class (11,400)"]
+  B --> C["3-fold predictions on training images only"]
+  C --> D["Pick the 15 most confused pairs"]
+  D --> E["SHAP ranks 35 regions for each pair"]
+  E --> F["Keep a specialist only if it beats the SVM on held-out training images (12 of 15 kept)"]
+  F --> G["Final model: SVM + 12 specialists"]
+  G --> H["Scored at the end, pair by pair"]
+  T --> H
