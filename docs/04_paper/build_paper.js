@@ -215,9 +215,6 @@ add(P("The system reads isolated characters. Our app can split a line of separat
 add(H1("Conclusion"));
 add(P("We recognised 57 handwritten Modi characters with one SVM on handcrafted features and added one new step: a small specialist for each look-alike pair, which sees only the regions SHAP picks for that pair. On a fixed test set of 11,400 images, accuracy went from 86.36% to 86.78%, nine of the 12 pairs improved and three got worse. Using all the features instead of the SHAP regions gave no significant gain. Next we would like to test this on a second dataset and find out why pairs like h/thha resist it."));
 
-add(new Paragraph({ children: [new TextRun({ text: "Acknowledgment", font: FONT, size: 20, smallCaps: true })], alignment: AlignmentType.CENTER, spacing: { before: 200, after: 100 } }));
-add(P("We thank our guide, Prof. Nilam Honmane, Department of Computer Engineering, Vishwakarma Institute of Technology, Pune, for guidance throughout this project."));
-
 add(new Paragraph({ children: [new TextRun({ text: "References", font: FONT, size: 20, smallCaps: true })], alignment: AlignmentType.CENTER, spacing: { before: 200, after: 100 } }));
 // references are added after all citations are resolved
 const refParas = () => order.map((k, i) => new Paragraph({
@@ -230,7 +227,7 @@ if (unused.length) throw new Error("uncited refs: " + unused.join(", "));
 
 // ---------------- title block ----------------
 const authorCell = (name, mail) => new TableCell({
-  width: { size: 5040, type: WidthType.DXA },
+  width: { size: 3360, type: WidthType.DXA },
   borders: { top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }, bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }, left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }, right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" } },
   children: [
     new Paragraph({ children: [new TextRun({ text: name, font: FONT, size: 22 })], alignment: AlignmentType.CENTER }),
@@ -242,14 +239,14 @@ const authorCell = (name, mail) => new TableCell({
 });
 const title = [
   new Paragraph({ children: [new TextRun({ text: "Handwritten Modi Character Recognition using Handcrafted Features", font: FONT, size: 48 })], alignment: AlignmentType.CENTER, spacing: { after: 240 } }),
-  new Table({ columnWidths: [5040, 5040], width: { size: 10080, type: WidthType.DXA }, alignment: AlignmentType.CENTER,
-    rows: [new TableRow({ children: [authorCell("Ananya Viraj Choudhari", "viraj.ananya24@vit.edu"), authorCell("Arya Bharat Patil", "arya.patil24@vit.edu")] })] }),
+  new Table({ columnWidths: [3360, 3360, 3360], width: { size: 10080, type: WidthType.DXA }, alignment: AlignmentType.CENTER,
+    rows: [new TableRow({ children: [authorCell("Nilam Honmane", "nilam.honmane@vit.edu"), authorCell("Ananya Viraj Choudhari", "viraj.ananya24@vit.edu"), authorCell("Arya Bharat Patil", "arya.patil24@vit.edu")] })] }),
   new Paragraph({ children: [], spacing: { after: 160 } }),
 ];
 
 const page = { size: { width: 12240, height: 15840 }, margin: { top: 1080, bottom: 1440, left: 1080, right: 1080 } };
 const doc = new Document({
-  creator: "Ananya Viraj Choudhari, Arya Bharat Patil",
+  creator: "Nilam Honmane, Ananya Viraj Choudhari, Arya Bharat Patil",
   title: "Handwritten Modi Character Recognition using Handcrafted Features",
   styles: { default: { document: { run: { font: FONT, size: 20 } } } },
   sections: [
